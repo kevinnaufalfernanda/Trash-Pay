@@ -17,7 +17,7 @@
             <div class="glass-panel rounded-3xl p-8 relative overflow-hidden">
                 <div class="absolute top-0 right-0 w-64 h-64 bg-emerald-400/10 rounded-full blur-3xl -z-10"></div>
                 <h3 class="text-3xl font-serif font-bold text-secondary mb-6 tracking-tight flex items-center gap-3">
-                    <span class="text-3xl drop-shadow-md">💸</span> Pending Redemption Requests
+                    <span class="text-3xl drop-shadow-md">💸</span> {{ __('Pending Redemption Requests') }}
                 </h3>
 
                 <div class="overflow-x-auto">
@@ -26,9 +26,9 @@
                             <tr class="bg-white/50 border-b border-white/60">
                                 <th class="py-4 px-6 font-bold text-gray-600 rounded-tl-xl backdrop-blur-sm">ID</th>
                                 <th class="py-4 px-6 font-bold text-gray-600 backdrop-blur-sm">User</th>
-                                <th class="py-4 px-6 font-bold text-gray-600 backdrop-blur-sm">Provider & No. Akun</th>
-                                <th class="py-4 px-6 font-bold text-gray-600 text-right backdrop-blur-sm">Amount (Coins)</th>
-                                <th class="py-4 px-6 font-semibold text-gray-600 text-center rounded-tr-xl backdrop-blur-sm">Actions</th>
+                                <th class="py-4 px-6 font-bold text-gray-600 backdrop-blur-sm">{{ __('Provider & Account No.') }}</th>
+                                <th class="py-4 px-6 font-bold text-gray-600 text-right backdrop-blur-sm">{{ __('Amount (Coins)') }}</th>
+                                <th class="py-4 px-6 font-semibold text-gray-600 text-center rounded-tr-xl backdrop-blur-sm">{{ __('Actions') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -51,13 +51,13 @@
                                         <form action="{{ route('admin.payouts.approve', $redemption->id) }}" method="POST">
                                             @csrf
                                             <button type="submit" class="px-4 py-2 bg-gradient-to-r from-emerald-400 to-teal-500 text-white font-bold rounded-xl shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:-translate-y-0.5 transition-all" title="Approve">
-                                                Transfer Selesai
+                                                {{ __('Transfer Completed') }}
                                             </button>
                                         </form>
                                         <form action="{{ route('admin.payouts.reject', $redemption->id) }}" method="POST">
                                             @csrf
                                             <button type="submit" class="px-4 py-2 bg-red-100/50 backdrop-blur-sm text-red-600 font-bold border border-red-200/50 rounded-xl hover:bg-red-100 transition-colors shadow-sm" title="Reject">
-                                                Tolak
+                                                {{ __('Reject') }}
                                             </button>
                                         </form>
                                     </td>
@@ -69,7 +69,7 @@
                     @if($redemptions->isEmpty())
                         <div class="text-center py-12">
                             <div class="text-5xl mb-4">🙌</div>
-                            <p class="text-gray-500">All caught up! No pending payouts.</p>
+                            <p class="text-gray-500">{{ __('All caught up! No pending payouts.') }}</p>
                         </div>
                     @endif
                 </div>

@@ -12,16 +12,16 @@
             <div class="md:col-span-2">
                 <div class="glass-panel rounded-3xl p-8 relative overflow-hidden">
                     <div class="absolute top-0 right-0 w-64 h-64 bg-amber-400/10 rounded-full blur-3xl -z-10"></div>
-                    <h3 class="text-3xl font-serif font-semibold mb-2 text-secondary tracking-tight">Tukar Koin</h3>
-                    <p class="text-sm font-medium text-gray-500 mb-6">Tukar koin yang kamu kumpulkan jadi saldo e-wallet!</p>
+                    <h3 class="text-3xl font-serif font-semibold mb-2 text-secondary tracking-tight">{{ __('Redeem Coins') }}</h3>
+                    <p class="text-sm font-medium text-gray-500 mb-6">{{ __('Exchange your collected coins for e-wallet balance!') }}</p>
 
                     <div class="mb-6 p-4 rounded-2xl bg-white/60 border border-white/80 flex items-center gap-4 shadow-sm">
                         <div class="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center text-xl">
                             💡
                         </div>
                         <div>
-                            <div class="font-bold text-secondary text-sm">Info Nilai Tukar</div>
-                            <div class="text-xs text-gray-600 font-medium">Setiap <strong class="text-amber-600">10 Koin</strong> bernilai setara dengan <strong class="text-emerald-600">Rp 1.000</strong> saldo e-wallet.</div>
+                            <div class="font-bold text-secondary text-sm">{{ __('Exchange Rate Info') }}</div>
+                            <div class="text-xs text-gray-600 font-medium">{{ __('Every') }} <strong class="text-amber-600">{{ __('10 Coins') }}</strong> {{ __('is equal to') }} <strong class="text-emerald-600">{{ __('Rp 1.000') }}</strong> {{ __('e-wallet balance.') }}</div>
                         </div>
                     </div>
 
@@ -40,7 +40,7 @@
                     <div
                         class="mb-8 p-4 bg-amber-50 rounded-xl border border-amber-200 flex justify-between items-center">
                         <div>
-                            <div class="text-amber-800 font-semibold text-sm">Available Balance</div>
+                            <div class="text-amber-800 font-semibold text-sm">{{ __('Available Balance') }}</div>
                             <div class="text-3xl font-bold text-amber-600">{{ number_format($user->coin_balance) }}
                                 <span class="text-lg">🪙</span></div>
                         </div>
@@ -51,7 +51,7 @@
                         @csrf
 
                         <div class="mb-6">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">E-Wallet Provider</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('E-Wallet Provider') }}</label>
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <input type="radio" name="provider" id="dana" value="Dana" class="peer hidden"
@@ -73,33 +73,33 @@
                         </div>
 
                         <div class="mb-10">
-                            <label for="amount" class="block text-sm font-bold text-gray-700 mb-2">Jumlah Koin</label>
+                            <label for="amount" class="block text-sm font-bold text-gray-700 mb-2">{{ __('Coin Amount') }}</label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
                                     <span class="text-xl">🪙</span>
                                 </div>
                                 <input type="number" name="amount" id="amount" min="100" max="{{ $user->coin_balance }}"
                                     class="w-full pl-14 rounded-2xl border border-gray-200 shadow-sm focus:border-primary focus:ring-primary focus:ring-4 focus:ring-primary/20 text-lg font-bold py-4 bg-white/70 transition-all"
-                                    required placeholder="Min. 100">
+                                    required placeholder="{{ __('Min. 100') }}">
                             </div>
                         </div>
 
                         <div class="mb-10">
-                            <label for="account_number" class="block text-sm font-bold text-gray-700 mb-2">Nomor HP / Akun Tujuan</label>
+                            <label for="account_number" class="block text-sm font-bold text-gray-700 mb-2">{{ __('Phone Number / Target Account') }}</label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
                                     <span class="text-xl">📱</span>
                                 </div>
                                 <input type="text" name="account_number" id="account_number"
                                     class="w-full pl-14 rounded-2xl border border-gray-200 shadow-sm focus:border-primary focus:ring-primary focus:ring-4 focus:ring-primary/20 text-lg font-bold py-4 bg-white/70 transition-all"
-                                    required placeholder="contoh: 081234567890">
+                                    required placeholder="{{ __('e.g., 081234567890') }}">
                             </div>
                         </div>
 
                         <button type="submit"
                             class="w-full px-8 py-5 bg-gradient-to-r from-primary to-emerald-500 text-white font-bold text-lg rounded-full btn-premium"
                             @if($user->coin_balance < 100) disabled @endif>
-                            🚀 Cairkan Sekarang
+                            {{ __('🚀 Withdraw Now') }}
                         </button>
                     </form>
                 </div>
@@ -108,10 +108,10 @@
             <!-- History -->
             <div>
                 <div class="glass-panel rounded-3xl p-6">
-                    <h3 class="text-xl font-serif font-semibold mb-4 text-secondary">Riwayat</h3>
+                    <h3 class="text-xl font-serif font-semibold mb-4 text-secondary">{{ __('History') }}</h3>
 
                     @if($redemptions->isEmpty())
-                        <p class="text-gray-500 text-sm">No redemption history yet.</p>
+                        <p class="text-gray-500 text-sm">{{ __('No redemption history yet.') }}</p>
                     @else
                         <div class="space-y-4">
                             @foreach($redemptions as $redemption)
@@ -127,11 +127,11 @@
                                         <span class="text-gray-500">{{ $redemption->created_at->format('d M, H:i') }}</span>
 
                                         @if($redemption->status === 'approved')
-                                            <span class="text-emerald-600 font-semibold bg-emerald-100 px-2 py-1 rounded-md">Berhasil</span>
+                                            <span class="text-emerald-600 font-semibold bg-emerald-100 px-2 py-1 rounded-md">{{ __('Success') }}</span>
                                         @elseif($redemption->status === 'rejected')
-                                            <span class="text-red-600 font-semibold bg-red-100 px-2 py-1 rounded-md">Ditolak</span>
+                                            <span class="text-red-600 font-semibold bg-red-100 px-2 py-1 rounded-md">{{ __('Rejected') }}</span>
                                         @else
-                                            <span class="text-amber-600 font-semibold bg-amber-100 px-2 py-1 rounded-md">Diproses</span>
+                                            <span class="text-amber-600 font-semibold bg-amber-100 px-2 py-1 rounded-md">{{ __('Processing') }}</span>
                                         @endif
                                     </div>
                                 </div>

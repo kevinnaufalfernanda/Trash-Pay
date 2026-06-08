@@ -4,8 +4,8 @@
 
     <div class="mb-6">
         <div class="text-center mb-6">
-            <h2 class="text-2xl font-serif font-bold text-secondary">Selamat Datang!</h2>
-            <p class="text-sm text-gray-500 mt-1">Login untuk mengakses Trash-Pay.</p>
+            <h2 class="text-2xl font-serif font-bold text-secondary">{{ __('Welcome Back!') }}</h2>
+            <p class="text-sm text-gray-500 mt-1">{{ __('Login to access Trash-Pay.') }}</p>
         </div>
 
     <form method="POST" action="{{ route('login') }}">
@@ -41,18 +41,18 @@
         <div class="flex items-center justify-between mt-8">
             @if (Route::has('password.request'))
                 <a class="text-sm font-medium text-gray-500 hover:text-primary transition-colors" href="{{ route('password.request') }}">
-                    {{ __('Lupa password?') }}
+                    {{ __('Forgot password?') }}
                 </a>
             @endif
 
             <button class="px-6 py-3 bg-gradient-to-r from-primary to-emerald-500 text-white font-bold rounded-xl hover:-translate-y-0.5 transition-transform shadow-lg shadow-emerald-500/30">
-                {{ __('Masuk') }}
+                {{ __('Log in') }}
             </button>
         </div>
         
         <div class="mt-8 text-center text-sm font-medium">
-            <span class="text-gray-500">Belum punya akun?</span>
-            <a href="{{ route('register') }}" class="text-primary font-bold hover:underline ml-1">Daftar sekarang</a>
+            <span class="text-gray-500">{{ __('Don\'t have an account?') }}</span>
+            <a href="{{ route('register') }}" class="text-primary font-bold hover:underline ml-1">{{ __('Register now') }}</a>
         </div>
     </form>
     </div>

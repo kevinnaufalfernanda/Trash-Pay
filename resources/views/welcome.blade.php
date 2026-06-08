@@ -7,6 +7,7 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400..800&family=Plus+Jakarta+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
         <script src="https://cdn.tailwindcss.com"></script>
+        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
         <script>
             tailwind.config = {
                 theme: {
@@ -81,14 +82,33 @@
                     <div class="flex items-center gap-6">
                         @if (Route::has('login'))
                             @auth
-                                <a href="{{ url('/dashboard') }}" class="text-sm font-medium text-secondary hover:text-primary transition-colors">Dashboard</a>
+                                <a href="{{ url('/dashboard') }}" class="text-sm font-medium text-secondary hover:text-primary transition-colors">{{ __('Dashboard') }}</a>
                             @else
-                                <a href="{{ route('login') }}" class="text-sm font-medium text-secondary hover:text-primary transition-colors">Log in</a>
+                                <a href="{{ route('login') }}" class="text-sm font-medium text-secondary hover:text-primary transition-colors">{{ __('Log in') }}</a>
                                 @if (Route::has('register'))
-                                    <a href="{{ route('register') }}" class="px-6 py-2.5 bg-primary text-white text-sm font-bold rounded-full btn-premium">Get Started</a>
+                                    <a href="{{ route('register') }}" class="px-6 py-2.5 bg-primary text-white text-sm font-bold rounded-full btn-premium">{{ __('Get Started') }}</a>
                                 @endif
                             @endauth
                         @endif
+
+                        <!-- Language Switcher -->
+                        <x-dropdown align="right" width="48">
+                            <x-slot name="trigger">
+                                <button class="inline-flex items-center px-4 py-2 shadow-sm text-sm leading-4 font-bold rounded-full text-white bg-primary hover:bg-emerald-600 border border-emerald-500/50 focus:outline-none transition ease-in-out duration-150">
+                                    <svg class="w-4 h-4 me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    <div class="font-sans">{{ app()->getLocale() == 'id' ? 'Indonesia' : 'English' }}</div>
+                                    <div class="ms-1">
+                                        <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                        </svg>
+                                    </div>
+                                </button>
+                            </x-slot>
+                            <x-slot name="content">
+                                <x-dropdown-link :href="route('lang.switch', 'id')" class="font-sans font-medium text-gray-700">Indonesia</x-dropdown-link>
+                                <x-dropdown-link :href="route('lang.switch', 'en')" class="font-sans font-medium text-gray-700">English</x-dropdown-link>
+                            </x-slot>
+                        </x-dropdown>
                     </div>
                 </div>
             </div>
@@ -100,20 +120,20 @@
             
             <div class="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center animate-fade-in-up">
                 <span class="inline-block py-1.5 px-5 rounded-full bg-white/60 backdrop-blur-md text-secondary text-xs font-semibold tracking-widest uppercase mb-8 border border-white shadow-sm">
-                    Wellness for the Earth
+                    {{ __('Wellness for the Earth') }}
                 </span>
                 <h1 class="text-5xl md:text-7xl font-serif font-bold tracking-tight mb-6 leading-tight text-secondary">
-                    Turn your waste into <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-teal-400">digital balance.</span>
+                    {{ __('Turn your waste into') }} <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-teal-400">{{ __('digital balance.') }}</span>
                 </h1>
                 <p class="mt-6 max-w-xl text-lg md:text-xl text-secondary/60 mx-auto mb-12 font-medium leading-relaxed">
-                    A seamless approach to Malang's circular economy. Classify waste gracefully, request pickups, and nurture your e-wallet.
+                    {{ __('A seamless approach to Malang\'s circular economy. Classify waste gracefully, request pickups, and nurture your e-wallet.') }}
                 </p>
                 <div class="flex flex-col sm:flex-row justify-center gap-4">
                     <a href="{{ route('register') }}" class="px-8 py-4 bg-primary text-white rounded-full text-lg font-bold btn-premium">
-                        Join the Movement
+                        {{ __('Join the Movement') }}
                     </a>
                     <a href="{{ route('login') }}" class="px-8 py-4 bg-white/50 backdrop-blur-md text-secondary border border-white/50 shadow-sm rounded-full text-lg font-bold hover:bg-white/80 transition-colors">
-                        Partner with Us
+                        {{ __('Partner with Us') }}
                     </a>
                 </div>
             </div>
@@ -127,22 +147,22 @@
                         <div class="w-16 h-16 bg-gradient-to-br from-emerald-400 to-teal-500 text-white rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-emerald-500/30">
                             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path></svg>
                         </div>
-                        <h3 class="text-2xl font-serif font-bold mb-4 text-secondary">Mindful Scanning</h3>
-                        <p class="text-secondary/60 font-medium leading-relaxed">Let our AI gently identify your waste category and value with a single, calming snapshot.</p>
+                        <h3 class="text-2xl font-serif font-bold mb-4 text-secondary">{{ __('Mindful Scanning') }}</h3>
+                        <p class="text-secondary/60 font-medium leading-relaxed">{{ __('Let our AI gently identify your waste category and value with a single, calming snapshot.') }}</p>
                     </div>
                     <div class="p-8 text-center glass-panel rounded-3xl">
                         <div class="w-16 h-16 bg-gradient-to-br from-blue-400 to-indigo-500 text-white rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-blue-500/30">
                             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
                         </div>
-                        <h3 class="text-2xl font-serif font-bold mb-4 text-secondary">Seamless Pickup</h3>
-                        <p class="text-secondary/60 font-medium leading-relaxed">Our dedicated eco-drivers will collect your sorted waste right from your sanctuary.</p>
+                        <h3 class="text-2xl font-serif font-bold mb-4 text-secondary">{{ __('Seamless Pickup') }}</h3>
+                        <p class="text-secondary/60 font-medium leading-relaxed">{{ __('Our dedicated eco-drivers will collect your sorted waste right from your sanctuary.') }}</p>
                     </div>
                     <div class="p-8 text-center glass-panel rounded-3xl">
                         <div class="w-16 h-16 bg-gradient-to-br from-amber-400 to-orange-500 text-white rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-amber-500/30">
                             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
-                        <h3 class="text-2xl font-serif font-bold mb-4 text-secondary">Pure Returns</h3>
-                        <p class="text-secondary/60 font-medium leading-relaxed">Exchange your digital balance into everyday value effortlessly and cleanly.</p>
+                        <h3 class="text-2xl font-serif font-bold mb-4 text-secondary">{{ __('Pure Returns') }}</h3>
+                        <p class="text-secondary/60 font-medium leading-relaxed">{{ __('Exchange your digital balance into everyday value effortlessly and cleanly.') }}</p>
                     </div>
                 </div>
             </div>
@@ -150,7 +170,7 @@
         
         <!-- Footer -->
         <footer class="py-16 text-center">
-            <p class="font-sans text-secondary/40 font-medium">&copy; {{ date('Y') }} Trash-Pay. Healing the Earth, together.</p>
+            <p class="font-sans text-secondary/40 font-medium">&copy; {{ date('Y') }} Trash-Pay. {{ __('Healing the Earth, together.') }}</p>
         </footer>
     </body>
 </html>

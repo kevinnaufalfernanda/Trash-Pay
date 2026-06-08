@@ -34,7 +34,30 @@
         </script>
     </head>
     <body class="font-sans text-gray-900 antialiased bg-gray-50 bg-[url('https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&q=80&w=2070')] bg-cover bg-center">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-white/80 backdrop-blur-sm">
+        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-white/80 backdrop-blur-sm relative">
+            <!-- Language Switcher -->
+            <div class="absolute top-6 right-6 z-50">
+                <x-dropdown align="right" width="48">
+                    <x-slot name="trigger">
+                        <button class="inline-flex items-center px-3 py-2 border border-gray-200 shadow-sm text-sm leading-4 font-medium rounded-xl text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
+                            <div>{{ strtoupper(app()->getLocale()) }}</div>
+                            <div class="ms-1">
+                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                        </button>
+                    </x-slot>
+                    <x-slot name="content">
+                        <x-dropdown-link :href="route('lang.switch', 'id')">
+                            🇮🇩 Indonesia
+                        </x-dropdown-link>
+                        <x-dropdown-link :href="route('lang.switch', 'en')">
+                            🇬🇧 English
+                        </x-dropdown-link>
+                    </x-slot>
+                </x-dropdown>
+            </div>
             <div class="mb-4">
                 <a href="/" class="flex flex-col items-center gap-2">
                     <div class="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center shadow-lg">

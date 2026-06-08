@@ -14,26 +14,26 @@
             <div class="grid md:grid-cols-3 gap-6 mb-8">
                 <!-- Total Weight -->
                 <div class="glass-panel rounded-3xl p-6 text-center">
-                    <div class="text-sm font-semibold text-gray-500 uppercase mb-2">Total Waste Collected</div>
+                    <div class="text-sm font-semibold text-gray-500 uppercase mb-2">{{ __('Total Waste Collected') }}</div>
                     <div class="text-4xl font-serif font-bold text-secondary">{{ number_format($totalWeight, 2) }} <span class="text-xl">kg</span></div>
                 </div>
 
                 <!-- CO2 Reduced -->
                 <div class="glass-panel rounded-3xl p-6 text-center">
-                    <div class="text-sm font-semibold text-gray-500 uppercase mb-2">Total CO2 Reduced</div>
+                    <div class="text-sm font-semibold text-gray-500 uppercase mb-2">{{ __('Total CO2 Reduced') }}</div>
                     <div class="text-4xl font-serif font-bold text-primary">{{ number_format($co2Reduced, 2) }} <span class="text-xl">kg</span></div>
-                    <p class="text-xs text-gray-400 mt-2">Formula: Total Weight × 1.2</p>
+                    <p class="text-xs text-gray-400 mt-2">{{ __('Formula: Total Weight × 1.2') }}</p>
                 </div>
 
                 <!-- Completed Pickups -->
                 <div class="glass-panel rounded-3xl p-6 text-center">
-                    <div class="text-sm font-semibold text-gray-500 uppercase mb-2">Successful Pickups</div>
+                    <div class="text-sm font-semibold text-gray-500 uppercase mb-2">{{ __('Successful Pickups') }}</div>
                     <div class="text-4xl font-serif font-bold text-blue-600">{{ number_format($completedPickups) }}</div>
                 </div>
             </div>
 
             <div class="glass-panel rounded-3xl p-8">
-                <h3 class="text-2xl font-serif font-bold mb-6 text-secondary">Waste by Category</h3>
+                <h3 class="text-2xl font-serif font-bold mb-6 text-secondary">{{ __('Waste by Category') }}</h3>
                 <div class="relative h-80 w-full">
                     <canvas id="wasteChart"></canvas>
                 </div>
@@ -52,7 +52,7 @@
                 data: {
                     labels: data.labels,
                     datasets: [{
-                        label: 'Pickups',
+                        label: '{{ __('Pickups') }}',
                         data: data.data,
                         backgroundColor: [
                             '#10B981', // Emerald

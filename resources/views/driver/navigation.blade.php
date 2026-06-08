@@ -19,22 +19,22 @@
                 <!-- Action -->
                 <div class="glass-panel rounded-3xl p-8 flex flex-col justify-between">
                     <div>
-                        <h3 class="text-2xl font-serif font-bold mb-6 text-secondary">Pickup Details</h3>
+                        <h3 class="text-2xl font-serif font-bold mb-6 text-secondary">{{ __('Pickup Details') }}</h3>
                         <div class="space-y-4">
                             <div class="bg-white/40 p-4 rounded-2xl border border-white/60 shadow-sm">
-                                <span class="text-xs text-gray-500 uppercase font-bold tracking-wider">Customer</span>
+                                <span class="text-xs text-gray-500 uppercase font-bold tracking-wider">{{ __('Customer') }}</span>
                                 <div class="font-bold text-gray-800 text-lg">{{ $pickup->user->name }}</div>
                             </div>
                             
                             @if($pickup->address_notes)
                             <div class="bg-white/40 p-4 rounded-2xl border border-white/60 shadow-sm border-l-4 border-l-primary">
-                                <span class="text-xs text-primary uppercase font-bold tracking-wider">Detail / Catatan Rumah</span>
+                                <span class="text-xs text-primary uppercase font-bold tracking-wider">{{ __('House Details / Notes') }}</span>
                                 <div class="font-medium text-gray-700 mt-1">{{ $pickup->address_notes }}</div>
                             </div>
                             @endif
 
                             <div class="bg-white/40 p-4 rounded-2xl border border-white/60 shadow-sm">
-                                <span class="text-xs text-gray-500 uppercase font-bold tracking-wider">Status</span>
+                                <span class="text-xs text-gray-500 uppercase font-bold tracking-wider">{{ __('Status') }}</span>
                                 <div class="mt-1"><span class="px-3 py-1.5 bg-blue-100 text-blue-800 text-xs font-bold rounded-full uppercase border border-blue-200">{{ $pickup->status }}</span></div>
                             </div>
                         </div>
@@ -42,7 +42,7 @@
                     
                     <div class="mt-8">
                         <a href="{{ route('driver.verify', $pickup->id) }}" class="block w-full text-center py-5 bg-gradient-to-r from-primary to-emerald-500 text-white font-bold rounded-full btn-premium text-lg shadow-lg shadow-emerald-500/30">
-                            📍 I've Arrived
+                            📍 {{ __('I\'ve Arrived') }}
                         </a>
                     </div>
                 </div>
@@ -79,12 +79,12 @@
 
             // Add marker for user location
             L.marker([userLat, userLon], {icon: userIcon}).addTo(map)
-                .bindPopup('<b>Customer: {{ $pickup->user->name }}</b><br>{{ $pickup->address }}')
+                .bindPopup('<b>{{ __('Customer:') }} {{ $pickup->user->name }}</b><br>{{ $pickup->address }}')
                 .openPopup();
 
             // Add marker for driver location
             L.marker([driverLat, driverLon], {icon: driverIcon}).addTo(map)
-                .bindPopup('Lokasi Anda saat ini');
+                .bindPopup('{{ __('Your current location') }}');
         });
     </script>
 </x-app-layout>
