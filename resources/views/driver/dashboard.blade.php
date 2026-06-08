@@ -21,10 +21,10 @@
                         <span x-show="!online" style="display: none;">💤</span>
                     </div>
                     <div>
-                        <h3 class="text-2xl font-serif text-secondary mb-1">Status Driver</h3>
+                        <h3 class="text-2xl font-serif text-secondary mb-1">{{ __('Driver Status') }}</h3>
                         <p class="text-sm transition-colors duration-500 font-light"
                            :class="online ? 'text-primary' : 'text-secondary/50'">
-                            <span x-text="online ? 'Online & Tersedia' : 'Offline / Istirahat'"></span>
+                            <span x-text="online ? '{{ __('Online & Available') }}' : '{{ __('Offline / Resting') }}'"></span>
                         </p>
                     </div>
                 </div>
@@ -53,29 +53,41 @@
                 </button>
             </div>
 
-            {{-- Stats --}}
-            <div class="grid md:grid-cols-4 gap-6 mb-10">
-                <div class="glass-panel rounded-3xl p-6 text-center border-t border-white/60">
-                    <div class="text-4xl mb-2">📦</div>
-                    <div class="text-xs font-bold tracking-widest text-gray-500 uppercase mb-2">Pending Orders</div>
-                    <div class="text-4xl font-serif font-bold text-accent">{{ $pendingCount }}</div>
+            <div class="grid md:grid-cols-3 gap-8 mb-10">
+                
+                {{-- Coin Balance (GIANT BLOCK like User Dashboard) --}}
+                <div class="md:col-span-1 glass-panel rounded-3xl p-8 text-center relative overflow-hidden group flex flex-col justify-center">
+                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-amber-400/20 rounded-full blur-3xl -z-10 group-hover:scale-110 transition-transform duration-500"></div>
+                    <div class="text-amber-600/80 text-xs font-bold tracking-widest uppercase mb-4">{{ __('Coin Balance') }}</div>
+                    <div class="text-6xl font-serif font-bold text-accent mb-4 tracking-tighter">{{ number_format($driver->coin_balance) }} <span class="text-3xl opacity-90 drop-shadow-sm">🪙</span></div>
+                    <a href="{{ route('driver.redeem') }}" class="inline-block px-8 py-3 bg-gradient-to-r from-accent to-amber-400 text-white rounded-full text-sm font-bold shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 hover:-translate-y-0.5 transition-all">{{ __('Withdraw Balance') }}</a>
                 </div>
-                <div class="glass-panel rounded-3xl p-6 text-center border-t border-white/60 relative overflow-hidden group">
-                    <div class="absolute inset-0 bg-gradient-to-b from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    <div class="text-4xl mb-2 relative z-10 group-hover:-translate-y-1 transition-transform">🚚</div>
-                    <div class="text-xs font-bold tracking-widest text-gray-500 uppercase mb-2 relative z-10">Active Now</div>
-                    <div class="text-4xl font-serif font-bold text-primary relative z-10">{{ $activeOrders->count() }}</div>
+
+                {{-- Driver Stats (4-grid) --}}
+                <div class="md:col-span-2 grid grid-cols-2 gap-4">
+                    <div class="glass-panel rounded-3xl p-6 text-center border-t border-white/60">
+                        <div class="text-4xl mb-2">📦</div>
+                        <div class="text-xs font-bold tracking-widest text-gray-500 uppercase mb-2">{{ __('Pending Orders') }}</div>
+                        <div class="text-4xl font-serif font-bold text-accent">{{ $pendingCount }}</div>
+                    </div>
+                    <div class="glass-panel rounded-3xl p-6 text-center border-t border-white/60 relative overflow-hidden group">
+                        <div class="absolute inset-0 bg-gradient-to-b from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="text-4xl mb-2 relative z-10 group-hover:-translate-y-1 transition-transform">🚚</div>
+                        <div class="text-xs font-bold tracking-widest text-gray-500 uppercase mb-2 relative z-10">{{ __('Active Now') }}</div>
+                        <div class="text-4xl font-serif font-bold text-primary relative z-10">{{ $activeOrders->count() }}</div>
+                    </div>
+                    <div class="glass-panel rounded-3xl p-6 text-center border-t border-white/60">
+                        <div class="text-4xl mb-2">✅</div>
+                        <div class="text-xs font-bold tracking-widest text-gray-500 uppercase mb-2">{{ __('Completed') }}</div>
+                        <div class="text-4xl font-serif font-bold text-secondary">{{ $completedCount }}</div>
+                    </div>
+                    <div class="glass-panel rounded-3xl p-6 text-center border-t border-white/60">
+                        <div class="text-4xl mb-2">⚖️</div>
+                        <div class="text-xs font-bold tracking-widest text-gray-500 uppercase mb-2">{{ __('Weight Collected') }}</div>
+                        <div class="text-4xl font-serif font-bold text-secondary">{{ number_format($totalWeightCollected, 1) }} <span class="text-lg opacity-60">kg</span></div>
+                    </div>
                 </div>
-                <div class="glass-panel rounded-3xl p-6 text-center border-t border-white/60">
-                    <div class="text-4xl mb-2">✅</div>
-                    <div class="text-xs font-bold tracking-widest text-gray-500 uppercase mb-2">Completed</div>
-                    <div class="text-4xl font-serif font-bold text-secondary">{{ $completedCount }}</div>
-                </div>
-                <div class="glass-panel rounded-3xl p-6 text-center border-t border-white/60">
-                    <div class="text-4xl mb-2">⚖️</div>
-                    <div class="text-xs font-bold tracking-widest text-gray-500 uppercase mb-2">Weight Collected</div>
-                    <div class="text-4xl font-serif font-bold text-secondary">{{ number_format($totalWeightCollected, 1) }} <span class="text-lg opacity-60">kg</span></div>
-                </div>
+
             </div>
 
             {{-- Active Orders --}}
@@ -83,7 +95,7 @@
             <div class="glass-panel rounded-3xl p-8 mb-10">
                 <h3 class="text-2xl font-serif font-bold mb-6 text-secondary flex items-center gap-3">
                     <span class="w-3 h-3 bg-red-500 rounded-full animate-pulse shadow-lg shadow-red-500/50"></span>
-                    My Active Orders
+                    {{ __('My Active Orders') }}
                 </h3>
                 <div class="space-y-4">
                     @foreach($activeOrders as $order)
@@ -98,8 +110,8 @@
                                 </div>
                             </div>
                             <div class="flex gap-3">
-                                <a href="{{ route('driver.navigation', $order->id) }}" class="px-5 py-2.5 bg-white/80 border border-gray-200 text-secondary text-sm font-bold rounded-full hover:bg-white transition-colors">Navigate</a>
-                                <a href="{{ route('driver.verify', $order->id) }}" class="px-5 py-2.5 bg-gradient-to-r from-primary to-emerald-500 text-white text-sm font-bold rounded-full btn-premium shadow-lg shadow-emerald-500/30">Verify Weight</a>
+                                <a href="{{ route('driver.navigation', $order->id) }}" class="px-5 py-2.5 bg-white/80 border border-gray-200 text-secondary text-sm font-bold rounded-full hover:bg-white transition-colors">{{ __('Navigate') }}</a>
+                                <a href="{{ route('driver.verify', $order->id) }}" class="px-5 py-2.5 bg-gradient-to-r from-primary to-emerald-500 text-white text-sm font-bold rounded-full btn-premium shadow-lg shadow-emerald-500/30">{{ __('Verify Weight') }}</a>
                             </div>
                         </div>
                     @endforeach
@@ -113,10 +125,10 @@
                 <div class="absolute -right-20 -top-20 w-64 h-64 bg-white/20 rounded-full blur-3xl"></div>
                 <div class="relative z-10">
                     <div class="text-6xl mb-6 drop-shadow-md group-hover:-translate-y-2 transition-transform duration-500">🚀</div>
-                    <h3 class="text-4xl font-serif font-bold mb-3 tracking-tight">Ready to collect waste?</h3>
-                    <p class="text-emerald-50 mb-8 font-medium text-lg">Check the Order Pool for new pickup requests near you.</p>
+                    <h3 class="text-4xl font-serif font-bold mb-3 tracking-tight">{{ __('Ready to collect waste?') }}</h3>
+                    <p class="text-emerald-50 mb-8 font-medium text-lg">{{ __('Check the Order Pool for new pickup requests near you.') }}</p>
                     <a href="{{ route('driver.orders') }}" class="inline-block px-10 py-4 bg-gradient-to-r from-accent to-amber-400 text-white rounded-full font-bold text-lg shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 hover:-translate-y-0.5 transition-all">
-                        View Order Pool ({{ $pendingCount }} pending)
+                        {{ __('View Order Pool') }} ({{ $pendingCount }} {{ __('pending') }})
                     </a>
                 </div>
             </div>

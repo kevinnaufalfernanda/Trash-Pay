@@ -2,24 +2,10 @@
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    <div x-data="{ role: 'user' }" class="mb-6">
-        <!-- Role Tabs -->
-        <div class="flex p-1 bg-white/50 backdrop-blur-sm border border-white/60 rounded-2xl mb-6 shadow-inner">
-            <button @click="role = 'user'" 
-                    :class="{'bg-white shadow-md text-primary font-bold': role === 'user', 'text-gray-500 hover:text-gray-700 hover:bg-white/40': role !== 'user'}" 
-                    type="button" class="flex-1 py-3 text-sm rounded-xl transition-all text-center focus:outline-none">
-                Warga
-            </button>
-            <button @click="role = 'driver'" 
-                    :class="{'bg-gradient-to-r from-primary to-emerald-500 shadow-md text-white font-bold': role === 'driver', 'text-gray-500 hover:text-gray-700 hover:bg-white/40': role !== 'driver'}" 
-                    type="button" class="flex-1 py-3 text-sm rounded-xl transition-all text-center focus:outline-none">
-                Eco-Driver
-            </button>
-        </div>
-
+    <div class="mb-6">
         <div class="text-center mb-6">
-            <h2 class="text-2xl font-serif font-bold text-secondary" x-text="role === 'user' ? 'Selamat Datang, Warga!' : 'Selamat Datang, Driver!'"></h2>
-            <p class="text-sm text-gray-500 mt-1" x-text="role === 'user' ? 'Login untuk kelola sampah & tukar koin.' : 'Login untuk melihat pesanan penjemputan.'"></p>
+            <h2 class="text-2xl font-serif font-bold text-secondary">Selamat Datang!</h2>
+            <p class="text-sm text-gray-500 mt-1">Login untuk mengakses Trash-Pay.</p>
         </div>
 
     <form method="POST" action="{{ route('login') }}">
@@ -28,7 +14,7 @@
         <!-- Email Address -->
         <div>
             <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full rounded-xl border-gray-200 shadow-sm focus:border-primary focus:ring-primary bg-white/70" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
+            <x-text-input id="email" class="block mt-2 w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-primary bg-white text-gray-900 transition-colors shadow-sm placeholder:text-gray-400" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
@@ -36,7 +22,7 @@
         <div class="mt-4">
             <x-input-label for="password" :value="__('Password')" />
 
-            <x-text-input id="password" class="block mt-1 w-full rounded-xl border-gray-200 shadow-sm focus:border-primary focus:ring-primary bg-white/70"
+            <x-text-input id="password" class="block mt-2 w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-primary bg-white text-gray-900 transition-colors shadow-sm placeholder:text-gray-400"
                             type="password"
                             name="password"
                             required autocomplete="current-password" />
