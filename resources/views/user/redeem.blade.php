@@ -1,0 +1,146 @@
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-serif font-semibold text-2xl text-secondary leading-tight">
+            {{ __('Redeem Center') }}
+        </h2>
+    </x-slot>
+
+    <div class="py-12">
+        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8 grid md:grid-cols-3 gap-8">
+
+            <!-- Redeem Form -->
+            <div class="md:col-span-2">
+                <div class="glass-panel rounded-3xl p-8 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-amber-400/10 rounded-full blur-3xl -z-10"></div>
+                    <h3 class="text-3xl font-serif font-semibold mb-2 text-secondary tracking-tight">Tukar Koin</h3>
+                    <p class="text-sm font-medium text-gray-500 mb-6">Tukar koin yang kamu kumpulkan jadi saldo e-wallet!</p>
+
+                    <div class="mb-6 p-4 rounded-2xl bg-white/60 border border-white/80 flex items-center gap-4 shadow-sm">
+                        <div class="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center text-xl">
+                            💡
+                        </div>
+                        <div>
+                            <div class="font-bold text-secondary text-sm">Info Nilai Tukar</div>
+                            <div class="text-xs text-gray-600 font-medium">Setiap <strong class="text-amber-600">10 Koin</strong> bernilai setara dengan <strong class="text-emerald-600">Rp 1.000</strong> saldo e-wallet.</div>
+                        </div>
+                    </div>
+
+                    @if(session('success'))
+                        <div class="mb-4 bg-emerald-100 text-emerald-700 px-4 py-3 rounded-xl">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+
+                    @if(session('error'))
+                        <div class="mb-4 bg-red-100 text-red-700 px-4 py-3 rounded-xl">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+
+                    <div
+                        class="mb-8 p-4 bg-amber-50 rounded-xl border border-amber-200 flex justify-between items-center">
+                        <div>
+                            <div class="text-amber-800 font-semibold text-sm">Available Balance</div>
+                            <div class="text-3xl font-bold text-amber-600">{{ number_format($user->coin_balance) }}
+                                <span class="text-lg">🪙</span></div>
+                        </div>
+                        <div class="text-2xl">💰</div>
+                    </div>
+
+                    <form action="{{ route('user.redeem.store') }}" method="POST">
+                        @csrf
+
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">E-Wallet Provider</label>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <input type="radio" name="provider" id="dana" value="Dana" class="peer hidden"
+                                        required>
+                                    <label for="dana"
+                                        class="block text-center cursor-pointer bg-white/50 border border-white/60 shadow-sm rounded-2xl p-4 hover:border-blue-300 peer-checked:border-2 peer-checked:border-blue-500 peer-checked:bg-blue-50/80 peer-checked:shadow-md transition-all">
+                                        <div class="font-bold text-blue-600 text-lg">DANA</div>
+                                    </label>
+                                </div>
+                                <div>
+                                    <input type="radio" name="provider" id="gopay" value="GoPay" class="peer hidden"
+                                        required>
+                                    <label for="gopay"
+                                        class="block text-center cursor-pointer bg-white/50 border border-white/60 shadow-sm rounded-2xl p-4 hover:border-green-300 peer-checked:border-2 peer-checked:border-green-500 peer-checked:bg-green-50/80 peer-checked:shadow-md transition-all">
+                                        <div class="font-bold text-green-600 text-lg">GoPay</div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-10">
+                            <label for="amount" class="block text-sm font-bold text-gray-700 mb-2">Jumlah Koin</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                                    <span class="text-xl">🪙</span>
+                                </div>
+                                <input type="number" name="amount" id="amount" min="100" max="{{ $user->coin_balance }}"
+                                    class="w-full pl-14 rounded-2xl border border-gray-200 shadow-sm focus:border-primary focus:ring-primary focus:ring-4 focus:ring-primary/20 text-lg font-bold py-4 bg-white/70 transition-all"
+                                    required placeholder="Min. 100">
+                            </div>
+                        </div>
+
+                        <div class="mb-10">
+                            <label for="account_number" class="block text-sm font-bold text-gray-700 mb-2">Nomor HP / Akun Tujuan</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                                    <span class="text-xl">📱</span>
+                                </div>
+                                <input type="text" name="account_number" id="account_number"
+                                    class="w-full pl-14 rounded-2xl border border-gray-200 shadow-sm focus:border-primary focus:ring-primary focus:ring-4 focus:ring-primary/20 text-lg font-bold py-4 bg-white/70 transition-all"
+                                    required placeholder="contoh: 081234567890">
+                            </div>
+                        </div>
+
+                        <button type="submit"
+                            class="w-full px-8 py-5 bg-gradient-to-r from-primary to-emerald-500 text-white font-bold text-lg rounded-full btn-premium"
+                            @if($user->coin_balance < 100) disabled @endif>
+                            🚀 Cairkan Sekarang
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- History -->
+            <div>
+                <div class="glass-panel rounded-3xl p-6">
+                    <h3 class="text-xl font-serif font-semibold mb-4 text-secondary">Riwayat</h3>
+
+                    @if($redemptions->isEmpty())
+                        <p class="text-gray-500 text-sm">No redemption history yet.</p>
+                    @else
+                        <div class="space-y-4">
+                            @foreach($redemptions as $redemption)
+                                <div class="p-3 bg-white/40 rounded-xl border border-white/60 shadow-sm">
+                                    <div class="flex justify-between items-center mb-1">
+                                        <div class="flex flex-col">
+                                            <span class="font-bold text-gray-800">{{ $redemption->provider }}</span>
+                                            <span class="text-xs text-gray-500 font-medium">{{ $redemption->account_number }}</span>
+                                        </div>
+                                        <span class="font-bold text-amber-500">{{ $redemption->amount }} 🪙</span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-xs mt-2">
+                                        <span class="text-gray-500">{{ $redemption->created_at->format('d M, H:i') }}</span>
+
+                                        @if($redemption->status === 'approved')
+                                            <span class="text-emerald-600 font-semibold bg-emerald-100 px-2 py-1 rounded-md">Berhasil</span>
+                                        @elseif($redemption->status === 'rejected')
+                                            <span class="text-red-600 font-semibold bg-red-100 px-2 py-1 rounded-md">Ditolak</span>
+                                        @else
+                                            <span class="text-amber-600 font-semibold bg-amber-100 px-2 py-1 rounded-md">Diproses</span>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+            </div>
+
+        </div>
+    </div>
+</x-app-layout>
