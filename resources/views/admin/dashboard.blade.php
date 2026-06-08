@@ -17,7 +17,7 @@
                 </div>
                 <div class="glass-panel rounded-3xl p-5 text-center">
                     <div class="text-2xl mb-1">🌿</div>
-                    <div class="text-xs font-semibold text-gray-500 uppercase">CO2 Reduced</div>
+                    <div class="text-xs font-semibold text-gray-500 uppercase">{{ __('CO2 Reduced') }}</div>
                     <div class="text-2xl font-bold text-primary">{{ number_format($co2Reduced, 1) }} <span class="text-sm">kg</span></div>
                 </div>
                 <div class="glass-panel rounded-3xl p-5 text-center">

@@ -25,6 +25,21 @@ class DriverController extends Controller
     }
 
     /**
+     * Update driver online/offline status via AJAX
+     */
+    public function updateStatus(Request $request)
+    {
+        $request->validate([
+            'status' => 'required|in:online,offline'
+        ]);
+
+        $driver = auth()->user();
+        $driver->update(['driver_status' => $request->status]);
+
+        return response()->json(['success' => true]);
+    }
+
+    /**
      * Order Pool — list all pending pickups available in Malang
      */
     public function orderPool()

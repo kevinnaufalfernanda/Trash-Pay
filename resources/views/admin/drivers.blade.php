@@ -116,7 +116,11 @@
                                         </div>
                                     </div>
                                     <div class="text-right">
-                                        <span class="px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">{{ __('Active') }}</span>
+                                        @if($driver->driver_status === 'online')
+                                            <span class="px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">{{ __('Online') }}</span>
+                                        @else
+                                            <span class="px-3 py-1 bg-gray-100 text-gray-500 border border-gray-200 text-xs font-bold rounded-full">{{ __('Offline') }}</span>
+                                        @endif
                                         <p class="text-xs text-gray-400 mt-1">{{ __('Join') }} {{ $driver->created_at->format('d M Y') }}</p>
                                     </div>
                                 </div>

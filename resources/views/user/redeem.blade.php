@@ -6,7 +6,7 @@
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8 grid md:grid-cols-3 gap-8">
+        <div class="max-w-[90rem] mx-auto sm:px-6 lg:px-8 grid md:grid-cols-3 gap-8">
 
             <!-- Redeem Form -->
             <div class="md:col-span-2">
@@ -47,7 +47,7 @@
                         <div class="text-2xl">💰</div>
                     </div>
 
-                    <form action="{{ route('user.redeem.store') }}" method="POST">
+                    <form action="{{ route('user.redeem.store') }}" method="POST" x-data="{ amount: '', max: {{ $user->coin_balance }}, accountNumber: '{{ $user->payment_number }}', savedNumber: '{{ $user->payment_number }}', confirmedNumber: false }">
                         @csrf
 
                         <div class="mb-6">
@@ -74,13 +74,23 @@
 
                         <div class="mb-10">
                             <label for="amount" class="block text-sm font-bold text-gray-700 mb-2">{{ __('Coin Amount') }}</label>
-                            <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
-                                    <span class="text-xl">🪙</span>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                                        <span class="text-xl">🪙</span>
+                                    </div>
+                                    <input type="number" name="amount" id="amount" min="100" max="{{ $user->coin_balance }}" x-model.number="amount"
+                                        @input="if(amount > max) amount = max; if(amount < 0) amount = ''"
+                                        class="w-full h-full pl-14 rounded-2xl border shadow-sm focus:ring-4 text-lg font-bold py-4 bg-white/70 transition-all border-gray-200 focus:border-primary focus:ring-primary/20"
+                                        required placeholder="{{ __('Min. 100') }}">
                                 </div>
-                                <input type="number" name="amount" id="amount" min="100" max="{{ $user->coin_balance }}"
-                                    class="w-full pl-14 rounded-2xl border border-gray-200 shadow-sm focus:border-primary focus:ring-primary focus:ring-4 focus:ring-primary/20 text-lg font-bold py-4 bg-white/70 transition-all"
-                                    required placeholder="{{ __('Min. 100') }}">
+                                <div class="h-full text-sm font-semibold text-emerald-800 bg-gradient-to-r from-emerald-50 to-emerald-100/50 px-5 py-4 rounded-2xl border border-emerald-200 flex items-center justify-between transition-all">
+                                    <span class="flex items-center gap-2">
+                                        <span class="text-xl">💰</span>
+                                        {{ __('Estimated Money:') }}
+                                    </span>
+                                    <span class="font-bold text-2xl text-emerald-600">Rp <span x-text="Math.round((amount || 0) * 100).toLocaleString('id-ID')"></span></span>
+                                </div>
                             </div>
                         </div>
 
@@ -90,14 +100,29 @@
                                 <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
                                     <span class="text-xl">📱</span>
                                 </div>
-                                <input type="text" name="account_number" id="account_number"
+                                <input type="tel" name="account_number" id="account_number" x-model="accountNumber"
+                                    @input="accountNumber = $event.target.value.replace(/[^\d+]/g, '').replace(/(?!^)\+/g, '')"
                                     class="w-full pl-14 rounded-2xl border border-gray-200 shadow-sm focus:border-primary focus:ring-primary focus:ring-4 focus:ring-primary/20 text-lg font-bold py-4 bg-white/70 transition-all"
                                     required placeholder="{{ __('e.g., 081234567890') }}">
+                            </div>
+                            
+                            <div class="mt-4 p-4 bg-red-50 rounded-xl border border-red-200 flex items-start gap-3" x-show="accountNumber !== savedNumber && savedNumber !== '' && accountNumber !== ''" x-cloak x-transition>
+                                <input type="checkbox" id="confirm_number" x-model="confirmedNumber" class="mt-1 w-4 h-4 text-red-600 bg-white border-red-300 rounded focus:ring-red-500 focus:ring-2">
+                                <label for="confirm_number" class="text-sm text-red-800 font-medium">
+                                    {{ __('The number entered is different from your saved payment number. I confirm this number is correct.') }}
+                                </label>
+                            </div>
+                            <div class="mt-4 p-4 bg-amber-50 rounded-xl border border-amber-200 flex items-start gap-3" x-show="savedNumber === '' && accountNumber !== ''" x-cloak x-transition>
+                                <input type="checkbox" id="confirm_new_number" x-model="confirmedNumber" class="mt-1 w-4 h-4 text-amber-600 bg-white border-amber-300 rounded focus:ring-amber-500 focus:ring-2">
+                                <label for="confirm_new_number" class="text-sm text-amber-800 font-medium">
+                                    {{ __('You do not have a saved payment number. I confirm this number is correct.') }}
+                                </label>
                             </div>
                         </div>
 
                         <button type="submit"
-                            class="w-full px-8 py-5 bg-gradient-to-r from-primary to-emerald-500 text-white font-bold text-lg rounded-full btn-premium"
+                            class="w-full px-8 py-5 bg-gradient-to-r from-primary to-emerald-500 text-white font-bold text-lg rounded-full btn-premium disabled:opacity-50 disabled:cursor-not-allowed"
+                            x-bind:disabled="amount > max || amount < 100 || (accountNumber !== savedNumber && !confirmedNumber) || (savedNumber === '' && !confirmedNumber)"
                             @if($user->coin_balance < 100) disabled @endif>
                             {{ __('🚀 Withdraw Now') }}
                         </button>

@@ -25,6 +25,8 @@ class User extends Authenticatable
         'role',
         'coin_balance',
         'avatar',
+        'payment_number',
+        'driver_status',
     ];
 
     /**

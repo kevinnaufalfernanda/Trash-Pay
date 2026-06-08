@@ -99,9 +99,8 @@
                 {{ $slot }}
             </main>
 
-            <!-- Footer -->
             <footer class="py-8 text-center text-secondary/40">
-                <p class="font-sans text-sm font-medium">&copy; {{ date('Y') }} Trash-Pay. Turn waste into fun!</p>
+                <p class="font-sans text-sm font-medium">&copy; {{ date('Y') }} Trash-Pay. {{ __('Turn waste into fun!') }}</p>
             </footer>
 
             <!-- Bottom Navigation Bar (Mobile Only - Gamified Floating Nav) -->

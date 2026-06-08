@@ -6,7 +6,7 @@
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8 grid md:grid-cols-3 gap-8">
+        <div class="max-w-[90rem] mx-auto sm:px-6 lg:px-8 grid md:grid-cols-3 gap-8">
 
             <!-- Redeem Form -->
             <div class="md:col-span-2">
@@ -47,7 +47,7 @@
                         <div class="text-2xl">💰</div>
                     </div>
 
-                    <form action="{{ route('driver.redeem.store') }}" method="POST">
+                    <form action="{{ route('driver.redeem.store') }}" method="POST" x-data="{ amount: '', max: {{ $driver->coin_balance }}, accountNumber: '{{ $driver->payment_number }}', savedNumber: '{{ $driver->payment_number }}', confirmedNumber: false }">
                         @csrf
 
                         <div class="mb-6">
@@ -78,9 +78,17 @@
                                 <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
                                     <span class="text-xl">🪙</span>
                                 </div>
-                                <input type="number" name="amount" id="amount" min="100" max="{{ $driver->coin_balance }}"
-                                    class="w-full pl-14 rounded-2xl border border-gray-200 shadow-sm focus:border-primary focus:ring-primary focus:ring-4 focus:ring-primary/20 text-lg font-bold py-4 bg-white/70 transition-all"
+                                <input type="number" name="amount" id="amount" min="100" max="{{ $driver->coin_balance }}" x-model.number="amount"
+                                    class="w-full pl-14 rounded-2xl border shadow-sm focus:ring-4 text-lg font-bold py-4 bg-white/70 transition-all"
+                                    :class="amount > max ? 'border-red-300 focus:border-red-500 focus:ring-red-500/20' : 'border-gray-200 focus:border-primary focus:ring-primary/20'"
                                     required placeholder="{{ __('Min. 100') }}">
+                            </div>
+                            <div class="mt-2 text-red-500 text-sm font-medium" x-show="amount > max" x-cloak>
+                                {{ __('Coin amount exceeds your available balance.') }}
+                            </div>
+                            <div class="mt-3 text-sm font-semibold text-gray-600 bg-emerald-50 px-4 py-3 rounded-xl border border-emerald-100 flex items-center justify-between transition-all" x-show="amount >= 100" x-cloak x-transition>
+                                <span>{{ __('Estimated Money:') }}</span>
+                                <span class="text-emerald-700 font-bold text-lg">Rp <span x-text="(amount * 100).toLocaleString('id-ID')"></span></span>
                             </div>
                         </div>
 
@@ -90,14 +98,28 @@
                                 <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
                                     <span class="text-xl">📱</span>
                                 </div>
-                                <input type="text" name="account_number" id="account_number"
+                                <input type="text" name="account_number" id="account_number" x-model="accountNumber"
                                     class="w-full pl-14 rounded-2xl border border-gray-200 shadow-sm focus:border-primary focus:ring-primary focus:ring-4 focus:ring-primary/20 text-lg font-bold py-4 bg-white/70 transition-all"
                                     required placeholder="{{ __('e.g., 081234567890') }}">
+                            </div>
+                            
+                            <div class="mt-4 p-4 bg-red-50 rounded-xl border border-red-200 flex items-start gap-3" x-show="accountNumber !== savedNumber && savedNumber !== '' && accountNumber !== ''" x-cloak x-transition>
+                                <input type="checkbox" id="confirm_number" x-model="confirmedNumber" class="mt-1 w-4 h-4 text-red-600 bg-white border-red-300 rounded focus:ring-red-500 focus:ring-2">
+                                <label for="confirm_number" class="text-sm text-red-800 font-medium">
+                                    {{ __('The number entered is different from your saved payment number. I confirm this number is correct.') }}
+                                </label>
+                            </div>
+                            <div class="mt-4 p-4 bg-amber-50 rounded-xl border border-amber-200 flex items-start gap-3" x-show="savedNumber === '' && accountNumber !== ''" x-cloak x-transition>
+                                <input type="checkbox" id="confirm_new_number" x-model="confirmedNumber" class="mt-1 w-4 h-4 text-amber-600 bg-white border-amber-300 rounded focus:ring-amber-500 focus:ring-2">
+                                <label for="confirm_new_number" class="text-sm text-amber-800 font-medium">
+                                    {{ __('You do not have a saved payment number. I confirm this number is correct.') }}
+                                </label>
                             </div>
                         </div>
 
                         <button type="submit"
-                            class="w-full px-8 py-5 bg-gradient-to-r from-primary to-emerald-500 text-white font-bold text-lg rounded-full btn-premium"
+                            class="w-full px-8 py-5 bg-gradient-to-r from-primary to-emerald-500 text-white font-bold text-lg rounded-full btn-premium disabled:opacity-50 disabled:cursor-not-allowed"
+                            x-bind:disabled="amount > max || amount < 100 || (accountNumber !== savedNumber && !confirmedNumber) || (savedNumber === '' && !confirmedNumber)"
                             @if($driver->coin_balance < 100) disabled @endif>
                             {{ __('🚀 Withdraw Now') }}
                         </button>

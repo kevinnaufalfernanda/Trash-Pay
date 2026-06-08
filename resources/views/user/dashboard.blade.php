@@ -74,7 +74,7 @@
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center gap-2">
                                         <span class="text-lg">{{ $category->icon }}</span>
-                                        <span class="text-sm font-semibold text-secondary">{{ $category->name }}</span>
+                                        <span class="text-sm font-semibold text-secondary">{{ __($category->name) }}</span>
                                     </div>
                                     <span class="text-sm font-bold text-primary">{{ $category->price_per_kg }} <span class="text-xs">{{ __('Coins') }}</span></span>
                                 </div>
@@ -95,37 +95,14 @@
                 @else
                     <div class="space-y-4">
                         @foreach($recentPickups as $pickup)
-                            <div class="flex items-center justify-between p-4 bg-white/40 rounded-2xl border border-white/60 hover:bg-white/60 transition-colors group">
-                                    <div class="flex items-center gap-5">
-                                        <div class="w-14 h-14 bg-white rounded-xl flex items-center justify-center shadow-sm">
-                                            @if($pickup->waste_photo)
-                                                <img src="{{ Storage::url($pickup->waste_photo) }}" class="w-12 h-12 object-cover rounded-lg opacity-90" alt="Waste">
-                                            @else
-                                                <span class="text-2xl opacity-70">🗑️</span>
-                                            @endif
-                                        </div>
-                                        <div>
-                                            <div class="font-medium text-secondary text-base">Pickup #{{ $pickup->id }}</div>
-                                            <div class="text-sm text-secondary/50 font-light mt-0.5">{{ $pickup->created_at->format('d M Y') }}</div>
-                                        </div>
-                                    </div>
-                                    <div class="text-right">
-                                        @if($pickup->status === 'completed')
-                                            <span class="px-3 py-1.5 bg-primary/10 text-secondary rounded-full text-xs font-medium tracking-wide">Completed</span>
-                                            <div class="text-sm font-medium text-accent mt-2">+{{ $pickup->total_coins }} 🪙</div>
-                                        @elseif($pickup->status === 'on-the-way')
-                                            <span class="px-3 py-1.5 bg-accent/10 text-accent rounded-full text-xs font-medium tracking-wide">On the way</span>
-                                        @else
-                                            <span class="px-3 py-1.5 bg-secondary/5 text-secondary/60 rounded-full text-xs font-medium tracking-wide">Pending</span>
-                                        @endif
-                                    </div>
-                                </div>
-                            @endforeach
+                            @include('user.partials.dashboard-pickup-card', ['pickup' => $pickup])
+                        @endforeach
                         </div>
                     @endif
                 </div>
             </div>
 
         </div>
+
     </div>
 </x-app-layout>

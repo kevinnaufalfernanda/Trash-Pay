@@ -19,11 +19,19 @@
                 </div>
             </div>
 
-            <div class="p-4 sm:p-8 bg-white rounded-3xl card-bouncy border-2 border-red-100">
+            <div class="p-4 sm:p-8 bg-white rounded-3xl card-bouncy border-2 border-blue-100 shadow-blue-100/50">
                 <div class="max-w-xl">
-                    @include('profile.partials.delete-user-form')
+                    @include('profile.partials.update-payment-form')
                 </div>
             </div>
+
+            @if(auth()->user()->role !== 'admin')
+                <div class="p-4 sm:p-8 bg-white rounded-3xl card-bouncy border-2 border-red-100">
+                    <div class="max-w-xl">
+                        @include('profile.partials.delete-user-form')
+                    </div>
+                </div>
+            @endif
 
             @if(auth()->user()->role === 'user')
                 <div class="p-4 sm:p-8 bg-white rounded-3xl card-bouncy border-2 border-emerald-100 shadow-emerald-100/50">

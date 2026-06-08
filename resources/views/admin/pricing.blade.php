@@ -35,7 +35,7 @@
                                 <tr class="border-b border-white/40 hover:bg-white/60 transition-colors">
                                     <td class="py-4 px-6 flex items-center gap-3">
                                         <span class="text-2xl">{{ $category->icon }}</span>
-                                        <span class="font-bold text-secondary">{{ $category->name }}</span>
+                                        <span class="font-bold text-secondary">{{ __($category->name) }}</span>
                                     </td>
                                     <td class="py-4 px-6 text-right font-bold text-amber-500 text-lg">
                                         {{ number_format($category->price_per_kg, 0, ',', '.') }} <span class="text-xl">🪙</span>

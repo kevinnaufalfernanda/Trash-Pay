@@ -8,14 +8,14 @@
         <!-- Name -->
         <div class="mb-4">
             <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-2 w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-primary bg-white text-gray-900 transition-colors shadow-sm placeholder:text-gray-400" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
+            <x-text-input id="name" class="block mt-2" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
             <x-input-error :messages="$errors->get('name')" class="mt-2" />
         </div>
 
         <!-- Email Address -->
         <div class="mt-4">
             <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-2 w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-primary bg-white text-gray-900 transition-colors shadow-sm placeholder:text-gray-400" type="email" name="email" :value="old('email')" required autocomplete="username" />
+            <x-text-input id="email" class="block mt-2" type="email" name="email" :value="old('email')" required autocomplete="username" />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
@@ -23,10 +23,11 @@
         <div class="mt-4">
             <x-input-label for="password" :value="__('Password')" />
 
-            <x-text-input id="password" class="block mt-2 w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-primary bg-white text-gray-900 transition-colors shadow-sm placeholder:text-gray-400"
+            <x-text-input id="password" class="block mt-2"
                             type="password"
                             name="password"
                             required autocomplete="new-password" />
+            <p class="mt-2 text-xs text-gray-500 font-medium">{{ __('Min. 8 characters, containing letters, numbers, & symbols.') }}</p>
 
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
@@ -35,7 +36,7 @@
         <div class="mt-4">
             <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
 
-            <x-text-input id="password_confirmation" class="block mt-2 w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-primary bg-white text-gray-900 transition-colors shadow-sm placeholder:text-gray-400"
+            <x-text-input id="password_confirmation" class="block mt-2"
                             type="password"
                             name="password_confirmation" required autocomplete="new-password" />
 

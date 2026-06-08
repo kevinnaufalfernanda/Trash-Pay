@@ -19,6 +19,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/leaderboard', [\App\Http\Controllers\LeaderboardController::class, 'index'])->name('leaderboard');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::patch('/profile/payment', [ProfileController::class, 'updatePayment'])->name('profile.update-payment');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::post('/profile/apply-driver', [ProfileController::class, 'applyDriver'])->name('profile.apply-driver');
 });
@@ -35,6 +36,7 @@ Route::middleware(['auth', 'role:user'])->prefix('user')->name('user.')->group(f
 // Driver Routes
 Route::middleware(['auth', 'role:driver'])->prefix('driver')->name('driver.')->group(function () {
     Route::get('/dashboard', [DriverController::class, 'dashboard'])->name('dashboard');
+    Route::post('/status', [DriverController::class, 'updateStatus'])->name('status.update');
     Route::get('/orders', [DriverController::class, 'orderPool'])->name('orders');
     Route::get('/preview/{pickup}', [DriverController::class, 'preview'])->name('preview');
     Route::post('/orders/{pickup}/accept', [DriverController::class, 'acceptOrder'])->name('orders.accept');

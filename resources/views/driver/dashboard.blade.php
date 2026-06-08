@@ -13,7 +13,21 @@
             @endif
 
             {{-- Toggle Status --}}
-            <div class="mb-10 glass-panel rounded-3xl p-8 flex items-center justify-between" x-data="{ online: true }">
+            <div class="mb-10 glass-panel rounded-3xl p-8 flex items-center justify-between" 
+                 x-data="{ 
+                    online: {{ auth()->user()->driver_status === 'online' ? 'true' : 'false' }},
+                    toggleStatus() {
+                        this.online = !this.online;
+                        fetch('{{ route('driver.status.update') }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            body: JSON.stringify({ status: this.online ? 'online' : 'offline' })
+                        });
+                    }
+                 }">
                 <div class="flex items-center gap-6">
                     <div class="w-16 h-16 rounded-full flex items-center justify-center text-3xl transition-all duration-300 ease-out shadow-lg"
                          :class="online ? 'bg-gradient-to-br from-emerald-400 to-teal-500 text-white shadow-emerald-500/30' : 'bg-gray-100 text-gray-400 border border-white/50'">
@@ -33,7 +47,7 @@
                 <button type="button" 
                         class="relative inline-flex h-10 w-20 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                         :class="online ? 'bg-primary' : 'bg-gray-300'"
-                        @click="online = !online">
+                        @click="toggleStatus()">
                     <span class="sr-only">Toggle status</span>
                     <span class="pointer-events-none relative inline-block h-9 w-9 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
                           :class="online ? 'translate-x-10' : 'translate-x-0'">

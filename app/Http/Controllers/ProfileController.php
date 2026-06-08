@@ -39,6 +39,22 @@ class ProfileController extends Controller
     }
 
     /**
+     * Update the user's payment number.
+     */
+    public function updatePayment(Request $request): RedirectResponse
+    {
+        $request->validateWithBag('updatePayment', [
+            'payment_number' => ['required', 'string', 'max:20'],
+        ]);
+
+        $request->user()->update([
+            'payment_number' => $request->payment_number,
+        ]);
+
+        return Redirect::route('profile.edit')->with('status', 'payment-updated');
+    }
+
+    /**
      * Delete the user's account.
      */
     public function destroy(Request $request): RedirectResponse

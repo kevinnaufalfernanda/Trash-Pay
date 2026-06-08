@@ -31,12 +31,11 @@ class UserController extends Controller
     public function pickupRequest()
     {
         $categories = WasteCategory::all();
-        $activePickups = Pickup::where('user_id', auth()->id())
-                            ->whereIn('status', ['pending', 'on-the-way'])
+        $pickups = Pickup::where('user_id', auth()->id())
                             ->latest()
                             ->get();
                             
-        return view('user.pickup', compact('categories', 'activePickups'));
+        return view('user.pickup', compact('categories', 'pickups'));
     }
 
     /**
