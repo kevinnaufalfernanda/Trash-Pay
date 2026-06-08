@@ -23,8 +23,8 @@
                         <div class="mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-white/20 backdrop-blur-md text-white text-4xl shadow-sm border border-white/30 group-hover:-translate-y-2 transition-all duration-300 ease-out">
                             📸
                         </div>
-                        <h3 class="mb-3 text-3xl font-serif font-bold text-white tracking-tight">Scan AI & Dapat Koin!</h3>
-                        <p class="text-emerald-50 max-w-md font-medium text-lg leading-relaxed">Arahkan kamera ke sampahmu dan biarkan keajaiban AI bekerja.</p>
+                        <h3 class="mb-3 text-3xl font-serif font-bold text-white tracking-tight">{{ __('Scan AI & Get Coins!') }}</h3>
+                        <p class="text-emerald-50 max-w-md font-medium text-lg leading-relaxed">{{ __('Point your camera at your waste and let the AI magic work.') }}</p>
                     </div>
                 </a>
             </div>
@@ -33,17 +33,17 @@
                 <!-- Impact Score -->
                 <div class="glass-panel rounded-3xl p-8 text-center relative overflow-hidden group">
                     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-emerald-400/20 rounded-full blur-3xl -z-10 group-hover:scale-110 transition-transform duration-500"></div>
-                    <div class="text-emerald-600/80 text-xs font-bold tracking-widest uppercase mb-4">Impact Score (CO2)</div>
+                    <div class="text-emerald-600/80 text-xs font-bold tracking-widest uppercase mb-4">{{ __('Impact Score (CO2)') }}</div>
                     <div class="text-6xl font-serif font-bold text-secondary mb-2 tracking-tighter">{{ number_format($impactScore ?? 0, 2) }} <span class="text-2xl text-gray-400 font-sans">kg</span></div>
-                    <p class="text-sm text-gray-500 font-medium">Bumi berterima kasih padamu! 🌍</p>
+                    <p class="text-sm text-gray-500 font-medium">{{ __('The Earth thanks you!') }} 🌍</p>
                 </div>
 
                 <!-- Coin Balance -->
                 <div class="glass-panel rounded-3xl p-8 text-center relative overflow-hidden group">
                     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-amber-400/20 rounded-full blur-3xl -z-10 group-hover:scale-110 transition-transform duration-500"></div>
-                    <div class="text-amber-600/80 text-xs font-bold tracking-widest uppercase mb-4">Saldo Koin</div>
+                    <div class="text-amber-600/80 text-xs font-bold tracking-widest uppercase mb-4">{{ __('Coin Balance') }}</div>
                     <div class="text-6xl font-serif font-bold text-accent mb-4 tracking-tighter">{{ number_format($user->coin_balance) }} <span class="text-3xl opacity-90 drop-shadow-sm">🪙</span></div>
-                    <a href="{{ route('user.redeem') }}" class="inline-block px-8 py-3 bg-gradient-to-r from-accent to-amber-400 text-white rounded-full text-sm font-bold shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 hover:-translate-y-0.5 transition-all">Tukar Koin Sekarang</a>
+                    <a href="{{ route('user.redeem') }}" class="inline-block px-8 py-3 bg-gradient-to-r from-accent to-amber-400 text-white rounded-full text-sm font-bold shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 hover:-translate-y-0.5 transition-all">{{ __('Redeem Coins Now') }}</a>
                 </div>
             </div>
 
@@ -51,8 +51,8 @@
             <div class="glass-panel rounded-3xl p-8 mb-10 relative overflow-hidden">
                 <div class="absolute top-0 left-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -z-10"></div>
                 
-                <h3 class="text-2xl font-serif font-bold mb-2 text-secondary">Panduan Koin Trash-Pay 🪙</h3>
-                <p class="text-gray-500 mb-6 font-medium text-sm">Tukarkan sampahmu dengan koin! Kumpulkan dan cairkan ke e-Wallet.</p>
+                <h3 class="text-2xl font-serif font-bold mb-2 text-secondary">{{ __('Trash-Pay Coin Guide') }} 🪙</h3>
+                <p class="text-gray-500 mb-6 font-medium text-sm">{{ __('Exchange your waste for coins! Collect and withdraw to your e-Wallet.') }}</p>
 
                 <div class="grid md:grid-cols-2 gap-6">
                     <!-- Nilai Tukar -->
@@ -61,8 +61,8 @@
                             💰
                         </div>
                         <div>
-                            <div class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Nilai Tukar</div>
-                            <div class="font-bold text-lg text-secondary">10 Koin = Rp 1.000</div>
+                            <div class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">{{ __('Exchange Rate') }}</div>
+                            <div class="font-bold text-lg text-secondary">{{ __('10 Coins = Rp 1.000') }}</div>
                         </div>
                     </div>
 
@@ -76,7 +76,7 @@
                                         <span class="text-lg">{{ $category->icon }}</span>
                                         <span class="text-sm font-semibold text-secondary">{{ $category->name }}</span>
                                     </div>
-                                    <span class="text-sm font-bold text-primary">{{ $category->price_per_kg }} <span class="text-xs">Koin</span></span>
+                                    <span class="text-sm font-bold text-primary">{{ $category->price_per_kg }} <span class="text-xs">{{ __('Coins') }}</span></span>
                                 </div>
                             @endforeach
                         </div>
@@ -86,11 +86,11 @@
 
             <!-- Recent Pickups -->
             <div class="glass-panel rounded-3xl p-8">
-                <h3 class="text-2xl font-serif font-bold mb-6 text-secondary">Riwayat Penjemputan</h3>
+                <h3 class="text-2xl font-serif font-bold mb-6 text-secondary">{{ __('Pickup History') }}</h3>
                 @if($recentPickups->isEmpty())
                     <div class="text-center py-8">
                         <div class="text-4xl mb-4 opacity-50">📭</div>
-                        <p class="text-gray-500 text-sm font-medium">Belum ada riwayat. Yuk mulai scan sampahmu!</p>
+                        <p class="text-gray-500 text-sm font-medium">{{ __('No history yet. Let\'s start scanning your waste!') }}</p>
                     </div>
                 @else
                     <div class="space-y-4">

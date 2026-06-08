@@ -36,10 +36,13 @@ Route::middleware(['auth', 'role:user'])->prefix('user')->name('user.')->group(f
 Route::middleware(['auth', 'role:driver'])->prefix('driver')->name('driver.')->group(function () {
     Route::get('/dashboard', [DriverController::class, 'dashboard'])->name('dashboard');
     Route::get('/orders', [DriverController::class, 'orderPool'])->name('orders');
+    Route::get('/preview/{pickup}', [DriverController::class, 'preview'])->name('preview');
     Route::post('/orders/{pickup}/accept', [DriverController::class, 'acceptOrder'])->name('orders.accept');
     Route::get('/navigation/{pickup}', [DriverController::class, 'navigation'])->name('navigation');
     Route::get('/verify/{pickup}', [DriverController::class, 'verifyWeight'])->name('verify');
     Route::post('/verify/{pickup}', [DriverController::class, 'storeWeight'])->name('verify.store');
+    Route::get('/redeem', [DriverController::class, 'redeem'])->name('redeem');
+    Route::post('/redeem', [DriverController::class, 'storeRedeem'])->name('redeem.store');
 });
 
 // Admin Routes
@@ -58,3 +61,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 });
 
 require __DIR__ . '/auth.php';
+
+// Language Switcher Route
+Route::get('/lang/{locale}', [\App\Http\Controllers\LocaleController::class, 'switch'])->name('lang.switch');

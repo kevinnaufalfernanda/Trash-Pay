@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-serif font-semibold text-2xl text-secondary leading-tight">
-            {{ __('Papan Peringkat (Leaderboard)') }}
+            {{ __('Leaderboard') }}
         </h2>
     </x-slot>
 
@@ -15,7 +15,7 @@
                     <h3 class="text-3xl font-serif font-bold mb-6 text-emerald-600 tracking-tight flex items-center gap-3">
                         🌱 Top Eco-Heroes
                     </h3>
-                    <p class="text-gray-500 font-medium mb-8">Pengguna dengan dampak pengurangan CO2 terbesar.</p>
+                    <p class="text-gray-500 font-medium mb-8">{{ __('Users with the biggest CO2 reduction impact.') }}</p>
 
                     <div class="space-y-4">
                         @foreach($topUsers as $index => $user)
@@ -34,7 +34,7 @@
                         @endforeach
                         
                         @if($topUsers->isEmpty())
-                            <div class="text-center py-8 text-gray-500 font-medium">Belum ada data pahlawan bumi.</div>
+                            <div class="text-center py-8 text-gray-500 font-medium">{{ __('No eco-heroes data yet.') }}</div>
                         @endif
                     </div>
                 </div>
@@ -45,7 +45,7 @@
                     <h3 class="text-3xl font-serif font-bold mb-6 text-blue-600 tracking-tight flex items-center gap-3">
                         🚚 Top Eco-Drivers
                     </h3>
-                    <p class="text-gray-500 font-medium mb-8">Pahlawan jalanan dengan total angkutan sampah terbanyak.</p>
+                    <p class="text-gray-500 font-medium mb-8">{{ __('Street heroes with the highest total collected waste.') }}</p>
 
                     <div class="space-y-4">
                         @foreach($topDrivers as $index => $driver)
@@ -64,7 +64,7 @@
                         @endforeach
 
                         @if($topDrivers->isEmpty())
-                            <div class="text-center py-8 text-gray-500 font-medium">Belum ada data pahlawan jalanan.</div>
+                            <div class="text-center py-8 text-gray-500 font-medium">{{ __('No street heroes data yet.') }}</div>
                         @endif
                     </div>
                 </div>

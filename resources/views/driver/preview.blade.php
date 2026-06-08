@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-serif font-bold text-2xl text-secondary leading-tight">
-            {{ __('Navigation to Pickup #') }}{{ $pickup->id }}
+            {{ __('Preview Order #') }}{{ $pickup->id }}
         </h2>
     </x-slot>
 
@@ -13,7 +13,7 @@
             <div class="grid md:grid-cols-3 gap-6">
                 <!-- Map -->
                 <div class="md:col-span-2 glass-panel rounded-3xl p-4">
-                    <div id="map" class="h-96 w-full rounded-2xl z-0 border border-white/60"></div>
+                    <div id="map" class="h-[32rem] w-full rounded-2xl z-0 border border-white/60 shadow-sm"></div>
                 </div>
 
                 <!-- Action -->
@@ -34,15 +34,26 @@
                             @endif
 
                             <div class="bg-white/40 p-4 rounded-2xl border border-white/60 shadow-sm">
-                                <span class="text-xs text-gray-500 uppercase font-bold tracking-wider">{{ __('Status') }}</span>
-                                <div class="mt-1"><span class="px-3 py-1.5 bg-blue-100 text-blue-800 text-xs font-bold rounded-full uppercase border border-blue-200">{{ $pickup->status }}</span></div>
+                                <span class="text-xs text-gray-500 uppercase font-bold tracking-wider">{{ __('Estimation') }}</span>
+                                <div class="font-bold text-gray-800 text-lg">{{ $pickup->total_weight }} kg • {{ $pickup->category->name }}</div>
+                            </div>
+                            
+                            <div class="bg-white/40 p-4 rounded-2xl border border-amber-200 shadow-sm bg-amber-50">
+                                <span class="text-xs text-amber-600 uppercase font-bold tracking-wider">{{ __('Potential Coins') }}</span>
+                                <div class="font-bold text-amber-500 text-2xl">~{{ round($pickup->total_weight * $pickup->category->price_per_kg) }} 🪙</div>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="mt-8">
-                        <a href="{{ route('driver.verify', $pickup->id) }}" class="block w-full text-center py-5 bg-gradient-to-r from-primary to-emerald-500 text-white font-bold rounded-full btn-premium text-lg shadow-lg shadow-emerald-500/30">
-                            📍 {{ __('I\'ve Arrived') }}
+                    <div class="mt-8 space-y-3">
+                        <form action="{{ route('driver.orders.accept', $pickup->id) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="w-full text-center py-4 bg-gradient-to-r from-amber-400 to-amber-500 text-white font-bold rounded-full text-lg shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 hover:-translate-y-0.5 transition-all">
+                                🚀 {{ __('Take This Order') }}
+                            </button>
+                        </form>
+                        <a href="{{ route('driver.orders') }}" class="block w-full text-center py-4 bg-white/50 text-secondary font-bold rounded-full text-lg shadow-sm border border-white/60 hover:bg-white/80 transition-all">
+                            {{ __('Back to Pool') }}
                         </a>
                     </div>
                 </div>

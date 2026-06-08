@@ -17,17 +17,17 @@
             <div class="glass-panel rounded-3xl p-8 relative overflow-hidden">
                 <div class="absolute top-0 right-0 w-64 h-64 bg-amber-400/10 rounded-full blur-3xl -z-10"></div>
                 <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-xl font-bold text-secondary">Manage Waste Prices</h3>
-                    <p class="text-sm text-gray-500">Update prices dynamically based on market rate.</p>
+                    <h3 class="text-xl font-bold text-secondary">{{ __('Manage Waste Prices') }}</h3>
+                    <p class="text-sm text-gray-500">{{ __('Update prices dynamically based on market rate.') }}</p>
                 </div>
 
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="bg-white/50 border-b border-white/60">
-                                <th class="py-4 px-6 font-semibold text-gray-600">Kategori Sampah</th>
-                                <th class="py-4 px-6 font-semibold text-gray-600 text-right">Reward (Koin/kg)</th>
-                                <th class="py-4 px-6 font-semibold text-gray-600 text-center">Aksi</th>
+                                <th class="py-4 px-6 font-semibold text-gray-600">{{ __('Waste Category') }}</th>
+                                <th class="py-4 px-6 font-semibold text-gray-600 text-right">{{ __('Reward (Coins/kg)') }}</th>
+                                <th class="py-4 px-6 font-semibold text-gray-600 text-center">{{ __('Actions') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -45,7 +45,7 @@
                                             @csrf
                                             <input type="number" name="price_per_kg" value="{{ $category->price_per_kg }}" class="w-32 rounded-xl border-gray-300 shadow-sm focus:border-primary focus:ring-primary text-sm" required>
                                             <button type="submit" class="px-4 py-2 bg-gradient-to-r from-primary to-emerald-500 text-white font-semibold rounded-xl hover:shadow-lg shadow-emerald-500/30 hover:-translate-y-0.5 transition-all text-sm">
-                                                Update
+                                                {{ __('Update') }}
                                             </button>
                                         </form>
                                     </td>
@@ -54,7 +54,7 @@
                         </tbody>
                     </table>
                     @if($categories->isEmpty())
-                        <div class="text-center py-8 text-gray-500 text-sm">No categories found. Please run seeder.</div>
+                        <div class="text-center py-8 text-gray-500 text-sm">{{ __('No categories found. Please run seeder.') }}</div>
                     @endif
                 </div>
             </div>

@@ -31,7 +31,12 @@ class UserController extends Controller
     public function pickupRequest()
     {
         $categories = WasteCategory::all();
-        return view('user.pickup', compact('categories'));
+        $activePickups = Pickup::where('user_id', auth()->id())
+                            ->whereIn('status', ['pending', 'on-the-way'])
+                            ->latest()
+                            ->get();
+                            
+        return view('user.pickup', compact('categories', 'activePickups'));
     }
 
     /**
@@ -42,7 +47,11 @@ class UserController extends Controller
         $request->validate([
             'category_id' => 'required|exists:waste_categories,id',
             'estimated_weight' => 'required|numeric|min:0.1',
-            'waste_photo' => 'required|image|max:5120'
+            'waste_photo' => 'required|image|max:5120',
+            'address' => 'required|string|max:500',
+            'latitude' => 'nullable|string|max:255',
+            'longitude' => 'nullable|string|max:255',
+            'address_notes' => 'nullable|string|max:500',
         ]);
 
         $path = $request->file('waste_photo')->store('pickups', 'public');
@@ -52,6 +61,10 @@ class UserController extends Controller
             'category_id' => $request->category_id,
             'waste_photo' => $path,
             'total_weight' => $request->estimated_weight,
+            'address' => $request->address,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
+            'address_notes' => $request->address_notes,
             'status' => 'pending'
         ]);
 

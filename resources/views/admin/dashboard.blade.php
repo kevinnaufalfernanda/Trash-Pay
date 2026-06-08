@@ -12,7 +12,7 @@
             <div class="grid md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
                 <div class="glass-panel rounded-3xl p-5 text-center">
                     <div class="text-2xl mb-1">⚖️</div>
-                    <div class="text-xs font-semibold text-gray-500 uppercase">Total Sampah</div>
+                    <div class="text-xs font-semibold text-gray-500 uppercase">{{ __('Total Waste') }}</div>
                     <div class="text-2xl font-bold text-secondary">{{ number_format($totalWeight, 1) }} <span class="text-sm">kg</span></div>
                 </div>
                 <div class="glass-panel rounded-3xl p-5 text-center">
@@ -22,22 +22,22 @@
                 </div>
                 <div class="glass-panel rounded-3xl p-5 text-center">
                     <div class="text-2xl mb-1">✅</div>
-                    <div class="text-xs font-semibold text-gray-500 uppercase">Completed</div>
+                    <div class="text-xs font-semibold text-gray-500 uppercase">{{ __('Completed') }}</div>
                     <div class="text-2xl font-bold text-blue-600">{{ $completedPickups }}</div>
                 </div>
                 <div class="glass-panel rounded-3xl p-5 text-center">
                     <div class="text-2xl mb-1">💳</div>
-                    <div class="text-xs font-semibold text-gray-500 uppercase">Pending Payouts</div>
+                    <div class="text-xs font-semibold text-gray-500 uppercase">{{ __('Pending Payouts') }}</div>
                     <div class="text-2xl font-bold text-amber-500">{{ $pendingPayouts }}</div>
                 </div>
                 <div class="glass-panel rounded-3xl p-5 text-center">
                     <div class="text-2xl mb-1">👤</div>
-                    <div class="text-xs font-semibold text-gray-500 uppercase">Users</div>
+                    <div class="text-xs font-semibold text-gray-500 uppercase">{{ __('Users') }}</div>
                     <div class="text-2xl font-bold text-secondary">{{ $totalUsers }}</div>
                 </div>
                 <div class="glass-panel rounded-3xl p-5 text-center">
                     <div class="text-2xl mb-1">🚚</div>
-                    <div class="text-xs font-semibold text-gray-500 uppercase">Drivers</div>
+                    <div class="text-xs font-semibold text-gray-500 uppercase">{{ __('Drivers') }}</div>
                     <div class="text-2xl font-bold text-secondary">{{ $totalDrivers }}</div>
                 </div>
             </div>
@@ -47,14 +47,14 @@
 
                 <a href="{{ route('admin.analytics') }}" class="glass-panel rounded-3xl p-8 text-center hover:border-primary hover:bg-white/60 transition-all group">
                     <div class="text-5xl mb-4 group-hover:scale-110 transition-transform">📈</div>
-                    <h3 class="text-xl font-bold text-secondary mb-1">Analytics Dashboard</h3>
-                    <p class="text-sm text-gray-500">Monitoring statistik volume & emisi</p>
+                    <h3 class="text-xl font-bold text-secondary mb-1">{{ __('Analytics Dashboard') }}</h3>
+                    <p class="text-sm text-gray-500">{{ __('Monitoring volume & emission statistics') }}</p>
                 </a>
 
                 <a href="{{ route('admin.pricing') }}" class="glass-panel rounded-3xl p-8 text-center hover:border-primary hover:bg-white/60 transition-all group">
                     <div class="text-5xl mb-4 group-hover:scale-110 transition-transform">🏷️</div>
-                    <h3 class="text-xl font-bold text-secondary mb-1">Pricing Control</h3>
-                    <p class="text-sm text-gray-500">Kelola harga per kategori</p>
+                    <h3 class="text-xl font-bold text-secondary mb-1">{{ __('Pricing Control') }}</h3>
+                    <p class="text-sm text-gray-500">{{ __('Manage price per category') }}</p>
                 </a>
 
                 <a href="{{ route('admin.payouts') }}" class="glass-panel rounded-3xl p-8 text-center hover:border-amber-400 hover:bg-white/60 transition-all group relative">
@@ -62,8 +62,8 @@
                         <span class="absolute top-4 right-4 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg shadow-red-500/50">{{ $pendingPayouts }}</span>
                     @endif
                     <div class="text-5xl mb-4 group-hover:scale-110 transition-transform">💳</div>
-                    <h3 class="text-xl font-bold text-secondary mb-1">Payout Approvals</h3>
-                    <p class="text-sm text-gray-500">Validasi penarikan saldo user</p>
+                    <h3 class="text-xl font-bold text-secondary mb-1">{{ __('Payout Approvals') }}</h3>
+                    <p class="text-sm text-gray-500">{{ __('Validate user balance withdrawal') }}</p>
                 </a>
 
             </div>

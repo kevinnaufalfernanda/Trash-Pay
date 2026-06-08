@@ -41,13 +41,13 @@
                         class="mb-8 p-4 bg-amber-50 rounded-xl border border-amber-200 flex justify-between items-center">
                         <div>
                             <div class="text-amber-800 font-semibold text-sm">{{ __('Available Balance') }}</div>
-                            <div class="text-3xl font-bold text-amber-600">{{ number_format($user->coin_balance) }}
+                            <div class="text-3xl font-bold text-amber-600">{{ number_format($driver->coin_balance) }}
                                 <span class="text-lg">🪙</span></div>
                         </div>
                         <div class="text-2xl">💰</div>
                     </div>
 
-                    <form action="{{ route('user.redeem.store') }}" method="POST">
+                    <form action="{{ route('driver.redeem.store') }}" method="POST">
                         @csrf
 
                         <div class="mb-6">
@@ -78,7 +78,7 @@
                                 <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
                                     <span class="text-xl">🪙</span>
                                 </div>
-                                <input type="number" name="amount" id="amount" min="100" max="{{ $user->coin_balance }}"
+                                <input type="number" name="amount" id="amount" min="100" max="{{ $driver->coin_balance }}"
                                     class="w-full pl-14 rounded-2xl border border-gray-200 shadow-sm focus:border-primary focus:ring-primary focus:ring-4 focus:ring-primary/20 text-lg font-bold py-4 bg-white/70 transition-all"
                                     required placeholder="{{ __('Min. 100') }}">
                             </div>
@@ -98,7 +98,7 @@
 
                         <button type="submit"
                             class="w-full px-8 py-5 bg-gradient-to-r from-primary to-emerald-500 text-white font-bold text-lg rounded-full btn-premium"
-                            @if($user->coin_balance < 100) disabled @endif>
+                            @if($driver->coin_balance < 100) disabled @endif>
                             {{ __('🚀 Withdraw Now') }}
                         </button>
                     </form>
