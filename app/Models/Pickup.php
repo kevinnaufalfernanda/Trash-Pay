@@ -18,6 +18,7 @@ class Pickup extends Model
         'latitude',
         'longitude',
         'status',
+        'cancel_requested_by',
         'total_weight',
         'total_coins',
         'waste_photo',

@@ -27,6 +27,7 @@ class ProfileUpdateRequest extends FormRequest
                 Rule::unique(User::class)->ignore($this->user()->id),
             ],
             'payment_number' => ['nullable', 'string', 'max:20'],
+            'profile_photo' => ['nullable', 'image', 'max:2048'],
         ];
     }
 }

@@ -29,6 +29,10 @@ Route::middleware(['auth', 'role:user'])->prefix('user')->name('user.')->group(f
     Route::get('/dashboard', [UserController::class, 'dashboard'])->name('dashboard');
     Route::get('/pickup', [UserController::class, 'pickupRequest'])->name('pickup');
     Route::post('/pickup', [UserController::class, 'storePickupRequest'])->name('pickup.store');
+    Route::post('/pickup/{pickup}/cancel', [UserController::class, 'requestCancel'])->name('pickup.cancel');
+    Route::post('/pickup/{pickup}/approve-cancel', [UserController::class, 'approveCancel'])->name('pickup.approve-cancel');
+    Route::post('/pickup/{pickup}/reject-cancel', [UserController::class, 'rejectCancel'])->name('pickup.reject-cancel');
+    Route::get('/history', [UserController::class, 'history'])->name('history');
     Route::get('/redeem', [UserController::class, 'redeem'])->name('redeem');
     Route::post('/redeem', [UserController::class, 'storeRedeem'])->name('redeem.store');
 });
@@ -40,9 +44,13 @@ Route::middleware(['auth', 'role:driver'])->prefix('driver')->name('driver.')->g
     Route::get('/orders', [DriverController::class, 'orderPool'])->name('orders');
     Route::get('/preview/{pickup}', [DriverController::class, 'preview'])->name('preview');
     Route::post('/orders/{pickup}/accept', [DriverController::class, 'acceptOrder'])->name('orders.accept');
+    Route::post('/orders/{pickup}/cancel', [DriverController::class, 'requestCancel'])->name('orders.cancel');
+    Route::post('/orders/{pickup}/approve-cancel', [DriverController::class, 'approveCancel'])->name('orders.approve-cancel');
+    Route::post('/orders/{pickup}/reject-cancel', [DriverController::class, 'rejectCancel'])->name('orders.reject-cancel');
     Route::get('/navigation/{pickup}', [DriverController::class, 'navigation'])->name('navigation');
     Route::get('/verify/{pickup}', [DriverController::class, 'verifyWeight'])->name('verify');
     Route::post('/verify/{pickup}', [DriverController::class, 'storeWeight'])->name('verify.store');
+    Route::get('/history', [DriverController::class, 'history'])->name('history');
     Route::get('/redeem', [DriverController::class, 'redeem'])->name('redeem');
     Route::post('/redeem', [DriverController::class, 'storeRedeem'])->name('redeem.store');
 });

@@ -94,11 +94,16 @@
                     </div>
                 @else
                     <div class="space-y-4">
-                        @foreach($recentPickups as $pickup)
+                        @foreach($recentPickups->take(3) as $pickup)
                             @include('user.partials.dashboard-pickup-card', ['pickup' => $pickup])
                         @endforeach
-                        </div>
-                    @endif
+                    </div>
+                    <div class="mt-6 flex justify-center">
+                        <a href="{{ route('user.history') }}" class="inline-block px-6 py-2.5 bg-gray-50 text-gray-600 font-bold rounded-full border border-gray-200 hover:bg-gray-100 transition-colors text-sm">
+                            {{ __('Riwayat Lebih Detail') }} &rarr;
+                        </a>
+                    </div>
+                @endif
                 </div>
             </div>
 

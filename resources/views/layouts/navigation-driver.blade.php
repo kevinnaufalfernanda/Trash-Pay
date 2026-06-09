@@ -22,11 +22,11 @@
                     <x-nav-link :href="route('driver.orders')" :active="request()->routeIs('driver.orders')">
                         {{ __('Order Pool') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('leaderboard')" :active="request()->routeIs('leaderboard')">
-                        {{ __('Leaderboard') }}
-                    </x-nav-link>
                     <x-nav-link :href="route('driver.redeem')" :active="request()->routeIs('driver.redeem')">
                         {{ __('Redeem Center') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('leaderboard')" :active="request()->routeIs('leaderboard')">
+                        {{ __('Leaderboard') }}
                     </x-nav-link>
                 </div>
             </div>
@@ -37,7 +37,7 @@
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-4 py-2 shadow-sm text-sm leading-4 font-bold rounded-full text-white bg-primary hover:bg-emerald-600 border border-emerald-500/50 focus:outline-none transition ease-in-out duration-150">
                             <svg class="w-4 h-4 me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            <div class="font-sans">{{ app()->getLocale() == 'id' ? 'Indonesia' : 'English' }}</div>
+                            <div class="font-sans">{{ app()->getLocale() == 'id' ? 'ID' : 'EN' }}</div>
 
                             <div class="ms-1">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -48,10 +48,10 @@
                     </x-slot>
 
                     <x-slot name="content">
-                        <x-dropdown-link :href="route('lang.switch', 'id')" class="font-sans font-medium text-gray-700">
-                            Indonesia
+                        <x-dropdown-link :href="route('lang.switch', 'id')" class="font-sans font-medium text-gray-700 rounded-xl hover:bg-emerald-50 hover:text-primary transition-colors">
+                            Bahasa Indonesia
                         </x-dropdown-link>
-                        <x-dropdown-link :href="route('lang.switch', 'en')" class="font-sans font-medium text-gray-700">
+                        <x-dropdown-link :href="route('lang.switch', 'en')" class="font-sans font-medium text-gray-700 rounded-xl hover:bg-emerald-50 hover:text-primary transition-colors">
                             English
                         </x-dropdown-link>
                     </x-slot>
@@ -61,6 +61,13 @@
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-4 py-2 shadow-sm text-sm leading-4 font-bold rounded-full text-white bg-primary hover:bg-emerald-600 border border-emerald-500/50 focus:outline-none transition ease-in-out duration-150">
+                            @if(Auth::user()->profile_photo_path)
+                                <img class="h-6 w-6 rounded-full object-cover me-2 border border-white/50" src="{{ asset('storage/' . Auth::user()->profile_photo_path) }}" alt="{{ Auth::user()->name }}" />
+                            @else
+                                <div class="h-6 w-6 rounded-full bg-white/20 flex items-center justify-center me-2 text-xs border border-white/50">
+                                    {{ substr(Auth::user()->name, 0, 1) }}
+                                </div>
+                            @endif
                             <div class="font-sans">{{ Auth::user()->name }} (Driver)</div>
 
                             <div class="ms-1">
@@ -74,6 +81,10 @@
                     <x-slot name="content">
                         <x-dropdown-link :href="route('profile.edit')" class="font-sans font-medium text-gray-700">
                             {{ __('Profile') }}
+                        </x-dropdown-link>
+                        
+                        <x-dropdown-link :href="route('driver.history')" class="font-sans font-medium text-gray-700">
+                            {{ __('History') }}
                         </x-dropdown-link>
 
                         <!-- Authentication -->
@@ -112,24 +123,37 @@
             <x-responsive-nav-link :href="route('driver.orders')" :active="request()->routeIs('driver.orders')">
                 {{ __('Order Pool') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('leaderboard')" :active="request()->routeIs('leaderboard')">
-                {{ __('Leaderboard') }}
-            </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('driver.redeem')" :active="request()->routeIs('driver.redeem')">
                 {{ __('Redeem Center') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('leaderboard')" :active="request()->routeIs('leaderboard')">
+                {{ __('Leaderboard') }}
             </x-responsive-nav-link>
         </div>
 
         <!-- Responsive Settings Options -->
         <div class="pt-4 pb-1 border-t border-gray-200">
-            <div class="px-4">
-                <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
-                <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
+            <div class="px-4 flex items-center gap-3">
+                @if(Auth::user()->profile_photo_path)
+                    <img class="h-10 w-10 rounded-full object-cover border border-gray-200" src="{{ asset('storage/' . Auth::user()->profile_photo_path) }}" alt="{{ Auth::user()->name }}" />
+                @else
+                    <div class="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold border border-gray-300">
+                        {{ substr(Auth::user()->name, 0, 1) }}
+                    </div>
+                @endif
+                <div>
+                    <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
+                    <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
+                </div>
             </div>
 
             <div class="mt-3 space-y-1">
                 <x-responsive-nav-link :href="route('profile.edit')">
                     {{ __('Profile') }}
+                </x-responsive-nav-link>
+                
+                <x-responsive-nav-link :href="route('driver.history')">
+                    {{ __('History') }}
                 </x-responsive-nav-link>
 
                 <!-- Authentication -->

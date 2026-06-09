@@ -27,6 +27,7 @@ class User extends Authenticatable
         'avatar',
         'payment_number',
         'driver_status',
+        'profile_photo_path',
     ];
 
     /**

@@ -71,11 +71,36 @@
                             
                             <div class="space-y-4">
                                 @foreach($applications as $app)
-                                    <div class="p-4 bg-white/60 rounded-2xl border border-amber-200/50 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                                    <div x-data="{ zoomKTP: false }" class="p-4 bg-white/60 rounded-2xl border border-amber-200/50 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
                                         <div class="flex items-start gap-4">
-                                            <a href="{{ Storage::url($app->ktp_photo) }}" target="_blank" class="shrink-0 w-16 h-12 bg-gray-200 rounded-lg overflow-hidden border border-gray-300 hover:opacity-80 transition-opacity" title="{{ __('View KTP') }}">
+                                            <div @click="zoomKTP = true" class="cursor-pointer shrink-0 w-16 h-12 bg-gray-200 rounded-lg overflow-hidden border border-gray-300 hover:opacity-80 transition-opacity" title="{{ __('View KTP') }}">
                                                 <img src="{{ Storage::url($app->ktp_photo) }}" class="w-full h-full object-cover" alt="KTP">
-                                            </a>
+                                            </div>
+                                            
+                                            <!-- Fullscreen KTP Zoom -->
+                                            <template x-teleport="body">
+                                                <div x-show="zoomKTP" style="display: none;" class="fixed inset-0 z-[110] flex items-center justify-center p-4">
+                                                    <!-- Darker Backdrop for Zoom -->
+                                                    <div x-show="zoomKTP" x-transition.opacity class="fixed inset-0 bg-black/50 backdrop-blur-md" @click="zoomKTP = false"></div>
+                                                    
+                                                    <div x-show="zoomKTP"
+                                                         x-transition:enter="transition ease-out duration-300"
+                                                         x-transition:enter-start="opacity-0 scale-90"
+                                                         x-transition:enter-end="opacity-100 scale-100"
+                                                         x-transition:leave="transition ease-in duration-200"
+                                                         x-transition:leave-start="opacity-100 scale-100"
+                                                         x-transition:leave-end="opacity-0 scale-90"
+                                                         class="relative z-10 max-w-5xl w-full flex flex-col items-center justify-center">
+                                                         
+                                                        <button @click="zoomKTP = false" class="absolute -top-12 right-0 sm:-right-8 p-2 text-white/50 hover:text-white transition-colors">
+                                                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                                        </button>
+                                                        
+                                                        <img src="{{ Storage::url($app->ktp_photo) }}" class="max-w-full max-h-[85vh] rounded-2xl shadow-2xl object-contain border border-white/10">
+                                                    </div>
+                                                </div>
+                                            </template>
+                                            
                                             <div>
                                                 <h4 class="font-bold text-secondary">{{ $app->user->name }}</h4>
                                                 <div class="text-xs text-gray-500 flex flex-col gap-0.5 mt-1">

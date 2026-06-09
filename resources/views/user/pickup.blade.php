@@ -503,7 +503,8 @@
             </div>
         </div>
 
-        {{-- Pickup History --}}
+        {{-- Pickup History Sidebar --}}
+        <div class="lg:col-span-1">
             <div x-data="{ tab: 'active' }">
                 <div class="glass-panel rounded-3xl p-8 relative overflow-hidden">
                     <h3 class="text-xl font-serif font-bold mb-4 text-secondary flex items-center justify-between">
@@ -531,23 +532,33 @@
                             <p class="text-gray-500 text-sm text-center py-4">{{ __('No active pickups.') }}</p>
                         @else
                             <div class="space-y-4">
-                                @foreach($activePickupsList as $pickup)
+                                @foreach($activePickupsList->take(3) as $pickup)
                                     @include('user.partials.pickup-card', ['pickup' => $pickup])
                                 @endforeach
+                            </div>
+                            <div class="mt-6 flex justify-center">
+                                <a href="{{ route('user.history') }}" class="inline-block px-6 py-2.5 bg-gray-50 text-gray-600 font-bold rounded-full border border-gray-200 hover:bg-gray-100 transition-colors text-sm">
+                                    {{ __('Riwayat Lebih Detail') }} &rarr;
+                                </a>
                             </div>
                         @endif
                     </div>
 
                     <!-- Completed Tab -->
                     <div x-show="tab === 'completed'" style="display: none;">
-                        @php $completedPickupsList = $pickups->whereIn('status', ['completed', 'rejected']); @endphp
+                        @php $completedPickupsList = $pickups->whereIn('status', ['completed', 'rejected', 'cancelled']); @endphp
                         @if($completedPickupsList->isEmpty())
                             <p class="text-gray-500 text-sm text-center py-4">{{ __('No pickup history yet.') }}</p>
                         @else
                             <div class="space-y-4">
-                                @foreach($completedPickupsList as $pickup)
+                                @foreach($completedPickupsList->take(3) as $pickup)
                                     @include('user.partials.pickup-card', ['pickup' => $pickup])
                                 @endforeach
+                            </div>
+                            <div class="mt-6 flex justify-center">
+                                <a href="{{ route('user.history') }}" class="inline-block px-6 py-2.5 bg-gray-50 text-gray-600 font-bold rounded-full border border-gray-200 hover:bg-gray-100 transition-colors text-sm">
+                                    {{ __('Riwayat Lebih Detail') }} &rarr;
+                                </a>
                             </div>
                         @endif
                     </div>

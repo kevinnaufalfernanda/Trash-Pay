@@ -133,34 +133,25 @@
             <!-- History -->
             <div>
                 <div class="glass-panel rounded-3xl p-6">
-                    <h3 class="text-xl font-serif font-semibold mb-4 text-secondary">{{ __('History') }}</h3>
+                    <h3 class="text-xl font-serif font-semibold mb-4 text-secondary flex items-center justify-between">
+                        {{ __('Riwayat Penukaran') }}
+                    </h3>
 
                     @if($redemptions->isEmpty())
-                        <p class="text-gray-500 text-sm">{{ __('No redemption history yet.') }}</p>
+                        <div class="text-center py-8">
+                            <div class="text-4xl mb-4 opacity-50">📭</div>
+                            <p class="text-gray-500 text-sm font-medium">{{ __('Belum ada riwayat penukaran koin.') }}</p>
+                        </div>
                     @else
                         <div class="space-y-4">
-                            @foreach($redemptions as $redemption)
-                                <div class="p-3 bg-white/40 rounded-xl border border-white/60 shadow-sm">
-                                    <div class="flex justify-between items-center mb-1">
-                                        <div class="flex flex-col">
-                                            <span class="font-bold text-gray-800">{{ $redemption->provider }}</span>
-                                            <span class="text-xs text-gray-500 font-medium">{{ $redemption->account_number }}</span>
-                                        </div>
-                                        <span class="font-bold text-amber-500">{{ $redemption->amount }} 🪙</span>
-                                    </div>
-                                    <div class="flex justify-between items-center text-xs mt-2">
-                                        <span class="text-gray-500">{{ $redemption->created_at->format('d M, H:i') }}</span>
-
-                                        @if($redemption->status === 'approved')
-                                            <span class="text-emerald-600 font-semibold bg-emerald-100 px-2 py-1 rounded-md">{{ __('Success') }}</span>
-                                        @elseif($redemption->status === 'rejected')
-                                            <span class="text-red-600 font-semibold bg-red-100 px-2 py-1 rounded-md">{{ __('Rejected') }}</span>
-                                        @else
-                                            <span class="text-amber-600 font-semibold bg-amber-100 px-2 py-1 rounded-md">{{ __('Processing') }}</span>
-                                        @endif
-                                    </div>
-                                </div>
+                            @foreach($redemptions->take(3) as $redemption)
+                                @include('partials.redemption-card', ['redemption' => $redemption])
                             @endforeach
+                        </div>
+                        <div class="mt-6 flex justify-center">
+                            <a href="{{ route('user.history') }}" class="inline-block px-6 py-2.5 bg-gray-50 text-gray-600 font-bold rounded-full border border-gray-200 hover:bg-gray-100 transition-colors text-sm text-center w-full">
+                                {{ __('Lihat Semua Riwayat') }} &rarr;
+                            </a>
                         </div>
                     @endif
                 </div>

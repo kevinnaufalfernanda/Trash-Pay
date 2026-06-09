@@ -16,6 +16,10 @@ class DriverController extends Controller
     {
         $driver = auth()->user();
 
+        Pickup::where('status', 'pending')
+            ->where('created_at', '<', now()->subMinutes(15))
+            ->update(['status' => 'cancelled']);
+
         $completedCount = Pickup::where('driver_id', $driver->id)->where('status', 'completed')->count();
         $totalWeightCollected = Pickup::where('driver_id', $driver->id)->where('status', 'completed')->sum('total_weight');
         $activeOrders = Pickup::with('user')->where('driver_id', $driver->id)->where('status', 'on-the-way')->latest()->get();
@@ -44,6 +48,10 @@ class DriverController extends Controller
      */
     public function orderPool()
     {
+        Pickup::where('status', 'pending')
+            ->where('created_at', '<', now()->subMinutes(15))
+            ->update(['status' => 'cancelled']);
+
         $pickups = Pickup::with(['user', 'category'])->where('status', 'pending')->latest()->get();
 
         $highRewardPickups = collect();
@@ -60,7 +68,11 @@ class DriverController extends Controller
             }
         }
 
-        return view('driver.orders', compact('highRewardPickups', 'standardPickups'));
+        $driver = auth()->user();
+        $activeOrders = Pickup::with(['user', 'category'])->where('driver_id', $driver->id)->where('status', 'on-the-way')->latest()->get();
+        $currentCapacity = $activeOrders->sum('total_weight');
+
+        return view('driver.orders', compact('highRewardPickups', 'standardPickups', 'activeOrders', 'currentCapacity'));
     }
 
     /**
@@ -83,6 +95,12 @@ class DriverController extends Controller
         // Only accept if still pending
         if ($pickup->status !== 'pending') {
             return redirect()->route('driver.orders')->with('error', 'This order has already been taken.');
+        }
+
+        // Check 10kg capacity limit
+        $currentCapacity = Pickup::where('driver_id', auth()->id())->where('status', 'on-the-way')->sum('total_weight');
+        if ($currentCapacity + $pickup->total_weight > 10) {
+            return redirect()->route('driver.orders')->with('error', 'Kapasitas maksimal (10kg) terlampaui. Selesaikan pesanan Anda terlebih dahulu.');
         }
 
         $pickup->update([
@@ -191,5 +209,64 @@ class DriverController extends Controller
         ]);
 
         return redirect()->route('driver.redeem')->with('success', 'Permintaan penarikan saldo berhasil! Admin akan segera memprosesnya.');
+    }
+
+    /**
+     * Driver requests to cancel a pickup
+     */
+    public function requestCancel(Pickup $pickup)
+    {
+        if ($pickup->driver_id !== auth()->id()) {
+            abort(403, 'Unauthorized.');
+        }
+
+        if ($pickup->status === 'on-the-way') {
+            $pickup->update(['cancel_requested_by' => 'driver']);
+            return back()->with('success', 'Pengajuan pembatalan telah dikirim ke User.');
+        }
+
+        return back()->with('error', 'Pesanan tidak bisa dibatalkan.');
+    }
+
+    /**
+     * Driver approves user's cancellation request
+     */
+    public function approveCancel(Pickup $pickup)
+    {
+        if ($pickup->driver_id !== auth()->id() || $pickup->cancel_requested_by !== 'user') {
+            abort(403, 'Unauthorized.');
+        }
+
+        $pickup->update([
+            'status' => 'cancelled',
+            'cancel_requested_by' => null
+        ]);
+
+        return back()->with('success', 'Pembatalan disetujui. Pesanan telah dibatalkan.');
+    }
+
+    /**
+     * Driver rejects user's cancellation request
+     */
+    public function rejectCancel(Pickup $pickup)
+    {
+        if ($pickup->driver_id !== auth()->id() || $pickup->cancel_requested_by !== 'user') {
+            abort(403, 'Unauthorized.');
+        }
+
+        $pickup->update(['cancel_requested_by' => null]);
+
+        return back()->with('success', 'Anda menolak pembatalan. Pesanan tetap dilanjutkan.');
+    }
+
+    /**
+     * History Page for Driver
+     */
+    public function history()
+    {
+        $driver = auth()->user();
+        $pickups = Pickup::where('driver_id', $driver->id)->latest()->get();
+        $redemptions = Redemption::where('user_id', $driver->id)->latest()->get();
+        return view('driver.history', compact('driver', 'pickups', 'redemptions'));
     }
 }

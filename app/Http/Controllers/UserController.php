@@ -19,6 +19,10 @@ class UserController extends Controller
             ->where('status', 'completed')
             ->sum('total_weight') * 1.2; // Formula E = W * 1.2
 
+        Pickup::where('status', 'pending')
+            ->where('created_at', '<', now()->subMinutes(15))
+            ->update(['status' => 'cancelled']);
+
         $recentPickups = Pickup::where('user_id', $user->id)->latest()->take(5)->get();
         $categories = WasteCategory::all();
 
@@ -31,6 +35,10 @@ class UserController extends Controller
     public function pickupRequest()
     {
         $categories = WasteCategory::all();
+        Pickup::where('status', 'pending')
+            ->where('created_at', '<', now()->subMinutes(15))
+            ->update(['status' => 'cancelled']);
+
         $pickups = Pickup::where('user_id', auth()->id())
                             ->latest()
                             ->get();
@@ -108,5 +116,68 @@ class UserController extends Controller
         ]);
 
         return redirect()->route('user.redeem')->with('success', 'Redemption requested! Admin will review it shortly.');
+    }
+
+    /**
+     * User requests to cancel a pickup
+     */
+    public function requestCancel(Pickup $pickup)
+    {
+        if ($pickup->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized.');
+        }
+
+        if ($pickup->status === 'pending') {
+            $pickup->update(['status' => 'cancelled']);
+            return back()->with('success', 'Pesanan penjemputan berhasil dibatalkan.');
+        }
+
+        if ($pickup->status === 'on-the-way') {
+            $pickup->update(['cancel_requested_by' => 'user']);
+            return back()->with('success', 'Pengajuan pembatalan telah dikirim ke Driver.');
+        }
+
+        return back()->with('error', 'Pesanan tidak bisa dibatalkan.');
+    }
+
+    /**
+     * User approves driver's cancellation request
+     */
+    public function approveCancel(Pickup $pickup)
+    {
+        if ($pickup->user_id !== auth()->id() || $pickup->cancel_requested_by !== 'driver') {
+            abort(403, 'Unauthorized.');
+        }
+
+        $pickup->update([
+            'status' => 'cancelled',
+            'cancel_requested_by' => null
+        ]);
+
+        return back()->with('success', 'Pembatalan disetujui. Pesanan telah dibatalkan.');
+    }
+
+    /**
+     * User rejects driver's cancellation request
+     */
+    public function rejectCancel(Pickup $pickup)
+    {
+        if ($pickup->user_id !== auth()->id() || $pickup->cancel_requested_by !== 'driver') {
+            abort(403, 'Unauthorized.');
+        }
+
+        $pickup->update(['cancel_requested_by' => null]);
+
+        return back()->with('success', 'Anda menolak pembatalan. Pesanan tetap dilanjutkan.');
+    }
+
+    /**
+     * History Page for User
+     */
+    public function history()
+    {
+        $pickups = Pickup::where('user_id', auth()->id())->latest()->get();
+        $redemptions = Redemption::where('user_id', auth()->id())->latest()->get();
+        return view('user.history', compact('pickups', 'redemptions'));
     }
 }
