@@ -53,7 +53,7 @@
                                 class="w-full rounded-2xl border border-gray-200 shadow-sm focus:border-primary focus:ring-primary focus:ring-4 focus:ring-primary/20 text-lg font-bold py-4 bg-white/70 transition-all cursor-pointer" required>
                             <option value="">-- {{ __('Select Category') }} --</option>
                             @foreach($categories as $category)
-                                <option value="{{ $category->id }}">{{ $category->icon }} {{ __($category->name) }} ({{ number_format($category->price_per_kg, 0, ',', '.') }} {{ __('Coins/kg') }})</option>
+                                <option value="{{ $category->id }}">{{ __($category->name) }} ({{ number_format($category->price_per_kg, 0, ',', '.') }} {{ __('Coins/kg') }})</option>
                             @endforeach
                         </select>
                     </div>

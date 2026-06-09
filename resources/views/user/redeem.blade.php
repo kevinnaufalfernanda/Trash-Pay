@@ -16,8 +16,8 @@
                     <p class="text-sm font-medium text-gray-500 mb-6">{{ __('Exchange your collected coins for e-wallet balance!') }}</p>
 
                     <div class="mb-6 p-4 rounded-2xl bg-white/60 border border-white/80 flex items-center gap-4 shadow-sm">
-                        <div class="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center text-xl">
-                            💡
+                        <div class="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center text-amber-600">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
                         <div>
                             <div class="font-bold text-secondary text-sm">{{ __('Exchange Rate Info') }}</div>
@@ -41,10 +41,12 @@
                         class="mb-8 p-4 bg-amber-50 rounded-xl border border-amber-200 flex justify-between items-center">
                         <div>
                             <div class="text-amber-800 font-semibold text-sm">{{ __('Available Balance') }}</div>
-                            <div class="text-3xl font-bold text-amber-600">{{ number_format($user->coin_balance) }}
-                                <span class="text-lg">🪙</span></div>
+                            <div class="text-3xl font-bold text-amber-600 flex items-center gap-1.5">{{ number_format($user->coin_balance) }}
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8v8m0-8V6m0 12v-2m0 0v-2"></path></svg></div>
                         </div>
-                        <div class="text-2xl">💰</div>
+                        <div class="text-amber-500 bg-amber-100 p-3 rounded-2xl">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8v8m0-8V6m0 12v-2m0 0v-2"></path></svg>
+                        </div>
                     </div>
 
                     <form action="{{ route('user.redeem.store') }}" method="POST" x-data="{ amount: '', max: {{ $user->coin_balance }}, accountNumber: '{{ $user->payment_number }}', savedNumber: '{{ $user->payment_number }}', confirmedNumber: false }">
@@ -76,8 +78,8 @@
                             <label for="amount" class="block text-sm font-bold text-gray-700 mb-2">{{ __('Coin Amount') }}</label>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div class="relative">
-                                    <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
-                                        <span class="text-xl">🪙</span>
+                                    <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-amber-500">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8v8m0-8V6m0 12v-2m0 0v-2"></path></svg>
                                     </div>
                                     <input type="number" name="amount" id="amount" min="100" max="{{ $user->coin_balance }}" x-model.number="amount"
                                         @input="if(amount > max) amount = max; if(amount < 0) amount = ''"
@@ -86,7 +88,7 @@
                                 </div>
                                 <div class="h-full text-sm font-semibold text-emerald-800 bg-gradient-to-r from-emerald-50 to-emerald-100/50 px-5 py-4 rounded-2xl border border-emerald-200 flex items-center justify-between transition-all">
                                     <span class="flex items-center gap-2">
-                                        <span class="text-xl">💰</span>
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8v8m0-8V6m0 12v-2m0 0v-2"></path></svg>
                                         {{ __('Estimated Money:') }}
                                     </span>
                                     <span class="font-bold text-2xl text-emerald-600">Rp <span x-text="Math.round((amount || 0) * 100).toLocaleString('id-ID')"></span></span>
@@ -97,8 +99,8 @@
                         <div class="mb-10">
                             <label for="account_number" class="block text-sm font-bold text-gray-700 mb-2">{{ __('Phone Number / Target Account') }}</label>
                             <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
-                                    <span class="text-xl">📱</span>
+                                <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-gray-400">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
                                 </div>
                                 <input type="tel" name="account_number" id="account_number" x-model="accountNumber"
                                     @input="accountNumber = $event.target.value.replace(/[^\d+]/g, '').replace(/(?!^)\+/g, '')"
@@ -107,15 +109,15 @@
                             </div>
                             
                             <div class="mt-4 p-4 bg-red-50 rounded-xl border border-red-200 flex items-start gap-3" x-show="accountNumber !== savedNumber && savedNumber !== '' && accountNumber !== ''" x-cloak x-transition>
-                                <input type="checkbox" id="confirm_number" x-model="confirmedNumber" class="mt-1 w-4 h-4 text-red-600 bg-white border-red-300 rounded focus:ring-red-500 focus:ring-2">
-                                <label for="confirm_number" class="text-sm text-red-800 font-medium">
-                                    {{ __('The number entered is different from your saved payment number. I confirm this number is correct.') }}
+                                <input type="checkbox" id="confirm_number" x-model="confirmedNumber" class="mt-1 w-4 h-4 text-primary bg-white border-red-300 rounded focus:ring-primary focus:ring-2 cursor-pointer">
+                                <label for="confirm_number" class="text-sm text-red-800 font-medium cursor-pointer">
+                                    {{ __('Nomor ini berbeda dengan nomor di profil. Saya mengkonfirmasi nomor ini sudah sesuai.') }}
                                 </label>
                             </div>
                             <div class="mt-4 p-4 bg-amber-50 rounded-xl border border-amber-200 flex items-start gap-3" x-show="savedNumber === '' && accountNumber !== ''" x-cloak x-transition>
-                                <input type="checkbox" id="confirm_new_number" x-model="confirmedNumber" class="mt-1 w-4 h-4 text-amber-600 bg-white border-amber-300 rounded focus:ring-amber-500 focus:ring-2">
-                                <label for="confirm_new_number" class="text-sm text-amber-800 font-medium">
-                                    {{ __('You do not have a saved payment number. I confirm this number is correct.') }}
+                                <input type="checkbox" id="confirm_new_number" x-model="confirmedNumber" class="mt-1 w-4 h-4 text-primary bg-white border-amber-300 rounded focus:ring-primary focus:ring-2 cursor-pointer">
+                                <label for="confirm_new_number" class="text-sm text-amber-800 font-medium cursor-pointer">
+                                    {{ __('Belum ada nomor yang tersimpan di profil. Saya mengkonfirmasi nomor ini sudah sesuai.') }}
                                 </label>
                             </div>
                         </div>
@@ -124,7 +126,7 @@
                             class="w-full px-8 py-5 bg-gradient-to-r from-primary to-emerald-500 text-white font-bold text-lg rounded-full btn-premium disabled:opacity-50 disabled:cursor-not-allowed"
                             x-bind:disabled="amount > max || amount < 100 || (accountNumber !== savedNumber && !confirmedNumber) || (savedNumber === '' && !confirmedNumber)"
                             @if($user->coin_balance < 100) disabled @endif>
-                            {{ __('🚀 Withdraw Now') }}
+                            {{ __('Withdraw Now') }}
                         </button>
                     </form>
                 </div>
@@ -139,7 +141,9 @@
 
                     @if($redemptions->isEmpty())
                         <div class="text-center py-8">
-                            <div class="text-4xl mb-4 opacity-50">📭</div>
+                            <div class="w-20 h-20 mx-auto mb-4 bg-gray-100 text-gray-400 rounded-full flex items-center justify-center">
+                                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
+                            </div>
                             <p class="text-gray-500 text-sm font-medium">{{ __('Belum ada riwayat penukaran koin.') }}</p>
                         </div>
                     @else

@@ -31,8 +31,12 @@
                 <div class="flex items-center gap-6">
                     <div class="w-16 h-16 rounded-full flex items-center justify-center text-3xl transition-all duration-300 ease-out shadow-lg"
                          :class="online ? 'bg-gradient-to-br from-emerald-400 to-teal-500 text-white shadow-emerald-500/30' : 'bg-gray-100 text-gray-400 border border-white/50'">
-                        <span x-show="online">🟢</span>
-                        <span x-show="!online" style="display: none;">💤</span>
+                        <span x-show="online">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </span>
+                        <span x-show="!online" style="display: none;">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                        </span>
                     </div>
                     <div>
                         <h3 class="text-2xl font-serif text-secondary mb-1">{{ __('Driver Status') }}</h3>
@@ -73,30 +77,41 @@
                 <div class="md:col-span-1 glass-panel rounded-3xl p-8 text-center relative overflow-hidden group flex flex-col justify-center">
                     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-amber-400/20 rounded-full blur-3xl -z-10 group-hover:scale-110 transition-transform duration-500"></div>
                     <div class="text-amber-600/80 text-xs font-bold tracking-widest uppercase mb-4">{{ __('Coin Balance') }}</div>
-                    <div class="text-6xl font-serif font-bold text-accent mb-4 tracking-tighter">{{ number_format($driver->coin_balance) }} <span class="text-3xl opacity-90 drop-shadow-sm">🪙</span></div>
+                    <div class="text-6xl font-serif font-bold text-accent mb-4 tracking-tighter flex items-center justify-center gap-2">
+                        {{ number_format($driver->coin_balance) }} 
+                        <svg class="w-8 h-8 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8v8m0-8V6m0 12v-2m0 0v-2"></path></svg>
+                    </div>
                     <a href="{{ route('driver.redeem') }}" class="inline-block px-8 py-3 bg-gradient-to-r from-accent to-amber-400 text-white rounded-full text-sm font-bold shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 hover:-translate-y-0.5 transition-all">{{ __('Withdraw Balance') }}</a>
                 </div>
 
                 {{-- Driver Stats (4-grid) --}}
                 <div class="md:col-span-2 grid grid-cols-2 gap-4">
                     <div class="glass-panel rounded-3xl p-6 text-center border-t border-white/60">
-                        <div class="text-4xl mb-2">📦</div>
+                        <div class="w-12 h-12 mx-auto mb-2 bg-gray-100 text-gray-500 rounded-full flex items-center justify-center">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                        </div>
                         <div class="text-xs font-bold tracking-widest text-gray-500 uppercase mb-2">{{ __('Pending Orders') }}</div>
                         <div class="text-4xl font-serif font-bold text-accent">{{ $pendingCount }}</div>
                     </div>
                     <div class="glass-panel rounded-3xl p-6 text-center border-t border-white/60 relative overflow-hidden group">
                         <div class="absolute inset-0 bg-gradient-to-b from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        <div class="text-4xl mb-2 relative z-10 group-hover:-translate-y-1 transition-transform">🚚</div>
+                        <div class="w-12 h-12 mx-auto mb-2 relative z-10 group-hover:-translate-y-1 transition-transform bg-primary/10 text-primary rounded-full flex items-center justify-center">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"></path></svg>
+                        </div>
                         <div class="text-xs font-bold tracking-widest text-gray-500 uppercase mb-2 relative z-10">{{ __('Active Now') }}</div>
                         <div class="text-4xl font-serif font-bold text-primary relative z-10">{{ $activeOrders->count() }}</div>
                     </div>
                     <div class="glass-panel rounded-3xl p-6 text-center border-t border-white/60">
-                        <div class="text-4xl mb-2">✅</div>
+                        <div class="w-12 h-12 mx-auto mb-2 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
                         <div class="text-xs font-bold tracking-widest text-gray-500 uppercase mb-2">{{ __('Completed') }}</div>
                         <div class="text-4xl font-serif font-bold text-secondary">{{ $completedCount }}</div>
                     </div>
                     <div class="glass-panel rounded-3xl p-6 text-center border-t border-white/60">
-                        <div class="text-4xl mb-2">⚖️</div>
+                        <div class="w-12 h-12 mx-auto mb-2 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"></path></svg>
+                        </div>
                         <div class="text-xs font-bold tracking-widest text-gray-500 uppercase mb-2">{{ __('Weight Collected') }}</div>
                         <div class="text-4xl font-serif font-bold text-secondary">{{ number_format($totalWeightCollected, 1) }} <span class="text-lg opacity-60">kg</span></div>
                     </div>
@@ -163,7 +178,9 @@
                 <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80')] bg-cover bg-center opacity-10 mix-blend-overlay group-hover:scale-105 transition-transform duration-700"></div>
                 <div class="absolute -right-20 -top-20 w-64 h-64 bg-white/20 rounded-full blur-3xl"></div>
                 <div class="relative z-10">
-                    <div class="text-6xl mb-6 drop-shadow-md group-hover:-translate-y-2 transition-transform duration-500">🚀</div>
+                    <div class="mb-6 flex items-center justify-center text-white drop-shadow-md group-hover:-translate-y-2 transition-transform duration-500">
+                        <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </div>
                     <h3 class="text-4xl font-serif font-bold mb-3 tracking-tight">{{ __('Ready to collect waste?') }}</h3>
                     <p class="text-emerald-50 mb-8 font-medium text-lg">{{ __('Check the Order Pool for new pickup requests near you.') }}</p>
                     <a href="{{ route('driver.orders') }}" class="inline-block px-10 py-4 bg-gradient-to-r from-accent to-amber-400 text-white rounded-full font-bold text-lg shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 hover:-translate-y-0.5 transition-all">

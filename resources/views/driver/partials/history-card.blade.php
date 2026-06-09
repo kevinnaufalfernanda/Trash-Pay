@@ -61,7 +61,7 @@
                 <div class="shrink-0 text-right">
                     <div class="text-sm text-gray-500 font-medium">{{ __('Koin Didapat') }}</div>
                     <div class="text-xl font-bold text-amber-500 flex items-center gap-1 justify-end">
-                        +{{ number_format($order->total_coins) }} <span class="text-sm opacity-80">🪙</span>
+                        +{{ number_format($order->total_coins) }} <svg class="w-4 h-4 text-amber-500 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8v8m0-8V6m0 12v-2m0 0v-2"></path></svg>
                     </div>
                 </div>
             @endif
@@ -112,7 +112,9 @@
                         <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
                             <div class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">{{ __('Kategori') }}</div>
                             <div class="font-bold text-secondary flex items-center gap-2">
-                                <span>{{ $order->category->icon ?? '📦' }}</span> {{ $order->category->name }}
+                                <span>
+                                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                                </span> {{ $order->category->name }}
                             </div>
                         </div>
                         <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
@@ -137,11 +139,11 @@
                         <div>
                             <div class="text-xs text-emerald-600 font-bold uppercase tracking-wider mb-1">{{ __('Status') }}</div>
                             @if($order->status === 'on-the-way')
-                                <span class="text-blue-600 font-bold flex items-center gap-1">🚚 {{ __('Menuju Lokasi') }}</span>
+                                <span class="text-blue-600 font-bold flex items-center gap-1.5"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> {{ __('Menuju Lokasi') }}</span>
                             @elseif($order->status === 'completed')
-                                <span class="text-emerald-600 font-bold flex items-center gap-1">✅ {{ __('Selesai') }}</span>
+                                <span class="text-emerald-600 font-bold flex items-center gap-1.5"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> {{ __('Selesai') }}</span>
                             @elseif($order->status === 'cancelled')
-                                <span class="text-gray-600 font-bold flex items-center gap-1">🚫 {{ __('Dibatalkan') }}</span>
+                                <span class="text-gray-600 font-bold flex items-center gap-1.5"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg> {{ __('Dibatalkan') }}</span>
                             @endif
                         </div>
                         <div class="text-right">

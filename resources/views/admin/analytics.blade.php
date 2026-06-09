@@ -26,9 +26,9 @@
                 </div>
 
                 <!-- Completed Pickups -->
-                <div class="glass-panel border-t-4 border-t-blue-400 rounded-3xl p-6 text-center">
-                    <div class="text-sm font-semibold text-blue-600 uppercase mb-2">{{ __('Successful Pickups') }}</div>
-                    <div class="text-4xl font-serif font-bold text-blue-500">{{ number_format($completedPickups) }}</div>
+                <div class="glass-panel border-t-4 border-t-emerald-400 rounded-3xl p-6 text-center">
+                    <div class="text-sm font-semibold text-emerald-600 uppercase mb-2">{{ __('Successful Pickups') }}</div>
+                    <div class="text-4xl font-serif font-bold text-emerald-500">{{ number_format($completedPickups) }}</div>
                 </div>
             </div>
 

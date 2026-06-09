@@ -40,7 +40,7 @@
                             
                             <div class="bg-white/40 p-4 rounded-2xl border border-amber-200 shadow-sm bg-amber-50">
                                 <span class="text-xs text-amber-600 uppercase font-bold tracking-wider">{{ __('Potential Coins') }}</span>
-                                <div class="font-bold text-amber-500 text-2xl">~{{ round($pickup->total_weight * $pickup->category->price_per_kg) }} 🪙</div>
+                                <div class="font-bold text-amber-500 text-2xl flex items-center gap-1.5">~{{ round($pickup->total_weight * $pickup->category->price_per_kg) }} <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8v8m0-8V6m0 12v-2m0 0v-2"></path></svg></div>
                             </div>
                         </div>
                     </div>
@@ -49,7 +49,7 @@
                         <form action="{{ route('driver.orders.accept', $pickup->id) }}" method="POST">
                             @csrf
                             <button type="submit" class="w-full text-center py-4 bg-gradient-to-r from-amber-400 to-amber-500 text-white font-bold rounded-full text-lg shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 hover:-translate-y-0.5 transition-all">
-                                🚀 {{ __('Take This Order') }}
+                                {{ __('Take This Order') }}
                             </button>
                         </form>
                         <a href="{{ route('driver.orders') }}" class="block w-full text-center py-4 bg-white/50 text-secondary font-bold rounded-full text-lg shadow-sm border border-white/60 hover:bg-white/80 transition-all">

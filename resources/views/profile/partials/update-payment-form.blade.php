@@ -26,9 +26,9 @@
 
         <div class="flex items-start">
             <div class="flex items-center h-5">
-                <input id="confirm_payment" type="checkbox" x-model="confirmed" class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary text-primary" required>
+                <input id="confirm_payment" type="checkbox" x-model="confirmed" class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary text-primary cursor-pointer" required>
             </div>
-            <label for="confirm_payment" class="ml-2 text-sm font-medium text-gray-900">{{ __('I confirm that this payment number is correct and I am responsible for any transfer errors.') }}</label>
+            <label for="confirm_payment" class="ml-2 text-sm font-medium text-gray-900 cursor-pointer">{{ __('I confirm that this payment number is correct and I am responsible for any transfer errors.') }}</label>
         </div>
 
         <div class="flex items-center gap-4">

@@ -49,6 +49,7 @@
         </style>
     </head>
     <body class="font-sans text-gray-900 antialiased bg-mesh">
+        <x-auth-session-status :status="session('status')" />
         <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 relative">
             <!-- Language Switcher -->
             <div class="absolute top-6 right-6 z-50">

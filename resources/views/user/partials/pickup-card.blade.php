@@ -3,7 +3,7 @@
     <div @click="showModal = true" class="bg-white/60 border border-white/80 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between shadow-sm hover:shadow-md transition-all cursor-pointer hover:border-emerald-200 gap-4 {{ $pickup->status === 'cancelled' || $pickup->status === 'rejected' ? 'opacity-70' : '' }}">
         <div class="flex items-center gap-5">
             <div class="w-14 h-14 bg-gradient-to-br from-emerald-50 to-white rounded-2xl shadow-sm flex items-center justify-center text-3xl border border-white shrink-0">
-                {{ $pickup->category->icon ?? '📦' }}
+                <x-category-icon :category="$pickup->category" class="w-8 h-8 text-emerald-600" />
             </div>
             <div>
                 <div class="font-medium text-secondary">{{ __('Pickup #') }}{{ $pickup->id }}</div>
@@ -49,7 +49,7 @@
             <div class="shrink-0 sm:text-right mt-4 sm:mt-0">
                 <div class="text-sm text-gray-500 font-medium">{{ __('Koin Didapat') }}</div>
                 <div class="text-xl font-bold text-amber-500 flex items-center gap-1 sm:justify-end">
-                    +{{ number_format($pickup->total_coins) }} <span class="text-sm opacity-80">🪙</span>
+                    +{{ number_format($pickup->total_coins) }} <svg class="w-4 h-4 text-amber-500 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8v8m0-8V6m0 12v-2m0 0v-2"></path></svg>
                 </div>
             </div>
         @endif
@@ -99,7 +99,9 @@
                     <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
                         <div class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">{{ __('Kategori') }}</div>
                         <div class="font-bold text-secondary flex items-center gap-2">
-                            <span>{{ $pickup->category->icon ?? '📦' }}</span> {{ $pickup->category->name }}
+                            <span>
+                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                            </span> {{ $pickup->category->name }}
                         </div>
                     </div>
                     <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
@@ -151,13 +153,13 @@
                                 <span class="text-xs text-amber-500 font-semibold" x-text="timeLeft"></span>
                             </div>
                         @elseif($pickup->status === 'on-the-way')
-                            <span class="text-blue-600 font-bold">🚚 {{ __('Menuju Lokasi') }}</span>
+                            <span class="text-blue-600 font-bold flex items-center gap-1.5"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> {{ __('Menuju Lokasi') }}</span>
                         @elseif($pickup->status === 'completed')
-                            <span class="text-emerald-600 font-bold">✅ {{ __('Selesai') }}</span>
+                            <span class="text-emerald-600 font-bold flex items-center gap-1.5"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> {{ __('Selesai') }}</span>
                         @elseif($pickup->status === 'rejected')
-                            <span class="text-red-600 font-bold">❌ {{ __('Ditolak') }}</span>
+                            <span class="text-red-600 font-bold flex items-center gap-1.5"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg> {{ __('Ditolak') }}</span>
                         @elseif($pickup->status === 'cancelled')
-                            <span class="text-gray-600 font-bold">🚫 {{ __('Dibatalkan') }}</span>
+                            <span class="text-gray-600 font-bold flex items-center gap-1.5"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg> {{ __('Dibatalkan') }}</span>
                         @endif
                     </div>
                     @if($pickup->driver)
@@ -192,7 +194,10 @@
                         </div>
                     @elseif($pickup->cancel_requested_by === 'driver')
                         <div class="mt-2 p-4 bg-red-50 rounded-2xl border border-red-200">
-                            <p class="text-sm font-bold text-red-700 text-center mb-3">⚠️ Driver mengajukan pembatalan pesanan ini.</p>
+                            <p class="text-sm font-bold text-red-700 text-center mb-3 flex justify-center items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                Driver mengajukan pembatalan pesanan ini.
+                            </p>
                             <div class="flex gap-2">
                                 <form action="{{ route('user.pickup.approve-cancel', $pickup->id) }}" method="POST" class="w-1/2">
                                     @csrf

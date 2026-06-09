@@ -54,7 +54,7 @@
                 <div class="text-xs font-bold {{ $type === 'high' ? 'text-amber-600' : 'text-gray-500' }} uppercase">{{ $pickup->category->name }}</div>
             </div>
         </div>
-        <span class="text-xs font-bold {{ $type === 'high' ? 'text-white bg-amber-500' : 'text-primary bg-primary/10 border border-primary/20' }} px-3 py-1 rounded-full shadow-sm">{{ __('Est:') }} {{ $pickup->est_coins }} 🪙</span>
+        <span class="text-xs font-bold {{ $type === 'high' ? 'text-white bg-amber-500' : 'text-primary bg-primary/10 border border-primary/20' }} px-3 py-1 rounded-full shadow-sm flex items-center gap-1">{{ __('Est:') }} {{ $pickup->est_coins }} <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8v8m0-8V6m0 12v-2m0 0v-2"></path></svg></span>
     </div>
     
     @if($pickup->waste_photo)
@@ -68,11 +68,11 @@
 
     <div class="flex-grow space-y-2 mb-6">
         <div class="flex items-start gap-2 text-sm text-gray-600">
-            <span class="mt-0.5">⚖️</span>
+            <span class="mt-0.5 text-gray-400"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"></path></svg></span>
             <p>{{ __('Estimated Weight:') }} <strong>{{ $pickup->total_weight }} kg</strong></p>
         </div>
         <div class="flex items-start gap-2 text-sm text-gray-600">
-            <span class="mt-0.5">📍</span>
+            <span class="mt-0.5 text-gray-400"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg></span>
             <p>{{ __('Address:') }} <strong>{{ $pickup->address ?? __('No specific address') }}</strong></p>
         </div>
     </div>
@@ -80,12 +80,12 @@
     <div class="mt-auto">
         <div class="flex gap-2">
             <button @click="showPreviewModal = true; setTimeout(() => initMap(), 100)" class="flex-1 py-{{ $type === 'high' ? '4' : '3' }} {{ $type === 'high' ? 'bg-amber-50 text-amber-600 border-amber-200 hover:bg-amber-100' : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100' }} border font-bold rounded-2xl transition-colors flex justify-center items-center gap-2 text-sm">
-                🗺️ {{ __('Check Map') }}
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg> {{ __('Check Map') }}
             </button>
             <form action="{{ route('driver.orders.accept', $pickup->id) }}" method="POST" class="flex-1">
                 @csrf
                 <button @if($currentCapacity + $pickup->total_weight > 10) disabled @endif class="w-full h-full py-{{ $type === 'high' ? '4' : '3' }} {{ $type === 'high' ? 'bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50' : 'bg-white border-2 border-primary text-primary hover:bg-primary hover:text-white' }} font-bold rounded-2xl transition-all flex justify-center items-center gap-2 text-sm @if($currentCapacity + $pickup->total_weight > 10) opacity-50 cursor-not-allowed border-gray-300 text-gray-400 hover:bg-white hover:text-gray-400 bg-none @endif">
-                    🚀 {{ __('Take') }}
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> {{ __('Take') }}
                 </button>
             </form>
         </div>
@@ -147,15 +147,15 @@
                     <!-- Potential Coins -->
                     <div class="bg-amber-50 p-4 rounded-2xl border border-amber-200 shadow-sm flex items-center justify-between">
                         <div class="text-xs text-amber-600 uppercase font-bold tracking-wider">{{ __('Potensi Koin') }}</div>
-                        <div class="font-bold text-amber-500 text-xl">~{{ $pickup->est_coins }} 🪙</div>
+                        <div class="font-bold text-amber-500 text-xl flex items-center gap-1.5">~{{ $pickup->est_coins }} <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8v8m0-8V6m0 12v-2m0 0v-2"></path></svg></div>
                     </div>
                     
                     <!-- Action -->
                     <div class="mt-4 pt-4 border-t border-gray-100">
                         <form action="{{ route('driver.orders.accept', $pickup->id) }}" method="POST">
                             @csrf
-                            <button @if($currentCapacity + $pickup->total_weight > 10) disabled @endif type="submit" class="w-full text-center py-4 bg-gradient-to-r from-amber-400 to-amber-500 text-white font-bold rounded-2xl shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 transition-all @if($currentCapacity + $pickup->total_weight > 10) opacity-50 cursor-not-allowed bg-none bg-gray-300 text-gray-500 border border-gray-300 shadow-none hover:bg-gray-300 hover:shadow-none @endif">
-                                🚀 {{ __('Ambil Pesanan Ini') }}
+                            <button @if($currentCapacity + $pickup->total_weight > 10) disabled @endif type="submit" class="w-full flex justify-center items-center gap-2 text-center py-4 bg-gradient-to-r from-amber-400 to-amber-500 text-white font-bold rounded-2xl shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 transition-all @if($currentCapacity + $pickup->total_weight > 10) opacity-50 cursor-not-allowed bg-none bg-gray-300 text-gray-500 border border-gray-300 shadow-none hover:bg-gray-300 hover:shadow-none @endif">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> {{ __('Ambil Pesanan Ini') }}
                             </button>
                         </form>
                     </div>

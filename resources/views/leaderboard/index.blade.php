@@ -25,9 +25,9 @@
                             <div class="flex items-center gap-2">
                                 <div class="font-bold text-secondary text-lg sm:text-xl">{{ __('Peringkat Anda Saat Ini') }}</div>
                                 @if(auth()->user()->role === 'user')
-                                    <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full border border-emerald-200">🌱 Warga</span>
+                                    <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full border border-emerald-200">Warga</span>
                                 @else
-                                    <span class="px-2.5 py-0.5 bg-blue-100 text-blue-700 text-xs font-bold rounded-full border border-blue-200">🚚 Driver</span>
+                                    <span class="px-2.5 py-0.5 bg-blue-100 text-blue-700 text-xs font-bold rounded-full border border-blue-200">Driver</span>
                                 @endif
                             </div>
                             <div class="text-sm font-medium text-gray-600 mt-0.5">
@@ -41,11 +41,11 @@
                     </div>
                     @if($currentUserRank <= 10)
                         <div class="text-emerald-700 font-bold bg-emerald-100 border border-emerald-200 px-5 py-2.5 rounded-xl text-sm flex items-center gap-2 shadow-sm">
-                            <span class="text-lg">🎉</span> Masuk Top 10!
+                            Masuk Top 10!
                         </div>
                     @else
                         <div class="text-gray-600 font-medium text-sm bg-white/60 px-5 py-2.5 rounded-xl border border-gray-200 text-center">
-                            🚀 Terus kumpulkan sampah untuk masuk Top 10!
+                            Terus kumpulkan sampah untuk masuk Top 10!
                         </div>
                     @endif
                 </div>
@@ -57,7 +57,7 @@
                 <div class="glass-panel rounded-3xl p-8 relative overflow-hidden">
                     <div class="absolute top-0 right-0 w-64 h-64 bg-emerald-400/10 rounded-full blur-3xl -z-10"></div>
                     <h3 class="text-3xl font-serif font-bold mb-6 text-emerald-600 tracking-tight flex items-center gap-3">
-                        🌱 Top Eco-Heroes
+                        Top Eco-Heroes
                     </h3>
                     <p class="text-gray-500 font-medium mb-8">{{ __('Users with the biggest CO2 reduction impact.') }}</p>
 
@@ -73,7 +73,6 @@
                                         <div class="text-sm font-medium text-emerald-600">{{ number_format($user->impact_score, 1) }} kg CO2 Reduced</div>
                                     </div>
                                 </div>
-                                @if($index == 0) <span class="text-3xl drop-shadow-md">👑</span> @endif
                             </div>
                         @endforeach
                         
@@ -87,7 +86,7 @@
                 <div class="glass-panel rounded-3xl p-8 relative overflow-hidden">
                     <div class="absolute top-0 right-0 w-64 h-64 bg-blue-400/10 rounded-full blur-3xl -z-10"></div>
                     <h3 class="text-3xl font-serif font-bold mb-6 text-blue-600 tracking-tight flex items-center gap-3">
-                        🚚 Top Eco-Drivers
+                        Top Eco-Drivers
                     </h3>
                     <p class="text-gray-500 font-medium mb-8">{{ __('Street heroes with the highest total collected waste.') }}</p>
 
@@ -103,7 +102,6 @@
                                         <div class="text-sm font-medium text-blue-600">{{ number_format($driver->collected_weight, 1) }} kg Collected</div>
                                     </div>
                                 </div>
-                                @if($index == 0) <span class="text-3xl drop-shadow-md">🚀</span> @endif
                             </div>
                         @endforeach
 

@@ -53,7 +53,9 @@ class ProfileController extends Controller
     public function updatePayment(Request $request): RedirectResponse
     {
         $request->validateWithBag('updatePayment', [
-            'payment_number' => ['required', 'string', 'max:20'],
+            'payment_number' => ['required', 'string', 'max:20', \Illuminate\Validation\Rule::unique('users')->ignore($request->user()->id)],
+        ], [
+            'payment_number.unique' => 'Nomor ini sudah terdaftar.'
         ]);
 
         $request->user()->update([

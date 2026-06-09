@@ -17,7 +17,9 @@
             <div class="glass-panel rounded-3xl p-8 relative overflow-hidden">
                 <div class="absolute top-0 right-0 w-64 h-64 bg-emerald-400/10 rounded-full blur-3xl -z-10"></div>
                 <h3 class="text-3xl font-serif font-bold text-secondary mb-6 tracking-tight flex items-center gap-3">
-                    <span class="text-3xl drop-shadow-md">💸</span> {{ __('Pending Redemption Requests') }}
+                    <span class="text-amber-500 bg-amber-100 p-2.5 rounded-2xl shadow-sm">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8v8m0-8V6m0 12v-2m0 0v-2"></path></svg>
+                    </span> {{ __('Pending Redemption Requests') }}
                 </h3>
 
                 <div class="overflow-x-auto">
@@ -46,7 +48,7 @@
                                         </div>
                                         <div class="text-sm font-medium text-gray-500 font-mono">{{ $redemption->account_number }}</div>
                                     </td>
-                                    <td class="py-4 px-6 text-right font-serif font-bold text-2xl text-amber-500">{{ number_format($redemption->amount) }} 🪙</td>
+                                    <td class="py-4 px-6 text-right font-serif font-bold text-2xl text-amber-500 flex justify-end items-center gap-1.5">{{ number_format($redemption->amount) }} <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8v8m0-8V6m0 12v-2m0 0v-2"></path></svg></td>
                                     <td class="py-4 px-6 flex justify-center gap-2">
                                         <form action="{{ route('admin.payouts.approve', $redemption->id) }}" method="POST">
                                             @csrf
@@ -68,7 +70,9 @@
 
                     @if($redemptions->isEmpty())
                         <div class="text-center py-12">
-                            <div class="text-5xl mb-4">🙌</div>
+                            <div class="w-20 h-20 mx-auto mb-4 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center">
+                                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
                             <p class="text-gray-500">{{ __('All caught up! No pending payouts.') }}</p>
                         </div>
                     @endif

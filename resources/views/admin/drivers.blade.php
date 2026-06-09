@@ -66,7 +66,9 @@
                         <div class="glass-panel rounded-3xl p-6 border-2 border-amber-200 shadow-lg shadow-amber-200/50 relative overflow-hidden">
                             <div class="absolute top-0 right-0 w-32 h-32 bg-amber-400/20 rounded-full blur-2xl -z-10"></div>
                             <h3 class="text-xl font-serif font-bold text-amber-600 mb-6 flex items-center gap-2">
-                                <span>⚠️</span> {{ __('Pending Registration Approvals') }}
+                                <span class="text-amber-500">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                </span> {{ __('Pending Registration Approvals') }}
                             </h3>
                             
                             <div class="space-y-4">
@@ -132,8 +134,8 @@
                             @forelse($drivers as $driver)
                                 <div class="p-4 bg-white/40 rounded-2xl border border-white/60 flex items-center justify-between hover:bg-white/60 transition-colors">
                                     <div class="flex items-center gap-4">
-                                        <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-2xl">
-                                            🚚
+                                        <div class="w-12 h-12 bg-primary/10 text-primary rounded-xl flex items-center justify-center">
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"></path></svg>
                                         </div>
                                         <div>
                                             <h4 class="font-bold text-secondary">{{ $driver->name }}</h4>
@@ -151,7 +153,9 @@
                                 </div>
                             @empty
                                 <div class="text-center py-8">
-                                    <div class="text-4xl mb-4 opacity-50">🚚</div>
+                                    <div class="w-20 h-20 mx-auto mb-4 bg-gray-100 text-gray-400 rounded-full flex items-center justify-center">
+                                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                                    </div>
                                     <p class="text-gray-500 font-medium">{{ __('No Eco-Driver account yet.') }}</p>
                                 </div>
                             @endforelse

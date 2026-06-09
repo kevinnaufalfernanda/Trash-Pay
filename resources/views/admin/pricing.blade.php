@@ -34,11 +34,11 @@
                             @foreach($categories as $category)
                                 <tr class="border-b border-white/40 hover:bg-white/60 transition-colors">
                                     <td class="py-4 px-6 flex items-center gap-3">
-                                        <span class="text-2xl">{{ $category->icon }}</span>
+                                        <x-category-icon :category="$category" class="w-8 h-8 text-emerald-600" />
                                         <span class="font-bold text-secondary">{{ __($category->name) }}</span>
                                     </td>
                                     <td class="py-4 px-6 text-right font-bold text-amber-500 text-lg">
-                                        {{ number_format($category->price_per_kg, 0, ',', '.') }} <span class="text-xl">🪙</span>
+                                        {{ number_format($category->price_per_kg, 0, ',', '.') }} <svg class="w-5 h-5 inline-block text-amber-500 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8v8m0-8V6m0 12v-2m0 0v-2"></path></svg>
                                     </td>
                                     <td class="py-4 px-6">
                                         <form action="{{ route('admin.pricing.update', $category->id) }}" method="POST" class="flex gap-2 justify-center">
