@@ -32,9 +32,24 @@
                 }
             }
         </script>
+        <style>
+            /* Premium Modern Mesh Background */
+            .bg-mesh {
+                background-color: #f8fafc;
+                background-image: 
+                    radial-gradient(at 40% 20%, hsla(160, 100%, 74%, 0.15) 0px, transparent 50%),
+                    radial-gradient(at 80% 0%, hsla(189, 100%, 56%, 0.15) 0px, transparent 50%),
+                    radial-gradient(at 0% 50%, hsla(355, 100%, 93%, 0.2) 0px, transparent 50%),
+                    radial-gradient(at 80% 50%, hsla(340, 100%, 76%, 0.15) 0px, transparent 50%),
+                    radial-gradient(at 0% 100%, hsla(22, 100%, 77%, 0.15) 0px, transparent 50%),
+                    radial-gradient(at 80% 100%, hsla(242, 100%, 70%, 0.15) 0px, transparent 50%),
+                    radial-gradient(at 0% 0%, hsla(343, 100%, 76%, 0.1) 0px, transparent 50%);
+                background-attachment: fixed;
+            }
+        </style>
     </head>
-    <body class="font-sans text-gray-900 antialiased bg-gray-50 bg-[url('https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&q=80&w=2070')] bg-cover bg-center">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-white/80 backdrop-blur-sm relative">
+    <body class="font-sans text-gray-900 antialiased bg-mesh">
+        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 relative">
             <!-- Language Switcher -->
             <div class="absolute top-6 right-6 z-50">
                 <x-dropdown align="right" width="48">
