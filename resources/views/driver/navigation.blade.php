@@ -25,6 +25,11 @@
                                 <span class="text-xs text-gray-500 uppercase font-bold tracking-wider">{{ __('Customer') }}</span>
                                 <div class="font-bold text-gray-800 text-lg">{{ $pickup->user->name }}</div>
                             </div>
+
+                            <div class="bg-white/40 p-4 rounded-2xl border border-white/60 shadow-sm">
+                                <span class="text-xs text-gray-500 uppercase font-bold tracking-wider">{{ __('Alamat Penjemputan') }}</span>
+                                <div class="font-medium text-gray-800 mt-1 text-sm">{{ $pickup->address }}</div>
+                            </div>
                             
                             @if($pickup->address_notes)
                             <div class="bg-white/40 p-4 rounded-2xl border border-white/60 shadow-sm border-l-4 border-l-primary">
@@ -35,7 +40,9 @@
 
                             <div class="bg-white/40 p-4 rounded-2xl border border-white/60 shadow-sm">
                                 <span class="text-xs text-gray-500 uppercase font-bold tracking-wider">{{ __('Status') }}</span>
-                                <div class="mt-1"><span class="px-3 py-1.5 bg-blue-100 text-blue-800 text-xs font-bold rounded-full uppercase border border-blue-200">{{ $pickup->status }}</span></div>
+                                <div class="mt-1"><span class="px-3 py-1.5 bg-amber-100 text-amber-800 text-xs font-bold rounded-full uppercase border border-amber-200">
+                                    {{ $pickup->status === 'on-the-way' ? __('On the way') : ucfirst($pickup->status) }}
+                                </span></div>
                             </div>
                         </div>
                     </div>
@@ -62,7 +69,7 @@
                         @endif
 
                         <a href="{{ route('driver.verify', $pickup->id) }}" class="block w-full text-center py-5 bg-gradient-to-r from-primary to-emerald-500 text-white font-bold rounded-full btn-premium text-lg shadow-lg shadow-emerald-500/30">
-                            📍 {{ __('I\'ve Arrived') }}
+                            {{ __('I\'ve Arrived') }}
                         </a>
 
                         @if($pickup->cancel_requested_by === null)
@@ -70,7 +77,7 @@
                                 @csrf
                                 <button type="submit" class="w-full mt-4 py-3 bg-red-50 text-red-600 font-bold rounded-xl border border-red-100 hover:bg-red-100 transition-all text-sm flex justify-center items-center gap-2">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
-                                    {{ __('Ajukan Batal ke User') }}
+                                    {{ __('Request Cancel to User') }}
                                 </button>
                             </form>
                         @elseif($pickup->cancel_requested_by === 'driver')
@@ -120,6 +127,11 @@
             // Add marker for driver location
             L.marker([driverLat, driverLon], {icon: driverIcon}).addTo(map)
                 .bindPopup('{{ __('Your current location') }}');
+
+            // Fix map grey tile issue by recalculating size after a slight delay
+            setTimeout(function() {
+                map.invalidateSize();
+            }, 300);
         });
     </script>
 </x-app-layout>

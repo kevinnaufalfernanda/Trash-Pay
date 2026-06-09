@@ -95,6 +95,9 @@ class ProfileController extends Controller
             'nik' => ['required', 'string', 'size:16'],
             'vehicle_plate' => ['required', 'string', 'max:20'],
             'ktp_photo' => ['required', 'image', 'max:2048'],
+            'sim_photo' => ['required', 'image', 'max:2048'],
+            'stnk_photo' => ['required', 'image', 'max:2048'],
+            'skck_photo' => ['required', 'image', 'max:2048'],
         ]);
 
         $user = $request->user();
@@ -104,13 +107,19 @@ class ProfileController extends Controller
             return back()->with('status', 'application-already-exists');
         }
 
-        $path = $request->file('ktp_photo')->store('driver_documents', 'public');
+        $ktpPath = $request->file('ktp_photo')->store('driver_documents', 'public');
+        $simPath = $request->file('sim_photo')->store('driver_documents', 'public');
+        $stnkPath = $request->file('stnk_photo')->store('driver_documents', 'public');
+        $skckPath = $request->file('skck_photo')->store('driver_documents', 'public');
 
         DriverApplication::create([
             'user_id' => $user->id,
             'nik' => $request->nik,
             'vehicle_plate' => strtoupper($request->vehicle_plate),
-            'ktp_photo' => $path,
+            'ktp_photo' => $ktpPath,
+            'sim_photo' => $simPath,
+            'stnk_photo' => $stnkPath,
+            'skck_photo' => $skckPath,
             'status' => 'pending',
         ]);
 

@@ -21,7 +21,7 @@
                             {{ __('Cancel Requested') }}
                         </div>
                     @else
-                        <div class="mt-2 text-xs font-bold text-blue-600 flex items-center gap-1 bg-blue-50 w-max px-2.5 py-1 rounded-md border border-blue-100">
+                        <div class="mt-2 text-xs font-bold text-amber-600 flex items-center gap-1 bg-amber-50 w-max px-2.5 py-1 rounded-md border border-amber-100">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                             {{ __('Driver on the way') }} &bull; {{ $pickup->total_weight }} kg
                         </div>
@@ -46,10 +46,9 @@
         </div>
 
         @if($pickup->status === 'completed')
-            <div class="shrink-0 sm:text-right mt-4 sm:mt-0">
-                <div class="text-sm text-gray-500 font-medium">{{ __('Coins Earned') }}</div>
-                <div class="text-xl font-bold text-amber-500 flex items-center gap-1 sm:justify-end">
-                    +{{ number_format($pickup->total_coins) }} <svg class="w-4 h-4 text-amber-500 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8v8m0-8V6m0 12v-2m0 0v-2"></path></svg>
+            <div class="shrink-0 mt-4 sm:mt-0 sm:pr-2 flex items-center justify-end">
+                <div class="text-2xl font-bold text-amber-500 flex items-center gap-1.5">
+                    +{{ number_format($pickup->total_coins) }} <svg class="w-6 h-6 text-amber-500 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8v8m0-8V6m0 12v-2m0 0v-2"></path></svg>
                 </div>
             </div>
         @endif
@@ -122,9 +121,23 @@
                 </div>
 
                 <!-- Status & Driver -->
-                <div class="flex items-center justify-between p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
+                @php
+                    $boxClass = 'bg-emerald-50 border-emerald-100';
+                    $labelClass = 'text-emerald-600';
+                    if (in_array($pickup->status, ['pending', 'on-the-way'])) {
+                        $boxClass = 'bg-amber-50 border-amber-100';
+                        $labelClass = 'text-amber-600';
+                    } elseif ($pickup->status === 'rejected') {
+                        $boxClass = 'bg-red-50 border-red-100';
+                        $labelClass = 'text-red-600';
+                    } elseif ($pickup->status === 'cancelled') {
+                        $boxClass = 'bg-gray-50 border-gray-200';
+                        $labelClass = 'text-gray-600';
+                    }
+                @endphp
+                <div class="flex items-center justify-between p-4 {{ $boxClass }} rounded-2xl border">
                     <div>
-                        <div class="text-xs text-emerald-600 font-bold uppercase tracking-wider mb-1">{{ __('Status') }}</div>
+                        <div class="text-xs {{ $labelClass }} font-bold uppercase tracking-wider mb-1">{{ __('Status') }}</div>
                         @if($pickup->status === 'pending')
                             <div class="flex flex-col gap-1" x-data="{
                                 expiresAt: new Date('{{ $pickup->created_at->addMinutes(15)->toIso8601String() }}').getTime(),
@@ -153,7 +166,7 @@
                                 <span class="text-xs text-amber-500 font-semibold" x-text="timeLeft"></span>
                             </div>
                         @elseif($pickup->status === 'on-the-way')
-                            <span class="text-blue-600 font-bold flex items-center gap-1.5"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> {{ __('On the way') }}</span>
+                            <span class="text-amber-600 font-bold flex items-center gap-1.5"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> {{ __('On the way') }}</span>
                         @elseif($pickup->status === 'completed')
                             <span class="text-emerald-600 font-bold flex items-center gap-1.5"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> {{ __('Completed') }}</span>
                         @elseif($pickup->status === 'rejected')
@@ -164,7 +177,7 @@
                     </div>
                     @if($pickup->driver)
                         <div class="text-right">
-                            <div class="text-xs text-emerald-600 font-bold uppercase tracking-wider mb-1">{{ __('Driver') }}</div>
+                            <div class="text-xs {{ $labelClass }} font-bold uppercase tracking-wider mb-1">{{ __('Driver') }}</div>
                             <div class="font-bold text-secondary">{{ $pickup->driver->name }}</div>
                         </div>
                     @endif

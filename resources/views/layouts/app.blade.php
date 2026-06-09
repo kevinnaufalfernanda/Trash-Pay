@@ -85,42 +85,52 @@
         <!-- Global Error Toast -->
         @php
             $hasAnyErrors = false;
+            $backendErrors = [];
             foreach ($errors->getBags() as $bag) {
                 if ($bag->any()) {
                     $hasAnyErrors = true;
-                    break;
+                    $backendErrors = array_merge($backendErrors, $bag->all());
                 }
             }
         @endphp
-        @if ($hasAnyErrors)
-            <div x-data="{ show: false }" 
-                 x-show="show"
-                 x-init="setTimeout(() => show = true, 50); setTimeout(() => show = false, 5000)"
-                 x-transition:enter="transition ease-out duration-500"
-                 x-transition:enter-start="opacity-0 -translate-y-20 scale-95"
-                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
-                 x-transition:leave="transition ease-in duration-300"
-                 x-transition:leave-start="opacity-100 translate-y-0 scale-100"
-                 x-transition:leave-end="opacity-0 -translate-y-20 scale-95"
-                 class="fixed top-8 left-1/2 -translate-x-1/2 z-[9999] w-[90%] max-w-md bg-red-600 rounded-2xl shadow-2xl border border-red-400 p-5 flex items-start gap-4">
-                <div class="flex-shrink-0 text-white mt-0.5">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                </div>
-                <div class="flex-1 text-white">
-                    <h3 class="font-bold text-lg mb-1">{{ __('An error occurred') }}</h3>
-                    <ul class="text-sm font-medium text-red-100 mt-1">
-                        @foreach ($errors->getBags() as $bag)
-                            @foreach ($bag->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        @endforeach
-                    </ul>
-                </div>
-                <button @click="show = false" class="text-red-200 hover:text-white transition-colors p-1">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
+        <div x-data="{ 
+                show: @js($hasAnyErrors),
+                messages: @js($backendErrors),
+                init() {
+                    if (this.show) {
+                        setTimeout(() => this.show = false, 5000);
+                    }
+                }
+             }" 
+             @show-toast.window="
+                messages = Array.isArray($event.detail.message) ? $event.detail.message : [$event.detail.message];
+                show = true;
+                setTimeout(() => show = false, 5000);
+             "
+             x-show="show"
+             x-cloak
+             x-transition:enter="transition ease-out duration-500"
+             x-transition:enter-start="opacity-0 -translate-y-20 scale-95"
+             x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+             x-transition:leave="transition ease-in duration-300"
+             x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+             x-transition:leave-end="opacity-0 -translate-y-20 scale-95"
+             class="fixed top-8 left-1/2 -translate-x-1/2 z-[9999] w-[90%] max-w-md bg-red-600 rounded-2xl shadow-2xl border border-red-400 p-5 flex items-start gap-4">
+            <div class="flex-shrink-0 text-white mt-0.5">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
             </div>
-        @endif
+            <div class="flex-1 text-white">
+                <h3 class="font-bold text-lg mb-1">{{ __('Perhatian') }}</h3>
+                <ul class="text-sm font-medium text-red-100 mt-1">
+                    <template x-for="msg in messages" :key="msg">
+                        <li x-text="msg"></li>
+                    </template>
+                </ul>
+            </div>
+            <button @click="show = false" type="button" class="text-red-200 hover:text-white transition-colors p-1">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
 
         <div class="pb-20 sm:pb-0">
             @auth

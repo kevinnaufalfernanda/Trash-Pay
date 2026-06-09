@@ -7,11 +7,11 @@
             <div x-data="{
                     activeTab: '{{ $period }}',
                     currentPill: '{{ $period }}',
-                    pillStyle: { opacity: 0 },
+                    pillStyle: { left: '4px', width: '80px', opacity: 1 },
                     updatePill(tab) {
                         this.currentPill = tab;
                         let el = this.$refs['tab_' + tab];
-                        if (el) {
+                        if (el && el.offsetWidth > 0) {
                             this.pillStyle = {
                                 left: el.offsetLeft + 'px',
                                 width: el.offsetWidth + 'px',
@@ -27,7 +27,8 @@
                         }, 250);
                     },
                     init() {
-                        setTimeout(() => this.updatePill(this.activeTab), 50);
+                        this.$nextTick(() => this.updatePill(this.activeTab));
+                        setTimeout(() => this.updatePill(this.activeTab), 100);
                         window.addEventListener('resize', () => this.updatePill(this.activeTab));
                     }
                 }" 
@@ -42,8 +43,9 @@
                    x-ref="tab_all"
                    @mouseenter="updatePill('all')"
                    @click.prevent="navigate('all', '{{ route('leaderboard', ['period' => 'all']) }}')"
-                   class="relative whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-bold transition-colors duration-200 z-10 active:scale-95"
-                   :class="currentPill === 'all' ? 'text-white' : 'text-gray-500 hover:text-emerald-600'">
+                   class="relative whitespace-nowrap px-4 py-1.5 rounded-full text-sm outline-none focus:outline-none focus:ring-0 transition-colors duration-300 z-10 inline-block"
+                   :class="currentPill === 'all' ? 'text-white font-bold' : 'text-gray-500 font-bold hover:text-emerald-600'"
+                   style="-webkit-tap-highlight-color: transparent;">
                     {{ __('All Time') }}
                 </a>
                 
@@ -51,8 +53,9 @@
                    x-ref="tab_monthly"
                    @mouseenter="updatePill('monthly')"
                    @click.prevent="navigate('monthly', '{{ route('leaderboard', ['period' => 'monthly']) }}')"
-                   class="relative whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-bold transition-colors duration-200 z-10 active:scale-95"
-                   :class="currentPill === 'monthly' ? 'text-white' : 'text-gray-500 hover:text-emerald-600'">
+                   class="relative whitespace-nowrap px-4 py-1.5 rounded-full text-sm outline-none focus:outline-none focus:ring-0 transition-colors duration-300 z-10 inline-block"
+                   :class="currentPill === 'monthly' ? 'text-white font-bold' : 'text-gray-500 font-bold hover:text-emerald-600'"
+                   style="-webkit-tap-highlight-color: transparent;">
                     {{ __('This Month') }}
                 </a>
                 
@@ -60,8 +63,9 @@
                    x-ref="tab_weekly"
                    @mouseenter="updatePill('weekly')"
                    @click.prevent="navigate('weekly', '{{ route('leaderboard', ['period' => 'weekly']) }}')"
-                   class="relative whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-bold transition-colors duration-200 z-10 active:scale-95"
-                   :class="currentPill === 'weekly' ? 'text-white' : 'text-gray-500 hover:text-emerald-600'">
+                   class="relative whitespace-nowrap px-4 py-1.5 rounded-full text-sm outline-none focus:outline-none focus:ring-0 transition-colors duration-300 z-10 inline-block"
+                   :class="currentPill === 'weekly' ? 'text-white font-bold' : 'text-gray-500 font-bold hover:text-emerald-600'"
+                   style="-webkit-tap-highlight-color: transparent;">
                     {{ __('This Week') }}
                 </a>
             </div>

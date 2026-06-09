@@ -10,6 +10,9 @@ class DriverApplication extends Model
         'user_id',
         'nik',
         'ktp_photo',
+        'sim_photo',
+        'stnk_photo',
+        'skck_photo',
         'vehicle_plate',
         'status',
     ];

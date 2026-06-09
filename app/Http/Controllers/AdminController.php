@@ -42,7 +42,9 @@ class AdminController extends Controller
 
         // Real category-based data
         $categories = WasteCategory::all();
-        $chartLabels = $categories->pluck('name')->toArray();
+        $chartLabels = $categories->pluck('name')->map(function($name) {
+            return __($name);
+        })->toArray();
         $chartValues = [];
 
         foreach ($categories as $cat) {
@@ -62,11 +64,46 @@ class AdminController extends Controller
     /**
      * Driver Management — view and create drivers
      */
-    public function drivers()
+    public function drivers(Request $request)
     {
-        $drivers = User::where('role', 'driver')->latest()->get();
+        $sort = $request->query('sort', 'default');
+        $status = $request->query('status', 'all');
+
+        $query = User::where('role', 'driver')
+            ->with('driverApplication')
+            ->withCount(['driverPickups as completed_jobs' => function($q) {
+                $q->where('status', 'completed');
+            }])
+            ->withSum(['driverPickups as collected_weight' => function($q) {
+                $q->where('status', 'completed');
+            }], 'total_weight');
+
+        if ($status === 'online') {
+            $query->where('driver_status', 'online');
+        } elseif ($status === 'offline') {
+            $query->where('driver_status', 'offline');
+        }
+
+        switch ($sort) {
+            case 'date_asc':
+                $query->orderBy('created_at', 'asc');
+                break;
+            case 'name_desc':
+                $query->orderBy('name', 'desc');
+                break;
+            case 'name_asc':
+                $query->orderBy('name', 'asc');
+                break;
+            case 'date_desc':
+            case 'default':
+            default:
+                $query->latest();
+                break;
+        }
+
+        $drivers = $query->get();
         $applications = DriverApplication::with('user')->where('status', 'pending')->latest()->get();
-        return view('admin.drivers', compact('drivers', 'applications'));
+        return view('admin.drivers', compact('drivers', 'applications', 'sort', 'status'));
     }
 
     /**
@@ -91,24 +128,26 @@ class AdminController extends Controller
     }
 
     /**
-     * Store a new driver account
+     * Revoke Driver Status — revert to user and delete application
      */
-    public function storeDriver(Request $request)
+    public function revokeDriver(User $driver)
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        if ($driver->role !== 'driver') {
+            return redirect()->route('admin.drivers')->withErrors(['error' => 'User is not a driver.']);
+        }
+
+        // Change role back to user
+        $driver->update([
+            'role' => 'user',
+            'driver_status' => 'offline'
         ]);
 
-        User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => 'driver',
-        ]);
+        // Delete their driver application so they have to start fresh if they want to apply again
+        if ($driver->driverApplication) {
+            $driver->driverApplication()->delete();
+        }
 
-        return redirect()->route('admin.drivers')->with('success', 'Akun Eco-Driver berhasil dibuat!');
+        return redirect()->route('admin.drivers')->with('success', "Status Mitra Driver untuk {$driver->name} berhasil diberhentikan. Mereka sekarang adalah User biasa.");
     }
 
     /**

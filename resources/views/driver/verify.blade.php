@@ -47,15 +47,22 @@
                 <form action="{{ route('driver.verify.store', $pickup->id) }}" method="POST">
                     @csrf
 
-                    <div class="mb-6">
-                        <label class="block text-sm font-bold text-gray-700 mb-2">{{ __('Verified Category') }}</label>
-                        <select name="category_id" x-model="categoryId"
-                                class="w-full rounded-2xl border border-gray-200 shadow-sm focus:border-primary focus:ring-primary focus:ring-4 focus:ring-primary/20 text-lg font-bold py-4 bg-white/70 transition-all cursor-pointer" required>
-                            <option value="">-- {{ __('Select Category') }} --</option>
+                    <div class="mb-8">
+                        <label class="block text-sm font-bold text-gray-700 mb-4">{{ __('Verified Category') }}</label>
+                        <div class="flex flex-wrap justify-center gap-4">
                             @foreach($categories as $category)
-                                <option value="{{ $category->id }}">{{ __($category->name) }} ({{ number_format($category->price_per_kg, 0, ',', '.') }} {{ __('Coins/kg') }})</option>
+                                <div class="relative group w-[calc(50%-0.5rem)] md:w-[calc((100%-2rem)/3)]">
+                                    <input type="radio" name="category_id" id="cat_{{ $category->id }}" value="{{ $category->id }}" x-model="categoryId" class="peer hidden" required>
+                                    <label for="cat_{{ $category->id }}" class="block text-center cursor-pointer bg-white/60 border border-gray-200 shadow-sm rounded-2xl p-4 hover:border-emerald-300 peer-checked:border-primary peer-checked:border-2 peer-checked:bg-emerald-50/80 peer-checked:shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-lg active:scale-95 h-full flex flex-col items-center justify-center">
+                                        <div class="mb-2 opacity-90 group-hover:scale-110 transition-transform flex justify-center text-emerald-600">
+                                            <x-category-icon :category="$category" class="w-10 h-10" />
+                                        </div>
+                                        <div class="font-bold text-sm text-secondary">{{ __($category->name) }}</div>
+                                        <div class="text-xs text-primary mt-1 font-bold">{{ number_format($category->price_per_kg, 0, ',', '.') }} {{ __('Coins/kg') }}</div>
+                                    </label>
+                                </div>
                             @endforeach
-                        </select>
+                        </div>
                     </div>
 
                     <div class="mb-10">
@@ -79,8 +86,9 @@
                     </div>
 
                     <button type="submit"
-                            class="w-full py-5 bg-gradient-to-r from-primary to-emerald-500 text-white font-bold rounded-full btn-premium text-xl shadow-lg shadow-emerald-500/30">
-                        ✅ {{ __('Complete & Transfer Coins') }}
+                            class="w-full py-5 bg-gradient-to-r from-primary to-emerald-500 text-white font-bold rounded-full btn-premium text-xl shadow-lg shadow-emerald-500/30 flex items-center justify-center gap-3 transition-transform hover:scale-[1.02] active:scale-95 group">
+                        <svg class="w-6 h-6 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        {{ __('Complete & Transfer Coins') }}
                     </button>
                 </form>
 

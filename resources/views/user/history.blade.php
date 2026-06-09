@@ -11,13 +11,13 @@
                 <!-- Top Level Tabs -->
                 <div x-data="{
                         currentLine: 'pesanan',
-                        lineStyle: { opacity: 0 },
+                        lineStyle: { left: '0px', width: '130px', opacity: 1 },
                         lineColor: 'bg-primary',
                         updateLine(tab) {
                             this.currentLine = tab;
                             this.lineColor = tab === 'penukaran' ? 'bg-amber-500' : 'bg-primary';
                             let el = this.$refs['tab_' + tab];
-                            if (el) {
+                            if (el && el.offsetWidth > 0) {
                                 this.lineStyle = {
                                     left: el.offsetLeft + 'px',
                                     width: el.offsetWidth + 'px',
@@ -26,7 +26,8 @@
                             }
                         },
                         init() {
-                            setTimeout(() => this.updateLine(this.mainTab), 50);
+                            this.$nextTick(() => this.updateLine(this.mainTab));
+                            setTimeout(() => this.updateLine(this.mainTab), 100);
                             window.addEventListener('resize', () => this.updateLine(this.mainTab));
                             this.$watch('mainTab', value => this.updateLine(value));
                         }
@@ -42,8 +43,9 @@
                     <button @click="mainTab = 'pesanan'" 
                             x-ref="tab_pesanan"
                             @mouseenter="updateLine('pesanan')"
-                            class="pb-3 text-sm font-bold flex items-center gap-2 transition-colors duration-200 focus:outline-none whitespace-nowrap"
-                            :class="currentLine === 'pesanan' ? 'text-primary' : 'text-gray-500 hover:text-gray-700'">
+                            class="pb-3 text-sm transition-colors duration-300 outline-none focus:outline-none focus:ring-0 flex items-center gap-2 whitespace-nowrap"
+                            :class="currentLine === 'pesanan' ? 'text-primary font-bold' : 'text-gray-400 font-bold hover:text-gray-700'"
+                            style="-webkit-tap-highlight-color: transparent;">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg> 
                         {{ __('Order History') }}
                     </button>
@@ -51,8 +53,9 @@
                     <button @click="mainTab = 'penukaran'" 
                             x-ref="tab_penukaran"
                             @mouseenter="updateLine('penukaran')"
-                            class="pb-3 text-sm font-bold flex items-center gap-2 transition-colors duration-200 focus:outline-none whitespace-nowrap"
-                            :class="currentLine === 'penukaran' ? 'text-amber-500' : 'text-gray-500 hover:text-gray-700'">
+                            class="pb-3 text-sm transition-colors duration-300 outline-none focus:outline-none focus:ring-0 flex items-center gap-2 whitespace-nowrap"
+                            :class="currentLine === 'penukaran' ? 'text-amber-500 font-bold' : 'text-gray-400 font-bold hover:text-gray-700'"
+                            style="-webkit-tap-highlight-color: transparent;">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8v8m0-8V6m0 12v-2m0 0v-2"></path></svg> 
                         {{ __('Redemption History') }}
                     </button>
@@ -75,11 +78,11 @@
                     <!-- Tabs -->
                     <div x-data="{
                             currentSub: 'active',
-                            subLineStyle: { opacity: 0 },
+                            subLineStyle: { left: '0%', width: '50%', opacity: 1 },
                             updateSubLine(subTab) {
                                 this.currentSub = subTab;
                                 let el = this.$refs['subtab_' + subTab];
-                                if (el) {
+                                if (el && el.offsetWidth > 0) {
                                     this.subLineStyle = {
                                         left: el.offsetLeft + 'px',
                                         width: el.offsetWidth + 'px',
@@ -88,8 +91,10 @@
                                 }
                             },
                             init() {
-                                setTimeout(() => this.updateSubLine(this.tab), 50);
-                                window.addEventListener('resize', () => this.updateSubLine(this.tab));
+                                this.currentSub = tab;
+                                this.$nextTick(() => this.updateSubLine(this.currentSub));
+                                setTimeout(() => this.updateSubLine(this.currentSub), 100);
+                                window.addEventListener('resize', () => this.updateSubLine(this.currentSub));
                                 this.$watch('tab', value => this.updateSubLine(value));
                             }
                         }"
@@ -103,16 +108,18 @@
                         <button @click="tab = 'active'" 
                                 x-ref="subtab_active"
                                 @mouseenter="updateSubLine('active')"
-                                class="w-1/2 pb-3 font-bold text-sm transition-colors duration-200 focus:outline-none text-center"
-                                :class="currentSub === 'active' ? 'text-primary' : 'text-gray-500 hover:text-gray-700'">
+                                class="w-1/2 pb-3 text-sm transition-colors duration-300 outline-none focus:outline-none focus:ring-0 text-center"
+                                :class="currentSub === 'active' ? 'text-primary font-bold' : 'text-gray-400 font-bold hover:text-gray-700'"
+                                style="-webkit-tap-highlight-color: transparent;">
                             {{ __('Active') }}
                         </button>
                         
                         <button @click="tab = 'completed'" 
                                 x-ref="subtab_completed"
                                 @mouseenter="updateSubLine('completed')"
-                                class="w-1/2 pb-3 font-bold text-sm transition-colors duration-200 focus:outline-none text-center"
-                                :class="currentSub === 'completed' ? 'text-primary' : 'text-gray-500 hover:text-gray-700'">
+                                class="w-1/2 pb-3 text-sm transition-colors duration-300 outline-none focus:outline-none focus:ring-0 text-center"
+                                :class="currentSub === 'completed' ? 'text-primary font-bold' : 'text-gray-400 font-bold hover:text-gray-700'"
+                                style="-webkit-tap-highlight-color: transparent;">
                             {{ __('History') }}
                         </button>
                     </div>

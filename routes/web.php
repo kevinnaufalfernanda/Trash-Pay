@@ -60,9 +60,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
     Route::get('/analytics', [AdminController::class, 'analytics'])->name('analytics');
     Route::get('/drivers', [AdminController::class, 'drivers'])->name('drivers');
-    Route::post('/drivers', [AdminController::class, 'storeDriver'])->name('drivers.store');
     Route::post('/drivers/{application}/approve', [AdminController::class, 'approveDriverApplication'])->name('drivers.approve');
     Route::post('/drivers/{application}/reject', [AdminController::class, 'rejectDriverApplication'])->name('drivers.reject');
+    Route::post('/drivers/{driver}/revoke', [AdminController::class, 'revokeDriver'])->name('drivers.revoke');
     Route::get('/pricing', [AdminController::class, 'pricing'])->name('pricing');
     Route::post('/pricing/{category}', [AdminController::class, 'updatePricing'])->name('pricing.update');
     Route::get('/payouts', [AdminController::class, 'payouts'])->name('payouts');

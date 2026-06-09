@@ -49,7 +49,44 @@
                         </div>
                     </div>
 
-                    <form action="{{ route('driver.redeem.store') }}" method="POST" x-data="{ amount: '', max: {{ $driver->coin_balance }}, accountNumber: '{{ $driver->payment_number }}', savedNumber: '{{ $driver->payment_number }}', confirmedNumber: false }">
+                    <form action="{{ route('driver.redeem.store') }}" method="POST" novalidate
+                          @submit.prevent="
+                              if ($el.checkValidity()) {
+                                  if ((accountNumber !== savedNumber && !confirmedNumber) || (savedNumber === '' && !confirmedNumber)) {
+                                      triggerToast('{{ __('Please confirm your phone number by checking the box.') }}');
+                                      let confirmBox = document.getElementById('confirm_number') || document.getElementById('confirm_new_number');
+                                      if (confirmBox) confirmBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                      return;
+                                  }
+                                  $el.submit();
+                              } else {
+                                  let firstInvalid = $el.querySelector(':invalid');
+                                  if (firstInvalid) {
+                                      let msg = '{{ __('Please complete all required fields.') }}';
+                                      if (firstInvalid.type === 'radio') msg = '{{ __('Please select an e-wallet provider.') }}';
+                                      if (firstInvalid.type === 'number') msg = '{{ __('Please enter a valid coin amount (min 100).') }}';
+                                      if (firstInvalid.type === 'tel') msg = '{{ __('Please enter your phone number or target account.') }}';
+                                      
+                                      triggerToast(msg);
+                                      
+                                      let targetToScroll = firstInvalid;
+                                      if (firstInvalid.classList.contains('hidden') && firstInvalid.nextElementSibling) {
+                                          targetToScroll = firstInvalid.nextElementSibling;
+                                      }
+                                      targetToScroll.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                  }
+                              }
+                          "
+                          x-data="{ 
+                              amount: '', max: {{ $driver->coin_balance }}, accountNumber: '{{ $driver->payment_number }}', savedNumber: '{{ $driver->payment_number }}', confirmedNumber: false,
+                              toastMessage: '',
+                              showToast: false,
+                              triggerToast(msg) {
+                                  this.toastMessage = msg;
+                                  this.showToast = true;
+                                  setTimeout(() => this.showToast = false, 4000);
+                              }
+                          }">
                         @csrf
 
                         <div class="mb-6">
@@ -123,11 +160,32 @@
                         </div>
 
                         <button type="submit"
-                            class="w-full px-8 py-5 bg-gradient-to-r from-primary to-emerald-500 text-white font-bold text-lg rounded-full btn-premium disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] transition-all duration-300 hover:shadow-xl hover:shadow-primary/40 hover:-translate-y-1"
-                            x-bind:disabled="amount > max || amount < 100 || (accountNumber !== savedNumber && !confirmedNumber) || (savedNumber === '' && !confirmedNumber)"
-                            @if($driver->coin_balance < 100) disabled @endif>
+                            class="w-full px-8 py-5 bg-gradient-to-r from-primary to-emerald-500 text-white font-bold text-lg rounded-full btn-premium active:scale-[0.98] transition-all duration-300 hover:shadow-xl hover:shadow-primary/40 hover:-translate-y-1">
                             {{ __('Withdraw Now') }}
                         </button>
+                        
+                        <template x-teleport="body">
+                            <div x-show="showToast"
+                                 x-cloak
+                                 x-transition:enter="transition ease-out duration-500"
+                                 x-transition:enter-start="opacity-0 -translate-y-20 scale-95"
+                                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                                 x-transition:leave="transition ease-in duration-300"
+                                 x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                                 x-transition:leave-end="opacity-0 -translate-y-20 scale-95"
+                                 class="fixed top-8 left-1/2 -translate-x-1/2 z-[99999] w-[90%] max-w-md bg-red-600 rounded-2xl shadow-2xl border border-red-400 p-5 flex items-start gap-4">
+                                <div class="flex-shrink-0 text-white mt-0.5">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                </div>
+                                <div class="flex-1 text-white">
+                                    <h3 class="font-bold text-lg mb-1">{{ __('Attention') }}</h3>
+                                    <p class="text-sm font-medium text-red-100" x-text="toastMessage"></p>
+                                </div>
+                                <button @click="showToast = false" type="button" class="text-red-200 hover:text-white transition-colors p-1">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                </button>
+                            </div>
+                        </template>
                     </form>
                 </div>
             </div>

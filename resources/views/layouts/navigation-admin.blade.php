@@ -15,22 +15,100 @@
                 </div>
 
                 <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('admin.analytics')" :active="request()->routeIs('admin.analytics')">
-                        {{ __('Analytics') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('admin.pricing')" :active="request()->routeIs('admin.pricing')">
-                        {{ __('Pricing Control') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('admin.drivers')" :active="request()->routeIs('admin.drivers')">
-                        {{ __('Eco-Drivers') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('admin.payouts')" :active="request()->routeIs('admin.payouts')">
-                        {{ __('Payouts') }}
-                    </x-nav-link>
+                @php
+                    $activeRoute = '';
+                    if(request()->routeIs('admin.dashboard')) $activeRoute = 'admin.dashboard';
+                    if(request()->routeIs('admin.analytics')) $activeRoute = 'admin.analytics';
+                    if(request()->routeIs('admin.pricing')) $activeRoute = 'admin.pricing';
+                    if(request()->routeIs('admin.drivers')) $activeRoute = 'admin.drivers';
+                    if(request()->routeIs('admin.payouts')) $activeRoute = 'admin.payouts';
+                @endphp
+                <div class="hidden sm:flex sm:ms-10 items-center">
+                    <div x-data="{
+                            activeTab: '{{ $activeRoute }}',
+                            currentLine: '{{ $activeRoute }}',
+                            lineStyle: { opacity: 0 },
+                            updateLine(tab) {
+                                this.currentLine = tab;
+                                if (!tab) {
+                                    this.lineStyle = { opacity: 0 };
+                                    return;
+                                }
+                                let el = this.$refs['nav_' + tab.replace('.', '_')];
+                                if (el) {
+                                    this.lineStyle = {
+                                        left: el.offsetLeft + 'px',
+                                        width: el.offsetWidth + 'px',
+                                        opacity: 1
+                                    };
+                                } else {
+                                    this.lineStyle = { opacity: 0 };
+                                }
+                            },
+                            navigate(tab, url) {
+                                this.activeTab = tab;
+                                this.updateLine(tab);
+                                setTimeout(() => {
+                                    window.location.href = url;
+                                }, 250);
+                            },
+                            init() {
+                                setTimeout(() => this.updateLine(this.activeTab), 50);
+                                window.addEventListener('resize', () => this.updateLine(this.activeTab));
+                            }
+                        }" 
+                        @mouseleave="updateLine(activeTab)"
+                        class="flex space-x-8 h-16 relative">
+                        
+                        <!-- Sliding Bottom Line -->
+                        <div class="absolute bottom-0 h-1 bg-primary rounded-t-md transition-all duration-300 ease-out"
+                             :style="lineStyle"></div>
+                        
+                        <a href="{{ route('admin.dashboard') }}" 
+                           x-ref="nav_admin_dashboard"
+                           @mouseenter="updateLine('admin.dashboard')"
+                           @click.prevent="navigate('admin.dashboard', '{{ route('admin.dashboard') }}')"
+                           class="inline-flex items-center px-1 pt-1 text-sm font-bold transition-colors duration-200"
+                           :class="currentLine === 'admin.dashboard' ? 'text-primary' : 'text-gray-500 hover:text-gray-700'">
+                            {{ __('Dashboard') }}
+                        </a>
+                        
+                        <a href="{{ route('admin.analytics') }}" 
+                           x-ref="nav_admin_analytics"
+                           @mouseenter="updateLine('admin.analytics')"
+                           @click.prevent="navigate('admin.analytics', '{{ route('admin.analytics') }}')"
+                           class="inline-flex items-center px-1 pt-1 text-sm font-bold transition-colors duration-200"
+                           :class="currentLine === 'admin.analytics' ? 'text-primary' : 'text-gray-500 hover:text-gray-700'">
+                            {{ __('Analytics') }}
+                        </a>
+                        
+                        <a href="{{ route('admin.pricing') }}" 
+                           x-ref="nav_admin_pricing"
+                           @mouseenter="updateLine('admin.pricing')"
+                           @click.prevent="navigate('admin.pricing', '{{ route('admin.pricing') }}')"
+                           class="inline-flex items-center px-1 pt-1 text-sm font-bold transition-colors duration-200"
+                           :class="currentLine === 'admin.pricing' ? 'text-primary' : 'text-gray-500 hover:text-gray-700'">
+                            {{ __('Pricing Control') }}
+                        </a>
+                        
+                        <a href="{{ route('admin.drivers') }}" 
+                           x-ref="nav_admin_drivers"
+                           @mouseenter="updateLine('admin.drivers')"
+                           @click.prevent="navigate('admin.drivers', '{{ route('admin.drivers') }}')"
+                           class="inline-flex items-center px-1 pt-1 text-sm font-bold transition-colors duration-200"
+                           :class="currentLine === 'admin.drivers' ? 'text-primary' : 'text-gray-500 hover:text-gray-700'">
+                            {{ __('Eco-Drivers') }}
+                        </a>
+                        
+                        <a href="{{ route('admin.payouts') }}" 
+                           x-ref="nav_admin_payouts"
+                           @mouseenter="updateLine('admin.payouts')"
+                           @click.prevent="navigate('admin.payouts', '{{ route('admin.payouts') }}')"
+                           class="inline-flex items-center px-1 pt-1 text-sm font-bold transition-colors duration-200"
+                           :class="currentLine === 'admin.payouts' ? 'text-primary' : 'text-gray-500 hover:text-gray-700'">
+                            {{ __('Payouts') }}
+                        </a>
+                    </div>
                 </div>
             </div>
 

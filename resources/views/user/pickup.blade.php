@@ -31,8 +31,37 @@
                     </div>
                 @endif
 
-                <form action="{{ route('user.pickup.store') }}" method="POST" enctype="multipart/form-data"
+                <form action="{{ route('user.pickup.store') }}" method="POST" enctype="multipart/form-data" novalidate
+                      @submit.prevent="
+                          if ($el.checkValidity()) {
+                              $el.submit();
+                          } else {
+                              let firstInvalid = $el.querySelector(':invalid');
+                              if (firstInvalid) {
+                                  let msg = '{{ __('Please complete all required fields.') }}';
+                                  if (firstInvalid.type === 'file') msg = '{{ __('Please upload the required waste photo first.') }}';
+                                  if (firstInvalid.type === 'radio') msg = '{{ __('Please select a waste category first.') }}';
+                                  triggerToast(msg);
+                                  
+                                  let targetToScroll = firstInvalid;
+                                  if (firstInvalid.type === 'radio') {
+                                      let catSection = document.getElementById('category-section');
+                                      if (catSection) targetToScroll = catSection;
+                                  } else if (firstInvalid.classList.contains('hidden') && firstInvalid.nextElementSibling) {
+                                      targetToScroll = firstInvalid.nextElementSibling;
+                                  }
+                                  targetToScroll.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                              }
+                          }
+                      "
                       x-data="{
+                          toastMessage: '',
+                          showToast: false,
+                          triggerToast(msg) {
+                              this.toastMessage = msg;
+                              this.showToast = true;
+                              setTimeout(() => this.showToast = false, 4000);
+                          },
                           scanning: false,
                           scanned: false,
                           resultCategory: '',
@@ -377,7 +406,7 @@
                     </div>
 
                     {{-- Step 2: Confirm Category (auto-selected by AI, can override) --}}
-                    <div class="mb-10">
+                    <div class="mb-10" id="category-section">
                         <div class="flex items-center gap-3 mb-2">
                             <span class="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white text-sm font-bold shadow-[0_2px_0_0_#047857]">2</span>
                             <label class="text-lg font-serif font-bold text-secondary">{{ __('Confirm Category') }}</label>
@@ -497,36 +526,121 @@
                             class="w-full px-8 py-5 mt-8 bg-gradient-to-r from-primary to-emerald-500 text-white font-bold rounded-full btn-premium text-lg active:scale-[0.98] transition-all duration-300 hover:shadow-xl hover:shadow-primary/40 hover:-translate-y-1">
                         {{ __('Call Driver Now') }}
                     </button>
+
+                    <template x-teleport="body">
+                        <div x-show="showToast"
+                             x-cloak
+                             x-transition:enter="transition ease-out duration-500"
+                             x-transition:enter-start="opacity-0 -translate-y-20 scale-95"
+                             x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                             x-transition:leave="transition ease-in duration-300"
+                             x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                             x-transition:leave-end="opacity-0 -translate-y-20 scale-95"
+                             class="fixed top-8 left-1/2 -translate-x-1/2 z-[99999] w-[90%] max-w-md bg-red-600 rounded-2xl shadow-2xl border border-red-400 p-5 flex items-start gap-4">
+                            <div class="flex-shrink-0 text-white mt-0.5">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                            </div>
+                            <div class="flex-1 text-white">
+                                <h3 class="font-bold text-lg mb-1">{{ __('Attention') }}</h3>
+                                <p class="text-sm font-medium text-red-100" x-text="toastMessage"></p>
+                            </div>
+                            <button @click="showToast = false" type="button" class="text-red-200 hover:text-white transition-colors p-1">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </button>
+                        </div>
+                    </template>
                 </form>
             </div>
         </div>
 
         {{-- Pickup History Sidebar --}}
         <div class="lg:col-span-1">
-            <div x-data="{ tab: 'active' }">
-                <div class="glass-panel rounded-3xl p-8 relative overflow-hidden">
+            <div x-data="{
+                tab: 'active',
+                dragStartX: null,
+                onDragStart(e) {
+                    this.dragStartX = e.touches ? e.touches[0].clientX : e.clientX;
+                },
+                onDragEnd(e) {
+                    if (this.dragStartX === null) return;
+                    const endX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
+                    const diff = this.dragStartX - endX;
+                    if (Math.abs(diff) > 50) {
+                        if (diff > 0 && this.tab === 'active') this.tab = 'completed';
+                        if (diff < 0 && this.tab === 'completed') this.tab = 'active';
+                    }
+                    this.dragStartX = null;
+                }
+            }">
+                <div class="glass-panel rounded-3xl p-8 relative overflow-hidden"
+                     @touchstart="onDragStart($event)"
+                     @touchend="onDragEnd($event)"
+                     @mousedown="onDragStart($event)"
+                     @mouseup="onDragEnd($event)">
                     <h3 class="text-xl font-serif font-bold mb-4 text-secondary flex items-center justify-between">
-                        <span class="flex items-center gap-2">{{ __('Your Orders') }} 
-                            <svg class="w-6 h-6 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"></path></svg>
-                        </span>
+                        <span class="flex items-center gap-2">{{ __('Your Orders') }}</span>
                     </h3>
 
                     <!-- Tabs -->
-                    <div class="flex border-b border-gray-200 mb-6">
-                        <button @click="tab = 'active'" 
-                                :class="{ 'border-primary text-primary': tab === 'active', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': tab !== 'active' }"
-                                class="w-1/2 pb-3 border-b-2 font-bold text-sm transition-all focus:outline-none text-center">
+                    <div class="relative flex mb-6 select-none"
+                         x-data="{
+                             currentLine: 'active',
+                             lineStyle: { left: '0%', width: '50%', opacity: 1 },
+                             updateLine(t) {
+                                 this.currentLine = t;
+                                 let el = this.$refs['tab_' + t];
+                                 if (el && el.offsetWidth > 0) {
+                                     this.lineStyle = {
+                                         left: el.offsetLeft + 'px',
+                                         width: el.offsetWidth + 'px',
+                                         opacity: 1
+                                     };
+                                 }
+                             },
+                             init() {
+                                 this.currentLine = tab;
+                                 this.$nextTick(() => this.updateLine(this.currentLine));
+                                 setTimeout(() => this.updateLine(this.currentLine), 100);
+                                 this.$watch('tab', value => this.updateLine(value));
+                                 window.addEventListener('resize', () => this.updateLine(this.currentLine));
+                             }
+                         }"
+                         @mouseleave="updateLine(tab)">
+                        
+                        <!-- Sliding underline indicator (follows hover) -->
+                        <div class="absolute bottom-0 h-1 bg-primary rounded-full transition-all duration-300 ease-out z-10"
+                             :style="lineStyle">
+                        </div>
+                        <!-- Static gray base line -->
+                        <div class="absolute bottom-0 left-0 w-full h-px bg-gray-200"></div>
+
+                        <button x-ref="tab_active"
+                                @click="tab = 'active'"
+                                @mouseenter="updateLine('active')"
+                                :class="currentLine === 'active' ? 'text-primary font-bold' : 'text-gray-400 font-bold hover:text-gray-700'"
+                                class="w-1/2 pb-3 text-sm transition-colors duration-300 outline-none focus:outline-none focus:ring-0 text-center"
+                                style="-webkit-tap-highlight-color: transparent;">
                             {{ __('Active') }}
                         </button>
-                        <button @click="tab = 'completed'" 
-                                :class="{ 'border-primary text-primary': tab === 'completed', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': tab !== 'completed' }"
-                                class="w-1/2 pb-3 border-b-2 font-bold text-sm transition-all focus:outline-none text-center">
+                        
+                        <button x-ref="tab_completed"
+                                @click="tab = 'completed'"
+                                @mouseenter="updateLine('completed')"
+                                :class="currentLine === 'completed' ? 'text-primary font-bold' : 'text-gray-400 font-bold hover:text-gray-700'"
+                                class="w-1/2 pb-3 text-sm transition-colors duration-300 outline-none focus:outline-none focus:ring-0 text-center"
+                                style="-webkit-tap-highlight-color: transparent;">
                             {{ __('History') }}
                         </button>
                     </div>
 
                     <!-- Active Tab -->
-                    <div x-show="tab === 'active'">
+                    <div x-show="tab === 'active'"
+                         x-transition:enter="transition ease-out duration-300"
+                         x-transition:enter-start="opacity-0 -translate-x-4"
+                         x-transition:enter-end="opacity-100 translate-x-0"
+                         x-transition:leave="transition ease-in duration-200"
+                         x-transition:leave-start="opacity-100 translate-x-0"
+                         x-transition:leave-end="opacity-0 -translate-x-4">
                         @php $activePickupsList = $pickups->whereIn('status', ['pending', 'on-the-way']); @endphp
                         @if($activePickupsList->isEmpty())
                             <p class="text-gray-500 text-sm text-center py-4">{{ __('No active pickups.') }}</p>
@@ -545,7 +659,13 @@
                     </div>
 
                     <!-- Completed Tab -->
-                    <div x-show="tab === 'completed'" style="display: none;">
+                    <div x-show="tab === 'completed'" style="display: none;"
+                         x-transition:enter="transition ease-out duration-300"
+                         x-transition:enter-start="opacity-0 translate-x-4"
+                         x-transition:enter-end="opacity-100 translate-x-0"
+                         x-transition:leave="transition ease-in duration-200"
+                         x-transition:leave-start="opacity-100 translate-x-0"
+                         x-transition:leave-end="opacity-0 translate-x-4">
                         @php $completedPickupsList = $pickups->whereIn('status', ['completed', 'rejected', 'cancelled']); @endphp
                         @if($completedPickupsList->isEmpty())
                             <p class="text-gray-500 text-sm text-center py-4">{{ __('No pickup history yet.') }}</p>
