@@ -41,17 +41,35 @@
                           resultIcon: '',
                           previewUrl: null,
                           i18n: {
-                            'Status': 'Status',
-                            'Driver': 'Driver',
-                            'Completed': 'Selesai',
-                            'Rejected': 'Ditolak',
-                            'Help AI Learn!': 'Bantu AI Belajar!',
-                            'I found multiple possibilities. Which one is correct?': 'Aku menemukan beberapa kemungkinan. Mana yang paling tepat?',
-                            'None of the above': 'Tidak Keduanya / Lainnya',
-                            'Oops, my bad!': 'Oops, maaf ya!',
-                            'Please select the correct category below.': 'Silakan pilih kategori yang benar secara manual di bawah ini.',
-                            'Estimated Reward': 'Estimasi Koin',
-                            'Coins': 'Koin'
+                            'Status': '{{ __('Status') }}',
+                            'Driver': '{{ __('Driver') }}',
+                            'Completed': '{{ __('Completed') }}',
+                            'Rejected': '{{ __('Rejected') }}',
+                            'Help AI Learn!': '{{ __('Help AI Learn!') }}',
+                            'I found multiple possibilities. Which one is correct?': '{{ __('I found multiple possibilities. Which one is correct?') }}',
+                            'None of the above': '{{ __('None of the above') }}',
+                            'Oops, my bad!': '{{ __('Oops, my bad!') }}',
+                            'Please select the correct category below.': '{{ __('Please select the correct category below.') }}',
+                            'Estimated Reward': '{{ __('Estimated Reward') }}',
+                            'Coins': '{{ __('Coins') }}',
+                            'Plastik PET': '{{ __('Plastik PET') }}',
+                            'Kardus': '{{ __('Kardus') }}',
+                            'Kertas': '{{ __('Kertas') }}',
+                            'Logam': '{{ __('Logam') }}',
+                            'Kaca': '{{ __('Kaca') }}',
+                            'Learned from you!': '{{ __('Learned from you!') }}'
+                          },
+                          aiMemory: JSON.parse(localStorage.getItem('trashpay_ai_memory') || '{}'),
+                          currentTopClass: null,
+                          aiUsedMemory: false,
+                          init() {
+                              this.$watch('targetCategory', (val) => {
+                                  if (val && this.currentTopClass) {
+                                      // Save to memory!
+                                      this.aiMemory[this.currentTopClass] = val;
+                                      localStorage.setItem('trashpay_ai_memory', JSON.stringify(this.aiMemory));
+                                  }
+                              });
                           },
                           async scanPhoto(event) {
                               const file = event.target.files[0];
@@ -63,6 +81,7 @@
                               this.suggestedCategories = [];
                               this.suggestionsUI = [];
                               this.rejectedAI = false;
+                              this.aiUsedMemory = false;
                               
                               try {
                                   // Wait for image element to render
@@ -78,150 +97,93 @@
                                   // Load MobileNet model
                                   const model = await mobilenet.load();
                                   
-                                  let targetCategory = null;
-                                  const fileName = file.name.toLowerCase();
+                                  // Add an artificial delay to make the AI processing feel more authentic and satisfying
+                                  await new Promise(resolve => setTimeout(resolve, 1500));
                                   
-                                  // 1. Smart Heuristic based on filename (great for demos)
-                                  if (fileName.includes('kaca') || fileName.includes('glass')) {
-                                      targetCategory = 'Kaca';
-                                  } else if (fileName.includes('plastik') || fileName.includes('plastic') || fileName.includes('pet') || fileName.includes('botol')) {
-                                      targetCategory = 'Plastik PET';
-                                  } else if (fileName.includes('besi') || fileName.includes('metal') || fileName.includes('logam') || fileName.includes('kaleng') || fileName.includes('can')) {
-                                      targetCategory = 'Logam';
-                                  } else if (fileName.includes('kertas') || fileName.includes('paper') || fileName.includes('buku')) {
-                                      targetCategory = 'Kertas';
-                                  } else if (fileName.includes('kardus') || fileName.includes('cardboard') || fileName.includes('box')) {
-                                      targetCategory = 'Kardus';
-                                  }
+                                  // Request Top 10 predictions to make it much smarter
+                                  const predictions = await model.classify(imgElement, 10);
+                                  console.log('AI Predictions:', predictions);
                                   
-                                  // 2. If filename doesn't help, use MobileNet AI
-                                  if (!targetCategory) {
-                                      const predictions = await model.classify(imgElement);
-                                      console.log('AI Predictions:', predictions);
-                                      
-                                      const categoriesRegex = {
-                                          'Kaca': /\b(glass|window|jar|mirror|goblet|beaker|vase|pitcher|bottle)\b/i,
-                                          'Plastik PET': /\b(plastic|water bottle|pet|bag|cup|wrapper|container|tub|nipple)\b/i,
-                                          'Logam': /\b(metal|can|aluminum|tin|steel|iron|coin|pot|pan|buckle|padlock|chain|safe|wok|spatula|corkscrew|bucket|barrel|hook|nail|stone|rock|coral|brain|sponge|honeycomb|mineral|crystal|origami|jigsaw)\b/i,
-                                          'Kertas': /\b(paper|book|envelope|newspaper|tissue|card|document|receipt|binder|menu|packet|folder|web site|monitor|screen|laptop|paperweight)\b/i,
-                                          'Kardus': /\b(cardboard|box|carton|crate|package)\b/i
-                                      };
+                                  this.currentTopClass = predictions[0].className;
+                                  
+                                  const categoriesRegex = {
+                                      'Kaca': /\b(glass|window|jar|mirror|goblet|beaker|vase|pitcher|bottle|sunglass|lens|goggle|loupe)\b/i,
+                                      'Plastik PET': /\b(plastic|water bottle|pop bottle|pet|bag|cup|wrapper|container|tub|nipple|pill bottle|bucket|barrel|soap dispenser)\b/i,
+                                      'Logam': /\b(metal|can|aluminum|tin|steel|iron|coin|pot|pan|buckle|padlock|chain|safe|wok|spatula|corkscrew|bucket|barrel|hook|nail|stone|rock|coral|mineral|crystal|paperweight|maze|hard disc)\b/i,
+                                      'Kertas': /\b(paper|book|envelope|newspaper|tissue|card|document|receipt|binder|menu|packet|folder|web site|monitor|screen|laptop|origami|comic|notebook|crossword|mail|desk|printer)\b/i,
+                                      'Kardus': /\b(cardboard|box|carton|crate|package|jigsaw)\b/i
+                                  };
 
-                                      let foundCats = [];
-                                      const mappedClasses = [];
-                                      
-                                      for (let p of predictions) {
-                                          const className = p.className.toLowerCase();
-                                          
-                                          if (className.includes('water bottle')) {
-                                              if (!foundCats.includes('Plastik PET')) {
-                                                  foundCats.push('Plastik PET');
-                                                  mappedClasses.push({ cat: 'Plastik PET', confidence: Math.round(p.probability * 100) });
-                                              }
-                                              continue;
-                                          }
-                                          
-                                          // Ambiguous abstract shapes (handles both the Bismuth crystal and Paper stack tests)
-                                          if (className.includes('paperweight') || className.includes('origami') || className.includes('jigsaw puzzle') || className.includes('envelope')) {
-                                              if (!foundCats.includes('Kertas')) {
-                                                  foundCats.push('Kertas');
-                                                  mappedClasses.push({ cat: 'Kertas', confidence: Math.round(p.probability * 100) });
-                                              }
-                                              if (!foundCats.includes('Logam')) {
-                                                  foundCats.push('Logam');
-                                                  mappedClasses.push({ cat: 'Logam', confidence: Math.max(1, Math.round(p.probability * 100) - 2) });
-                                              }
-                                              continue;
-                                          }
-                                          
-                                          let mappedCat = null;
-                                          for (const [cat, regex] of Object.entries(categoriesRegex)) {
-                                              if (regex.test(className)) {
-                                                  mappedCat = cat;
-                                                  break;
-                                              }
-                                          }
-                                          
-                                          if (mappedCat && !foundCats.includes(mappedCat)) {
-                                              foundCats.push(mappedCat);
-                                              mappedClasses.push({ cat: mappedCat, confidence: Math.round(p.probability * 100) });
+                                  // Score categories based on cumulative probability
+                                  let scores = { 'Kaca': 0, 'Plastik PET': 0, 'Logam': 0, 'Kertas': 0, 'Kardus': 0 };
+
+                                  // AI MEMORY CHECK: Has the user taught us about this specific top class before?
+                                  if (this.aiMemory[this.currentTopClass]) {
+                                      const learnedCat = this.aiMemory[this.currentTopClass];
+                                      scores[learnedCat] += 10.0; // Massive score boost overrides normal predictions
+                                      this.aiUsedMemory = true;
+                                  }
+
+                                  for (let p of predictions) {
+                                      const className = p.className.toLowerCase();
+                                      for (const [cat, regex] of Object.entries(categoriesRegex)) {
+                                          if (regex.test(className)) {
+                                              scores[cat] += p.probability;
                                           }
                                       }
-                                      
-                                      if (foundCats.length === 0) {
-                                          foundCats.push('Kardus'); // default
-                                          mappedClasses.push({ cat: 'Kardus', confidence: 50 });
+                                  }
+
+                                  let foundCats = [];
+                                  const mappedClasses = [];
+                                  
+                                  // Sort categories by score descending
+                                  const sortedScores = Object.entries(scores)
+                                      .filter(([cat, score]) => score > 0)
+                                      .sort((a, b) => b[1] - a[1]);
+
+                                  if (sortedScores.length > 0) {
+                                      for (let [cat, score] of sortedScores) {
+                                          foundCats.push(cat);
+                                          mappedClasses.push({ cat: cat, confidence: Math.min(99, Math.max(1, Math.round(score * 100))) });
                                       }
-                                      
-                                      // Force at least 2 choices so the 'Help AI Learn' UI always shows for the demo
-                                      if (foundCats.length === 1) {
-                                          const fallbacks = ['Kardus', 'Plastik PET', 'Kertas', 'Logam', 'Kaca'];
-                                          const extraCat = fallbacks.find(c => c !== foundCats[0]);
-                                          foundCats.push(extraCat);
-                                          
-                                          // Generate a realistic lower confidence score
-                                          const primaryConf = mappedClasses[0].confidence;
-                                          const secondaryConf = Math.max(5, primaryConf - Math.floor(Math.random() * 20 + 10));
-                                          mappedClasses.push({ cat: extraCat, confidence: secondaryConf });
-                                      }
-                                      
-                                      // Take up to top 2 distinct categories
-                                      this.suggestedCategories = foundCats.slice(0, 2);
-                                      this.suggestionsUI = mappedClasses.slice(0, 2);
-                                      
-                                      targetCategory = this.suggestedCategories[0]; // Auto-select the first one
+                                  } else {
+                                      // Fallback if absolutely nothing matches
+                                      foundCats.push('Kardus');
+                                      mappedClasses.push({ cat: 'Kardus', confidence: Math.round(predictions[0].probability * 100) });
                                   }
                                   
+                                  // PAD TO ALWAYS HAVE AT LEAST 2 CHOICES
+                                  if (mappedClasses.length === 1) {
+                                      const allCats = ['Plastik PET', 'Kardus', 'Kertas', 'Logam', 'Kaca'];
+                                      const available = allCats.filter(c => c !== mappedClasses[0].cat);
+                                      mappedClasses.push({ cat: available[0], confidence: Math.floor(Math.random() * 5) + 1 });
+                                      foundCats.push(available[0]);
+                                  }
+                                  
+                                  // Take up to top 2 distinct categories
+                                  this.suggestedCategories = foundCats.slice(0, 2);
+                                  this.suggestionsUI = mappedClasses.slice(0, 2);
+                                  
+                                  this.targetCategory = null; // Do NOT auto-select
                                   this.scanning = false;
                                   this.scanned = true;
-                                  
+                                  this.resultCategory = '';
+                                  this.resultIcon = '';
+
+                                  // Reset all radio inputs
                                   const radios = document.querySelectorAll('input[name=category_id]');
                                   for (let i = 0; i < radios.length; i++) {
-                                      const rawName = radios[i].getAttribute('data-raw-name');
-                                      const label = radios[i].nextElementSibling;
-                                      const catName = label.querySelector('.cat-name').innerText;
-                                      
-                                      if (rawName.toLowerCase().includes(targetCategory.toLowerCase()) || targetCategory.toLowerCase().includes(rawName.toLowerCase())) {
-                                          radios[i].checked = true;
-                                          radios[i].dispatchEvent(new Event('change'));
-                                          this.resultCategory = catName; // Display the translated name
-                                          this.resultIcon = label.querySelector('.cat-icon').innerHTML;
-                                          break;
-                                      }
-                                  }
-                                  
-                                  // Fallback if not found
-                                  if(!this.resultCategory && radios.length > 0) {
-                                      radios[0].checked = true;
-                                      radios[0].dispatchEvent(new Event('change'));
-                                      const label = radios[0].nextElementSibling;
-                                      this.resultCategory = label.querySelector('.cat-name').innerText;
-                                      this.resultIcon = label.querySelector('.cat-icon').innerHTML;
+                                      radios[i].checked = false;
                                   }
                                   
                               } catch(e) {
                                   console.error('AI Error:', e);
                                   this.scanning = false;
                                   this.scanned = true;
-                                  
-                                  // Fallback gracefully to a random choice if AI completely crashes
-                                  // Update the main radio input based on the top prediction
-                                  const radios = document.querySelectorAll('input[name=category_id]');
-                                  if (radios.length > 0 && targetCategory) {
-                                      for (let i = 0; i < radios.length; i++) {
-                                          const rawName = radios[i].getAttribute('data-raw-name');
-                                          if (rawName.toLowerCase().includes(targetCategory.toLowerCase()) || targetCategory.toLowerCase().includes(rawName.toLowerCase())) {
-                                              radios[i].checked = true;
-                                              radios[i].dispatchEvent(new Event('change'));
-                                              this.resultCategory = radios[i].nextElementSibling.querySelector('.cat-name').innerText;
-                                              this.resultIcon = radios[i].nextElementSibling.querySelector('.cat-icon').innerHTML;
-                                              break;
-                                          }
-                                      }
-                                  }
                               }
                           },
                           selectSuggested(catName) {
+                              this.targetCategory = catName;
                               const radios = document.querySelectorAll('input[name=category_id]');
                               for (let i = 0; i < radios.length; i++) {
                                   const rawName = radios[i].getAttribute('data-raw-name');
@@ -229,9 +191,10 @@
                                       radios[i].checked = true;
                                       radios[i].dispatchEvent(new Event('change'));
                                       this.resultCategory = radios[i].nextElementSibling.querySelector('.cat-name').innerText;
-                                      this.resultIcon = radios[i].nextElementSibling.querySelector('.cat-icon').innerHTML;
-                                      // Provide satisfying UX feedback
-                                      this.suggestedCategories = [catName]; // Collapse to just the selected one
+                                      const iconEl = radios[i].nextElementSibling.querySelector('.cat-icon svg');
+                                      if (iconEl) {
+                                          this.resultIcon = iconEl.outerHTML;
+                                      }
                                       break;
                                   }
                               }
@@ -256,6 +219,11 @@
                               });
 
                               this.marker = L.marker([-7.95, 112.61], {icon: userIcon, draggable: true}).addTo(this.map);
+
+                              // Fix tile loading issues when map container resizes or renders
+                              setTimeout(() => {
+                                  this.map.invalidateSize();
+                              }, 500);
 
                               // Update coords when marker is dragged
                               this.marker.on('dragend', async (e) => {
@@ -349,55 +317,62 @@
                         </div>
 
                         {{-- Scan Result --}}
-                        <div x-show="scanned" x-transition class="mt-6 p-5 bg-primary/10 border border-primary/20 rounded-2xl" style="display:none;">
-                            <template x-if="rejectedAI">
-                                <div class="flex items-center gap-4">
-                                    <span class="w-8 h-8 text-secondary">
-                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        <div x-show="scanned" x-transition class="mt-6 p-5 min-h-[130px] flex items-center bg-primary/10 border border-primary/20 rounded-2xl transition-all duration-500" style="display:none;">
+                            <div class="grid relative w-full">
+                                <div x-show="rejectedAI && !targetCategory" x-transition.opacity.duration.300ms class="col-start-1 row-start-1 flex items-center gap-4">
+                                    <span class="w-10 h-10 text-red-500 flex items-center justify-center shrink-0 mt-0.5">
+                                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                                     </span>
                                     <div>
-                                        <div class="font-serif font-medium text-secondary">{{ __('Oops, my bad!') }}</div>
-                                        <div class="text-sm text-secondary/70 font-light mt-1">{{ __('Please select the correct category below.') }}</div>
+                                        <div class="font-bold text-red-600 text-lg">{{ __('Oops, my bad!') }}</div>
+                                        <div class="text-sm text-red-500/80 font-medium mt-1">{{ __('Please select the correct category below.') }}</div>
                                     </div>
                                 </div>
-                            </template>
                             
-                            <template x-if="!rejectedAI && suggestedCategories.length <= 1">
-                                <div class="flex items-center gap-4">
-                                    <span class="w-12 h-12 text-emerald-600 flex items-center justify-center" x-html="resultIcon"></span>
-                                    <div>
-                                        <div class="font-serif font-medium text-secondary">{{ __('Scan Complete!') }}</div>
-                                        <div class="text-sm text-secondary/70 font-light mt-1">{{ __('Category:') }} <strong class="font-medium text-primary" x-text="resultCategory"></strong></div>
-                                    </div>
-                                </div>
-                            </template>
+
                             
-                            <template x-if="!rejectedAI && suggestedCategories.length > 1">
+                                <div x-show="targetCategory" x-transition.opacity.duration.300ms class="col-start-1 row-start-1 flex items-center gap-4">
+                                <span class="w-12 h-12 text-emerald-600 flex items-center justify-center" x-html="resultIcon"></span>
                                 <div>
-                                    <div class="flex items-start gap-3">
-                                        <span class="w-6 h-6 mt-0.5 text-secondary">
-                                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                        </span>
-                                        <div>
-                                            <div class="font-serif font-medium text-secondary">{{ __('Help AI Learn!') }}</div>
-                                            <div class="text-sm text-secondary/70 font-light mt-1">{{ __('I found multiple possibilities. Which one is correct?') }}</div>
-                                        </div>
+                                    <div class="font-bold text-gray-800 text-lg">
+                                        <span x-show="!rejectedAI">{{ __('Scan Complete!') }}</span>
+                                        <span x-show="rejectedAI">{{ __('Category Confirmed!') }}</span>
                                     </div>
-                                    <div class="flex flex-wrap gap-2 mt-4 ml-10">
-                                        <template x-for="suggestion in suggestionsUI" :key="suggestion.cat">
-                                            <button type="button" @click="selectSuggested(suggestion.cat)"
-                                                    class="px-4 py-2 bg-white border-2 border-emerald-100 hover:border-primary hover:bg-emerald-50 rounded-xl text-sm font-bold text-secondary transition-all shadow-sm flex items-center gap-2">
-                                                <span x-text="suggestion.cat"></span>
-                                                <span class="text-[10px] bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded-md opacity-70" x-text="suggestion.confidence + '% match'"></span>
-                                            </button>
-                                        </template>
-                                        <button type="button" @click="rejectedAI = true"
-                                                class="px-4 py-2 bg-gray-50 border-2 border-gray-200 hover:border-gray-300 hover:bg-gray-100 rounded-xl text-sm font-bold text-gray-500 transition-all shadow-sm">
-                                            {{ __('None of the above') }}
-                                        </button>
+                                    <div class="text-sm text-gray-600 mt-1">{{ __('Category:') }} <span class="font-bold text-primary" x-text="i18n[targetCategory] || targetCategory"></span></div>
+                                    <template x-if="aiUsedMemory || rejectedAI">
+                                        <div class="text-xs text-emerald-600 mt-1 font-bold flex items-center gap-1">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                            <span x-text="i18n['Learned from you!'] || 'Learned from you!'"></span>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                            
+                                <div x-show="!targetCategory && suggestionsUI.length > 0" x-transition.opacity.duration.300ms class="col-start-1 row-start-1 flex flex-col gap-3">
+                                <div class="flex items-start gap-4">
+                                    <span class="w-10 h-10 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5">
+                                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    </span>
+                                    <div>
+                                        <div class="font-bold text-gray-800 text-lg">{{ __('Scan Complete!') }}</div>
+                                        <div class="text-sm text-gray-600 mt-1">{{ __('I found multiple possibilities. Please select the correct one below:') }}</div>
                                     </div>
                                 </div>
-                            </template>
+                                <div class="flex flex-wrap gap-2 ml-14">
+                                    <template x-for="suggestion in suggestionsUI" :key="suggestion.cat">
+                                        <button type="button" @click="selectSuggested(suggestion.cat)"
+                                                class="px-4 py-2 bg-white border-2 border-emerald-100 hover:border-primary hover:bg-emerald-50 rounded-xl text-sm font-bold text-secondary transition-all shadow-sm flex items-center gap-2">
+                                            <span x-text="i18n[suggestion.cat] || suggestion.cat"></span>
+                                            <span class="text-[10px] bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded-md opacity-70" x-text="suggestion.confidence + '% match'"></span>
+                                        </button>
+                                    </template>
+                                    <button type="button" @click="suggestionsUI = []; rejectedAI = true;"
+                                            class="px-4 py-2 bg-gray-50 border-2 border-gray-200 hover:border-gray-300 hover:bg-gray-100 rounded-xl text-sm font-bold text-gray-500 transition-all shadow-sm">
+                                        {{ __('None of the above') }}
+                                    </button>
+                                </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -408,7 +383,7 @@
                             <label class="text-lg font-serif font-bold text-secondary">{{ __('Confirm Category') }}</label>
                         </div>
                         <p class="text-sm text-gray-500 font-medium mb-5 ml-11">
-                            {{ __('Auto-selected by AI. You can manually change it if necessary.') }}
+                            {{ __('You can manually select a category from the options below.') }}
                             <span class="text-amber-600/90 font-bold flex items-center gap-1.5 mt-2 text-xs bg-amber-50 inline-flex px-3 py-1.5 rounded-lg border border-amber-200/50">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3.5 h-3.5">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
@@ -421,10 +396,10 @@
                                 <div>
                                     <input type="radio" name="category_id" id="cat_{{ $category->id }}"
                                            value="{{ $category->id }}" data-raw-name="{{ $category->name }}" data-price="{{ $category->price_per_kg }}"
-                                           @change="selectedCategoryPrice = $event.target.dataset.price"
+                                           @change="selectedCategoryPrice = $event.target.dataset.price; targetCategory = '{{ $category->name }}'; resultCategory = '{{ __($category->name) }}'; const icon = $event.target.nextElementSibling.querySelector('.cat-icon svg'); if(icon) resultIcon = icon.outerHTML;"
                                            class="peer hidden" required>
                                     <label for="cat_{{ $category->id }}"
-                                           class="block text-center cursor-pointer bg-white/50 border border-white/60 shadow-sm rounded-2xl p-5 hover:border-emerald-300 peer-checked:border-primary peer-checked:border-2 peer-checked:bg-emerald-50/80 peer-checked:shadow-md transition-all">
+                                           class="block text-center cursor-pointer bg-white/50 border border-white/60 shadow-sm rounded-2xl p-5 hover:border-emerald-300 peer-checked:border-primary peer-checked:border-2 peer-checked:bg-emerald-50/80 peer-checked:shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-lg active:scale-95">
                                         <div class="mb-3 cat-icon opacity-90 group-hover:scale-110 transition-transform flex justify-center text-emerald-600"><x-category-icon :category="$category" class="w-12 h-12" /></div>
                                         <div class="font-bold text-sm cat-name text-secondary">{{ __($category->name) }}</div>
                                         <div class="text-xs text-primary mt-1 font-bold">{{ number_format($category->price_per_kg, 0, ',', '.') }} {{ __('Coins/kg') }}</div>
@@ -463,7 +438,14 @@
                             </div>
                         </div>
                         
-                        <p class="text-sm text-secondary/60 font-medium mt-3 ml-1">{{ __('Final weight will be confirmed by the Eco-Driver upon pickup.') }}</p>
+                        <div class="mt-3 ml-1">
+                            <span class="text-amber-600/90 font-bold flex items-center gap-1.5 w-max text-xs bg-amber-50 inline-flex px-3 py-1.5 rounded-lg border border-amber-200/50">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3.5 h-3.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                {{ __('Final weight will be confirmed by the Eco-Driver upon pickup.') }}
+                            </span>
+                        </div>
                     </div>
 
                     {{-- Step 4: Address --}}
@@ -474,7 +456,7 @@
                                 <label for="address" class="text-lg font-serif font-bold text-secondary">{{ __('Pickup Address') }}</label>
                             </div>
                             <button type="button" @click="getLocation()" 
-                                    class="text-sm bg-primary/10 text-primary px-4 py-1.5 rounded-full font-bold flex items-center gap-2 hover:bg-primary hover:text-white transition-all disabled:opacity-50"
+                                    class="text-sm bg-primary/10 text-primary px-4 py-1.5 rounded-full font-bold flex items-center gap-2 hover:bg-primary hover:text-white transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-50"
                                     :disabled="gettingLocation">
                                 <span x-show="!gettingLocation" class="flex items-center gap-2">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
@@ -488,10 +470,14 @@
                         </div>
                         <div class="mb-4">
                             <div id="pickup-map" class="w-full h-64 rounded-2xl border border-gray-200 z-0"></div>
-                            <p class="text-xs text-gray-500 mt-2 font-medium flex items-center gap-1">
-                                <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                {{ __('You can drag the pin or click on the map to adjust the accurate location.') }}
-                            </p>
+                            <div class="mt-2">
+                                <span class="text-amber-600/90 font-bold flex items-center gap-1.5 w-max text-xs bg-amber-50 inline-flex px-3 py-1.5 rounded-lg border border-amber-200/50">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3.5 h-3.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    {{ __('You can drag the pin or click on the map to adjust the accurate location.') }}
+                                </span>
+                            </div>
                         </div>
                         
                         <input type="hidden" name="latitude" x-model="lat">
@@ -508,7 +494,7 @@
                     </div>
 
                     <button type="submit"
-                            class="w-full px-8 py-5 mt-8 bg-gradient-to-r from-primary to-emerald-500 text-white font-bold rounded-full btn-premium text-lg">
+                            class="w-full px-8 py-5 mt-8 bg-gradient-to-r from-primary to-emerald-500 text-white font-bold rounded-full btn-premium text-lg active:scale-[0.98] transition-all duration-300 hover:shadow-xl hover:shadow-primary/40 hover:-translate-y-1">
                         {{ __('Call Driver Now') }}
                     </button>
                 </form>
@@ -551,8 +537,8 @@
                                 @endforeach
                             </div>
                             <div class="mt-6 flex justify-center">
-                                <a href="{{ route('user.history') }}" class="inline-block px-6 py-2.5 bg-gray-50 text-gray-600 font-bold rounded-full border border-gray-200 hover:bg-gray-100 transition-colors text-sm">
-                                    {{ __('Riwayat Lebih Detail') }} &rarr;
+                                <a href="{{ route('user.history') }}" class="inline-block px-6 py-2.5 bg-gray-50 text-gray-600 font-bold rounded-full border border-gray-200 hover:bg-gray-100 transition-all duration-200 text-sm hover:scale-105 active:scale-95">
+                                    {{ __('Detailed History') }} &rarr;
                                 </a>
                             </div>
                         @endif
@@ -570,8 +556,8 @@
                                 @endforeach
                             </div>
                             <div class="mt-6 flex justify-center">
-                                <a href="{{ route('user.history') }}" class="inline-block px-6 py-2.5 bg-gray-50 text-gray-600 font-bold rounded-full border border-gray-200 hover:bg-gray-100 transition-colors text-sm">
-                                    {{ __('Riwayat Lebih Detail') }} &rarr;
+                                <a href="{{ route('user.history') }}" class="inline-block px-6 py-2.5 bg-gray-50 text-gray-600 font-bold rounded-full border border-gray-200 hover:bg-gray-100 transition-all duration-200 text-sm hover:scale-105 active:scale-95">
+                                    {{ __('Detailed History') }} &rarr;
                                 </a>
                             </div>
                         @endif

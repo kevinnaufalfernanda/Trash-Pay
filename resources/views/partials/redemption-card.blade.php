@@ -6,30 +6,30 @@
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8v8m0-8V6m0 12v-2m0 0v-2"></path></svg>
             </div>
             <div>
-                <div class="font-bold text-secondary">{{ __('Penukaran Koin') }}</div>
+                <div class="font-bold text-secondary">{{ __('Coin Redemption') }}</div>
                 <div class="text-sm text-gray-500 font-medium">{{ $redemption->provider }} &bull; {{ $redemption->created_at->format('d M Y') }}</div>
                 
                 @if($redemption->status === 'pending')
                     <div class="mt-1 text-xs font-bold text-amber-600 flex items-center gap-1 bg-amber-50 w-max px-2.5 py-1 rounded-md border border-amber-100">
                         <svg class="animate-spin -ml-1 mr-1 h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                        {{ __('Diproses') }}
+                        {{ __('Processing') }}
                     </div>
-                @elseif($redemption->status === 'completed')
+                @elseif($redemption->status === 'approved')
                     <div class="mt-1 text-xs font-bold text-emerald-600 flex items-center gap-1 bg-emerald-50 w-max px-2.5 py-1 rounded-md border border-emerald-100">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                        {{ __('Berhasil') }}
+                        {{ __('Success') }}
                     </div>
                 @elseif($redemption->status === 'rejected')
                     <div class="mt-1 text-xs font-bold text-red-500 flex items-center gap-1 bg-red-50 w-max px-2.5 py-1 rounded-md border border-red-100">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                        {{ __('Ditolak') }}
+                        {{ __('Rejected') }}
                     </div>
                 @endif
             </div>
         </div>
 
         <div class="shrink-0 text-right">
-            <div class="text-sm text-gray-500 font-medium">{{ __('Nominal') }}</div>
+            <div class="text-sm text-gray-500 font-medium">{{ __('Amount') }}</div>
             <div class="text-xl font-bold text-secondary flex items-center justify-end">
                 -{{ number_format($redemption->amount) }} <svg class="w-4 h-4 opacity-80 text-amber-500 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8v8m0-8V6m0 12v-2m0 0v-2"></path></svg>
             </div>
@@ -60,7 +60,7 @@
                 </button>
                 
                 <h3 class="text-2xl font-serif font-bold mb-6 text-secondary flex items-center gap-2">
-                    {{ __('Detail Penukaran') }}
+                    {{ __('Redemption Details') }}
                 </h3>
 
                 <div class="space-y-5">
@@ -78,13 +78,13 @@
                     <!-- Details Grid -->
                     <div class="grid grid-cols-2 gap-4">
                         <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
-                            <div class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">{{ __('Koin Ditukar') }}</div>
+                            <div class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">{{ __('Redeemed Coins') }}</div>
                             <div class="font-bold text-amber-500 flex items-center gap-1 text-lg">
                                 {{ number_format($redemption->amount) }} <svg class="w-5 h-5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8v8m0-8V6m0 12v-2m0 0v-2"></path></svg>
                             </div>
                         </div>
                         <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
-                            <div class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">{{ __('Nilai Rupiah') }}</div>
+                            <div class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">{{ __('Rupiah Value') }}</div>
                             <div class="font-bold text-secondary text-lg">Rp {{ number_format($redemption->amount * 100, 0, ',', '.') }}</div>
                         </div>
                     </div>
@@ -92,25 +92,36 @@
                     <!-- Additional Details -->
                     <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100 space-y-3">
                         <div class="flex justify-between items-center text-sm">
-                            <span class="text-gray-500 font-medium">{{ __('ID Transaksi') }}</span>
+                            <span class="text-gray-500 font-medium">{{ __('Transaction ID') }}</span>
                             <span class="font-bold text-secondary">#TXN-{{ str_pad($redemption->id, 5, '0', STR_PAD_LEFT) }}</span>
                         </div>
                         <div class="flex justify-between items-center text-sm">
-                            <span class="text-gray-500 font-medium">{{ __('Tanggal') }}</span>
+                            <span class="text-gray-500 font-medium">{{ __('Date') }}</span>
                             <span class="font-bold text-secondary">{{ $redemption->created_at->format('d M Y, H:i') }}</span>
                         </div>
                     </div>
 
                     <!-- Status -->
-                    <div class="flex items-center justify-between p-4 bg-amber-50 rounded-2xl border border-amber-100">
+                    @php
+                        $statusBg = 'bg-amber-50 border-amber-100';
+                        $statusLabelColor = 'text-amber-600';
+                        if ($redemption->status === 'approved') {
+                            $statusBg = 'bg-emerald-50 border-emerald-100';
+                            $statusLabelColor = 'text-emerald-600';
+                        } elseif ($redemption->status === 'rejected') {
+                            $statusBg = 'bg-red-50 border-red-100';
+                            $statusLabelColor = 'text-red-600';
+                        }
+                    @endphp
+                    <div class="flex items-center justify-between p-4 {{ $statusBg }} rounded-2xl border">
+                        <div class="text-xs {{ $statusLabelColor }} font-bold uppercase tracking-wider">{{ __('Status') }}</div>
                         <div>
-                            <div class="text-xs text-amber-600 font-bold uppercase tracking-wider mb-1">{{ __('Status') }}</div>
                             @if($redemption->status === 'pending')
-                                <span class="text-amber-600 font-bold flex items-center gap-1.5"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> {{ __('Sedang Diproses') }}</span>
-                            @elseif($redemption->status === 'completed')
-                                <span class="text-emerald-600 font-bold flex items-center gap-1.5"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> {{ __('Berhasil') }}</span>
+                                <span class="text-amber-600 font-bold flex items-center gap-1.5"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> {{ __('Processing') }}</span>
+                            @elseif($redemption->status === 'approved')
+                                <span class="text-emerald-600 font-bold flex items-center gap-1.5"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> {{ __('Success') }}</span>
                             @elseif($redemption->status === 'rejected')
-                                <span class="text-red-600 font-bold flex items-center gap-1.5"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg> {{ __('Ditolak') }}</span>
+                                <span class="text-red-600 font-bold flex items-center gap-1.5"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg> {{ __('Rejected') }}</span>
                             @endif
                         </div>
                     </div>

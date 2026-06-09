@@ -17,7 +17,7 @@ class DriverController extends Controller
         $driver = auth()->user();
 
         Pickup::where('status', 'pending')
-            ->where('created_at', '<', now()->subMinutes(15))
+            ->where('created_at', '<', now()->subHours(24))
             ->update(['status' => 'cancelled']);
 
         $completedCount = Pickup::where('driver_id', $driver->id)->where('status', 'completed')->count();
@@ -49,7 +49,7 @@ class DriverController extends Controller
     public function orderPool()
     {
         Pickup::where('status', 'pending')
-            ->where('created_at', '<', now()->subMinutes(15))
+            ->where('created_at', '<', now()->subHours(24))
             ->update(['status' => 'cancelled']);
 
         $pickups = Pickup::with(['user', 'category'])->where('status', 'pending')->latest()->get();
@@ -60,6 +60,11 @@ class DriverController extends Controller
         foreach ($pickups as $pickup) {
             $estCoins = round($pickup->total_weight * $pickup->category->price_per_kg);
             $pickup->est_coins = $estCoins;
+
+            $lat = $pickup->latitude ?? -7.95;
+            $lon = $pickup->longitude ?? 112.61;
+            // Approximate distance using Pythagorean theorem (1 deg ~ 111km)
+            $pickup->distance = round(sqrt(pow(($lat - (-7.95))*111, 2) + pow(($lon - 112.61)*111, 2)), 1);
 
             if ($estCoins >= 50) {
                 $highRewardPickups->push($pickup);
@@ -92,6 +97,11 @@ class DriverController extends Controller
      */
     public function acceptOrder(Pickup $pickup)
     {
+        // Block offline drivers
+        if (auth()->user()->driver_status === 'offline') {
+            return redirect()->route('driver.orders')->with('error', 'Status Anda sedang offline! Silakan aktifkan akun (Online) terlebih dahulu untuk mengambil pesanan.');
+        }
+
         // Only accept if still pending
         if ($pickup->status !== 'pending') {
             return redirect()->route('driver.orders')->with('error', 'This order has already been taken.');

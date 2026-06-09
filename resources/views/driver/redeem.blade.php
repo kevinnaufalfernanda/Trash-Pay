@@ -59,7 +59,7 @@
                                     <input type="radio" name="provider" id="dana" value="Dana" class="peer hidden"
                                         required>
                                     <label for="dana"
-                                        class="block text-center cursor-pointer bg-white/50 border border-white/60 shadow-sm rounded-2xl p-4 hover:border-blue-300 peer-checked:border-2 peer-checked:border-blue-500 peer-checked:bg-blue-50/80 peer-checked:shadow-md transition-all">
+                                        class="block text-center cursor-pointer bg-white/50 border border-white/60 shadow-sm rounded-2xl p-4 hover:border-blue-300 peer-checked:border-2 peer-checked:border-blue-500 peer-checked:bg-blue-50/80 peer-checked:shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-lg active:scale-95">
                                         <div class="font-bold text-blue-600 text-lg">DANA</div>
                                     </label>
                                 </div>
@@ -67,7 +67,7 @@
                                     <input type="radio" name="provider" id="gopay" value="GoPay" class="peer hidden"
                                         required>
                                     <label for="gopay"
-                                        class="block text-center cursor-pointer bg-white/50 border border-white/60 shadow-sm rounded-2xl p-4 hover:border-green-300 peer-checked:border-2 peer-checked:border-green-500 peer-checked:bg-green-50/80 peer-checked:shadow-md transition-all">
+                                        class="block text-center cursor-pointer bg-white/50 border border-white/60 shadow-sm rounded-2xl p-4 hover:border-green-300 peer-checked:border-2 peer-checked:border-green-500 peer-checked:bg-green-50/80 peer-checked:shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-lg active:scale-95">
                                         <div class="font-bold text-green-600 text-lg">GoPay</div>
                                     </label>
                                 </div>
@@ -76,21 +76,23 @@
 
                         <div class="mb-10">
                             <label for="amount" class="block text-sm font-bold text-gray-700 mb-2">{{ __('Coin Amount') }}</label>
-                            <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-amber-500">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8v8m0-8V6m0 12v-2m0 0v-2"></path></svg>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-amber-500">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8v8m0-8V6m0 12v-2m0 0v-2"></path></svg>
+                                    </div>
+                                    <input type="number" name="amount" id="amount" min="100" max="{{ $driver->coin_balance }}" x-model.number="amount"
+                                        @input="if(amount > max) amount = max; if(amount < 0) amount = ''"
+                                        class="w-full h-full pl-14 rounded-2xl border shadow-sm focus:ring-4 text-lg font-bold py-4 bg-white/70 transition-all border-gray-200 focus:border-primary focus:ring-primary/20"
+                                        required placeholder="{{ __('Min. 100') }}">
                                 </div>
-                                <input type="number" name="amount" id="amount" min="100" max="{{ $driver->coin_balance }}" x-model.number="amount"
-                                    class="w-full pl-14 rounded-2xl border shadow-sm focus:ring-4 text-lg font-bold py-4 bg-white/70 transition-all"
-                                    :class="amount > max ? 'border-red-300 focus:border-red-500 focus:ring-red-500/20' : 'border-gray-200 focus:border-primary focus:ring-primary/20'"
-                                    required placeholder="{{ __('Min. 100') }}">
-                            </div>
-                            <div class="mt-2 text-red-500 text-sm font-medium" x-show="amount > max" x-cloak>
-                                {{ __('Coin amount exceeds your available balance.') }}
-                            </div>
-                            <div class="mt-3 text-sm font-semibold text-gray-600 bg-emerald-50 px-4 py-3 rounded-xl border border-emerald-100 flex items-center justify-between transition-all" x-show="amount >= 100" x-cloak x-transition>
-                                <span>{{ __('Estimated Money:') }}</span>
-                                <span class="text-emerald-700 font-bold text-lg">Rp <span x-text="(amount * 100).toLocaleString('id-ID')"></span></span>
+                                <div class="h-full text-sm font-semibold text-emerald-800 bg-gradient-to-r from-emerald-50 to-emerald-100/50 px-5 py-4 rounded-2xl border border-emerald-200 flex items-center justify-between transition-all">
+                                    <span class="flex items-center gap-2">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8v8m0-8V6m0 12v-2m0 0v-2"></path></svg>
+                                        {{ __('Estimated Money:') }}
+                                    </span>
+                                    <span class="font-bold text-2xl text-emerald-600">Rp <span x-text="Math.round((amount || 0) * 100).toLocaleString('id-ID')"></span></span>
+                                </div>
                             </div>
                         </div>
 
@@ -100,14 +102,15 @@
                                 <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-gray-400">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
                                 </div>
-                                <input type="text" name="account_number" id="account_number" x-model="accountNumber"
+                                <input type="tel" name="account_number" id="account_number" x-model="accountNumber"
+                                    @input="accountNumber = $event.target.value.replace(/[^\d+]/g, '').replace(/(?!^)\+/g, '')"
                                     class="w-full pl-14 rounded-2xl border border-gray-200 shadow-sm focus:border-primary focus:ring-primary focus:ring-4 focus:ring-primary/20 text-lg font-bold py-4 bg-white/70 transition-all"
                                     required placeholder="{{ __('e.g., 081234567890') }}">
                             </div>
                             
-                            <div class="mt-4 p-4 bg-red-50 rounded-xl border border-red-200 flex items-start gap-3" x-show="accountNumber !== savedNumber && savedNumber !== '' && accountNumber !== ''" x-cloak x-transition>
-                                <input type="checkbox" id="confirm_number" x-model="confirmedNumber" class="mt-1 w-4 h-4 text-primary bg-white border-red-300 rounded focus:ring-primary focus:ring-2 cursor-pointer">
-                                <label for="confirm_number" class="text-sm text-red-800 font-medium cursor-pointer">
+                            <div class="mt-4 p-4 bg-amber-50 rounded-xl border border-amber-200 flex items-start gap-3" x-show="accountNumber !== savedNumber && savedNumber !== '' && accountNumber !== ''" x-cloak x-transition>
+                                <input type="checkbox" id="confirm_number" x-model="confirmedNumber" class="mt-1 w-4 h-4 text-primary bg-white border-amber-300 rounded focus:ring-primary focus:ring-2 cursor-pointer">
+                                <label for="confirm_number" class="text-sm text-amber-800 font-medium cursor-pointer">
                                     {{ __("This number is different from your profile's saved number. I confirm this number is correct.") }}
                                 </label>
                             </div>
@@ -120,7 +123,7 @@
                         </div>
 
                         <button type="submit"
-                            class="w-full px-8 py-5 bg-gradient-to-r from-primary to-emerald-500 text-white font-bold text-lg rounded-full btn-premium disabled:opacity-50 disabled:cursor-not-allowed"
+                            class="w-full px-8 py-5 bg-gradient-to-r from-primary to-emerald-500 text-white font-bold text-lg rounded-full btn-premium disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] transition-all duration-300 hover:shadow-xl hover:shadow-primary/40 hover:-translate-y-1"
                             x-bind:disabled="amount > max || amount < 100 || (accountNumber !== savedNumber && !confirmedNumber) || (savedNumber === '' && !confirmedNumber)"
                             @if($driver->coin_balance < 100) disabled @endif>
                             {{ __('Withdraw Now') }}
@@ -150,8 +153,8 @@
                             @endforeach
                         </div>
                         <div class="mt-6 flex justify-center">
-                            <a href="{{ route('driver.history') }}" class="inline-block px-6 py-2.5 bg-gray-50 text-gray-600 font-bold rounded-full border border-gray-200 hover:bg-gray-100 transition-colors text-sm text-center w-full">
-                                {{ __('View All History') }} &rarr;
+                            <a href="{{ route('driver.history') }}" class="inline-block px-6 py-2.5 bg-gray-50 text-gray-600 font-bold rounded-full border border-gray-200 hover:bg-gray-100 transition-all duration-200 text-sm text-center w-full active:scale-95 hover:scale-[1.02]">
+                                {{ __('View All History') }}
                             </a>
                         </div>
                     @endif

@@ -75,7 +75,7 @@ class UserController extends Controller
             'status' => 'pending'
         ]);
 
-        return redirect()->route('user.dashboard')->with('success', 'Pickup requested! A driver will pick it up soon.');
+        return redirect()->route('user.dashboard')->with('success', __('Pickup requested! A driver will pick it up soon.'));
     }
 
     /**

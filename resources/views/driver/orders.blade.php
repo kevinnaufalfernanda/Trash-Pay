@@ -51,7 +51,7 @@
                                 </div>
                                 <div>
                                     <div class="font-bold text-secondary text-lg">{{ $order->user->name }}</div>
-                                    <div class="text-sm font-medium text-secondary/60 mt-0.5">Pickup #{{ $order->id }} • {{ $order->category->name }} ({{ $order->total_weight }}kg)</div>
+                                    <div class="text-sm font-medium text-secondary/60 mt-0.5">Pickup #{{ $order->id }} • {{ __($order->category->name) }} ({{ $order->total_weight }}kg)</div>
                                     @if($order->cancel_requested_by === 'user')
                                         <div class="mt-1 text-xs font-bold text-red-600 flex items-center gap-1">
                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
@@ -101,43 +101,123 @@
                 </div>
             @endif
 
-            {{-- HIGH REWARD PICKUPS --}}
-            @if($highRewardPickups->isNotEmpty())
-                <div class="glass-panel rounded-3xl p-8 border-2 border-amber-300 shadow-lg shadow-amber-300/30 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-64 h-64 bg-amber-400/20 rounded-full blur-3xl -z-10"></div>
-                    <h3 class="text-2xl font-serif font-bold mb-6 text-amber-600 flex items-center gap-3">
-                        <span class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center animate-bounce shadow-sm">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"></path></svg>
-                        </span>
-                        {{ __('Priority Orders (High Coins)') }}
-                    </h3>
+            {{-- AVAILABLE PICKUPS (COMBINED) --}}
+            @if($highRewardPickups->isNotEmpty() || $standardPickups->isNotEmpty())
+                <div x-data="{ filter: 'all' }" class="glass-panel rounded-3xl p-8 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -z-10"></div>
+                    
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                        <h3 class="text-2xl font-serif font-bold text-secondary flex items-center gap-3">
+                            <span class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center text-gray-500 shadow-sm">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                            </span>
+                            {{ __('Available Orders') }}
+                        </h3>
+                        
+                        <!-- Custom Alpine Dropdown -->
+                        <div x-data="{ open: false }" class="relative w-full md:w-auto min-w-[260px]" @click.away="open = false">
+                            <button @click="open = !open" 
+                                    class="w-full flex items-center justify-between gap-3 py-2.5 px-4 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 font-bold text-sm cursor-pointer transition-all border-2"
+                                    :class="filter === 'high' ? 'border-amber-400 bg-amber-50/50 text-amber-700' : (filter === 'all' ? 'border-gray-200 bg-white text-gray-700 hover:border-gray-300' : 'border-primary/50 bg-primary/5 text-primary')">
+                                <span class="whitespace-nowrap truncate" x-text="filter === 'all' ? '{{ __('Semua Kategori') }}' : (filter === 'high' ? '{{ __('Prioritas (Banyak TrashCoin)') }}' : (filter === 'nearest' ? '{{ __('Terdekat (< 5km)') }}' : '{{ __('Standar') }}'))"></span>
+                                <svg class="w-4 h-4 transition-transform duration-200 flex-shrink-0" :class="{'rotate-180': open, 'text-amber-500': filter === 'high', 'text-gray-500': filter === 'all', 'text-primary': filter !== 'all' && filter !== 'high'}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+
+                            <div x-show="open" 
+                                 x-transition:enter="transition ease-out duration-200" 
+                                 x-transition:enter-start="opacity-0 scale-95 translateY-[-10px]" 
+                                 x-transition:enter-end="opacity-100 scale-100 translateY-0" 
+                                 x-transition:leave="transition ease-in duration-100" 
+                                 x-transition:leave-start="opacity-100 scale-100 translateY-0" 
+                                 x-transition:leave-end="opacity-0 scale-95 translateY-[-10px]" 
+                                 class="absolute right-0 md:left-0 mt-2 w-full min-w-max origin-top-right md:origin-top-left bg-white border border-gray-100 rounded-xl shadow-xl ring-1 ring-black ring-opacity-5 z-20 py-2 overflow-hidden"
+                                 style="display: none;">
+                                
+                                <button @click="filter = 'all'; open = false" 
+                                        class="w-full text-left px-4 py-2.5 text-sm font-bold transition-colors flex items-center justify-between"
+                                        :class="filter === 'all' ? 'text-primary bg-primary/10' : 'text-gray-600 hover:bg-emerald-50 hover:text-primary'">
+                                    {{ __('Semua Kategori') }}
+                                    <svg x-show="filter === 'all'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                </button>
+
+                                <button @click="filter = 'nearest'; open = false" 
+                                        class="w-full text-left px-4 py-2.5 text-sm font-bold transition-colors flex items-center justify-between"
+                                        :class="filter === 'nearest' ? 'text-primary bg-primary/10' : 'text-gray-600 hover:bg-emerald-50 hover:text-primary'">
+                                    {{ __('Terdekat (< 5km)') }}
+                                    <svg x-show="filter === 'nearest'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                </button>
+                                
+                                <button @click="filter = 'high'; open = false" 
+                                        class="w-full text-left px-4 py-2.5 text-sm font-bold transition-colors flex items-center justify-between"
+                                        :class="filter === 'high' ? 'text-amber-600 bg-amber-50' : 'text-gray-600 hover:bg-amber-50 hover:text-amber-600'">
+                                    {{ __('Prioritas (Banyak TrashCoin)') }}
+                                    <svg x-show="filter === 'high'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                </button>
+                                
+                                <button @click="filter = 'standard'; open = false" 
+                                        class="w-full text-left px-4 py-2.5 text-sm font-bold transition-colors flex items-center justify-between"
+                                        :class="filter === 'standard' ? 'text-primary bg-primary/10' : 'text-gray-600 hover:bg-emerald-50 hover:text-primary'">
+                                    {{ __('Standar') }}
+                                    <svg x-show="filter === 'standard'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                         @foreach($highRewardPickups as $pickup)
-                            @include('driver.partials.order-card', ['pickup' => $pickup, 'currentCapacity' => $currentCapacity ?? 0, 'type' => 'high'])
+                            <div x-show="filter === 'all' || filter === 'high' || (filter === 'nearest' && {{ $pickup->distance }} <= 5)" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="h-full" style="display: none;" x-init="$el.style.display = 'block'">
+                                @include('driver.partials.order-card', ['pickup' => $pickup, 'currentCapacity' => $currentCapacity ?? 0, 'type' => 'high'])
+                            </div>
+                        @endforeach
+
+                        @foreach($standardPickups as $pickup)
+                            <div x-show="filter === 'all' || filter === 'standard' || (filter === 'nearest' && {{ $pickup->distance }} <= 5)" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="h-full" style="display: none;" x-init="$el.style.display = 'block'">
+                                @include('driver.partials.order-card', ['pickup' => $pickup, 'currentCapacity' => $currentCapacity ?? 0, 'type' => 'standard'])
+                            </div>
                         @endforeach
                     </div>
-                </div>
-            @endif
-
-            {{-- STANDARD PICKUPS --}}
-            @if($standardPickups->isNotEmpty())
-                <div class="glass-panel rounded-3xl p-8">
-                    <h3 class="text-2xl font-serif font-bold mb-6 text-secondary flex items-center gap-3">
-                        <span class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center text-gray-500 shadow-sm">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
-                        </span>
-                        {{ __('Standard Orders') }}
-                    </h3>
-
-                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        @foreach($standardPickups as $pickup)
-                            @include('driver.partials.order-card', ['pickup' => $pickup, 'currentCapacity' => $currentCapacity ?? 0, 'type' => 'standard'])
-                        @endforeach
+                    
+                    <div x-show="filter === 'high' && {{ $highRewardPickups->count() }} === 0" style="display: none;" class="text-center py-8 text-gray-500 italic">
+                        {{ __('Tidak ada pesanan prioritas saat ini.') }}
+                    </div>
+                    <div x-show="filter === 'standard' && {{ $standardPickups->count() }} === 0" style="display: none;" class="text-center py-8 text-gray-500 italic">
+                        {{ __('Tidak ada pesanan standar saat ini.') }}
+                    </div>
+                    <div x-show="filter === 'nearest' && {{ $highRewardPickups->where('distance', '<=', 5)->count() + $standardPickups->where('distance', '<=', 5)->count() }} === 0" style="display: none;" class="text-center py-8 text-gray-500 italic">
+                        {{ __('Tidak ada pesanan di sekitar Anda (< 5km).') }}
                     </div>
                 </div>
             @endif
 
         </div>
     </div>
+
+    @if(auth()->user()->driver_status === 'offline')
+        <template x-teleport="body">
+            <div x-data="{ showOfflineWarning: true }" x-show="showOfflineWarning" style="display: none;" class="fixed inset-0 z-[100] flex items-center justify-center p-4" @click.self="showOfflineWarning = false">
+                <!-- Backdrop -->
+                <div x-show="showOfflineWarning" x-transition.opacity class="fixed inset-0 bg-secondary/80 backdrop-blur-sm pointer-events-none"></div>
+                
+                <!-- Modal Content -->
+                <div x-show="showOfflineWarning"
+                     x-transition:enter="transition ease-out duration-300"
+                     x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+                     x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                     class="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl relative z-10 text-center flex flex-col items-center">
+                     
+                    <div class="w-20 h-20 bg-red-100 text-red-500 rounded-full flex items-center justify-center mb-6 shadow-inner">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    </div>
+                    
+                    <h3 class="text-2xl font-serif font-bold text-secondary mb-3">{{ __('Akses Ditahan!') }}</h3>
+                    <p class="text-gray-500 mb-8">{{ __('Status Anda saat ini sedang Offline. Tolong aktifkan akun driver Anda dengan menekan tombol sakelar di menu Beranda terlebih dahulu agar Anda dapat mengambil pesanan.') }}</p>
+                    
+                    <button @click="showOfflineWarning = false" class="w-full py-3.5 bg-gray-100 text-gray-600 font-bold rounded-xl hover:bg-primary hover:text-white hover:border-primary active:bg-emerald-600 transition-colors border border-gray-200">
+                        {{ __('Saya Mengerti') }}
+                    </button>
+                </div>
+            </div>
+        </template>
+    @endif
 </x-app-layout>

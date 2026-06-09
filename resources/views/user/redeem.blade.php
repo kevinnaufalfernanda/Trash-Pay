@@ -59,7 +59,7 @@
                                     <input type="radio" name="provider" id="dana" value="Dana" class="peer hidden"
                                         required>
                                     <label for="dana"
-                                        class="block text-center cursor-pointer bg-white/50 border border-white/60 shadow-sm rounded-2xl p-4 hover:border-blue-300 peer-checked:border-2 peer-checked:border-blue-500 peer-checked:bg-blue-50/80 peer-checked:shadow-md transition-all">
+                                        class="block text-center cursor-pointer bg-white/50 border border-white/60 shadow-sm rounded-2xl p-4 hover:border-blue-300 peer-checked:border-2 peer-checked:border-blue-500 peer-checked:bg-blue-50/80 peer-checked:shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-lg active:scale-95">
                                         <div class="font-bold text-blue-600 text-lg">DANA</div>
                                     </label>
                                 </div>
@@ -67,7 +67,7 @@
                                     <input type="radio" name="provider" id="gopay" value="GoPay" class="peer hidden"
                                         required>
                                     <label for="gopay"
-                                        class="block text-center cursor-pointer bg-white/50 border border-white/60 shadow-sm rounded-2xl p-4 hover:border-green-300 peer-checked:border-2 peer-checked:border-green-500 peer-checked:bg-green-50/80 peer-checked:shadow-md transition-all">
+                                        class="block text-center cursor-pointer bg-white/50 border border-white/60 shadow-sm rounded-2xl p-4 hover:border-green-300 peer-checked:border-2 peer-checked:border-green-500 peer-checked:bg-green-50/80 peer-checked:shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-lg active:scale-95">
                                         <div class="font-bold text-green-600 text-lg">GoPay</div>
                                     </label>
                                 </div>
@@ -108,9 +108,9 @@
                                     required placeholder="{{ __('e.g., 081234567890') }}">
                             </div>
                             
-                            <div class="mt-4 p-4 bg-red-50 rounded-xl border border-red-200 flex items-start gap-3" x-show="accountNumber !== savedNumber && savedNumber !== '' && accountNumber !== ''" x-cloak x-transition>
-                                <input type="checkbox" id="confirm_number" x-model="confirmedNumber" class="mt-1 w-4 h-4 text-primary bg-white border-red-300 rounded focus:ring-primary focus:ring-2 cursor-pointer">
-                                <label for="confirm_number" class="text-sm text-red-800 font-medium cursor-pointer">
+                            <div class="mt-4 p-4 bg-amber-50 rounded-xl border border-amber-200 flex items-start gap-3" x-show="accountNumber !== savedNumber && savedNumber !== '' && accountNumber !== ''" x-cloak x-transition>
+                                <input type="checkbox" id="confirm_number" x-model="confirmedNumber" class="mt-1 w-4 h-4 text-primary bg-white border-amber-300 rounded focus:ring-primary focus:ring-2 cursor-pointer">
+                                <label for="confirm_number" class="text-sm text-amber-800 font-medium cursor-pointer">
                                     {{ __("This number is different from your profile's saved number. I confirm this number is correct.") }}
                                 </label>
                             </div>
@@ -123,7 +123,7 @@
                         </div>
 
                         <button type="submit"
-                            class="w-full px-8 py-5 bg-gradient-to-r from-primary to-emerald-500 text-white font-bold text-lg rounded-full btn-premium disabled:opacity-50 disabled:cursor-not-allowed"
+                            class="w-full px-8 py-5 bg-gradient-to-r from-primary to-emerald-500 text-white font-bold text-lg rounded-full btn-premium disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] transition-all duration-300 hover:shadow-xl hover:shadow-primary/40 hover:-translate-y-1"
                             x-bind:disabled="amount > max || amount < 100 || (accountNumber !== savedNumber && !confirmedNumber) || (savedNumber === '' && !confirmedNumber)"
                             @if($user->coin_balance < 100) disabled @endif>
                             {{ __('Withdraw Now') }}
@@ -153,8 +153,8 @@
                             @endforeach
                         </div>
                         <div class="mt-6 flex justify-center">
-                            <a href="{{ route('user.history') }}" class="inline-block px-6 py-2.5 bg-gray-50 text-gray-600 font-bold rounded-full border border-gray-200 hover:bg-gray-100 transition-colors text-sm text-center w-full">
-                                {{ __('View All History') }} &rarr;
+                            <a href="{{ route('user.history') }}" class="inline-block px-6 py-2.5 bg-gray-50 text-gray-600 font-bold rounded-full border border-gray-200 hover:bg-gray-100 transition-all duration-200 text-sm text-center w-full active:scale-95 hover:scale-[1.02]">
+                                {{ __('View All History') }}
                             </a>
                         </div>
                     @endif

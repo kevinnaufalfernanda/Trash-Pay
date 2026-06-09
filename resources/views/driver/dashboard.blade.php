@@ -49,7 +49,7 @@
                 
                 <!-- Toggle Switch -->
                 <button type="button" 
-                        class="relative inline-flex h-10 w-20 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                        class="relative inline-flex h-10 w-20 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 active:scale-95"
                         :class="online ? 'bg-primary' : 'bg-gray-300'"
                         @click="toggleStatus()">
                     <span class="sr-only">Toggle status</span>
@@ -81,12 +81,12 @@
                         {{ number_format($driver->coin_balance) }} 
                         <svg class="w-8 h-8 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8v8m0-8V6m0 12v-2m0 0v-2"></path></svg>
                     </div>
-                    <a href="{{ route('driver.redeem') }}" class="inline-block px-8 py-3 bg-gradient-to-r from-accent to-amber-400 text-white rounded-full text-sm font-bold shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 hover:-translate-y-0.5 transition-all">{{ __('Withdraw Balance') }}</a>
+                    <a href="{{ route('driver.redeem') }}" class="inline-block px-8 py-3 bg-gradient-to-r from-accent to-amber-400 text-white rounded-full text-sm font-bold shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 hover:-translate-y-0.5 active:scale-[0.98] transition-all duration-200">{{ __('Withdraw Balance') }}</a>
                 </div>
 
                 {{-- Driver Stats (4-grid) --}}
                 <div class="md:col-span-2 grid grid-cols-2 gap-4">
-                    <div class="glass-panel rounded-3xl p-6 text-center border-t border-white/60">
+                    <div class="glass-panel rounded-3xl p-6 text-center border-t border-white/60 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
                         <div class="w-12 h-12 mx-auto mb-2 bg-gray-100 text-gray-500 rounded-full flex items-center justify-center">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
                         </div>
@@ -101,14 +101,14 @@
                         <div class="text-xs font-bold tracking-widest text-gray-500 uppercase mb-2 relative z-10">{{ __('Active Now') }}</div>
                         <div class="text-4xl font-serif font-bold text-primary relative z-10">{{ $activeOrders->count() }}</div>
                     </div>
-                    <div class="glass-panel rounded-3xl p-6 text-center border-t border-white/60">
+                    <div class="glass-panel rounded-3xl p-6 text-center border-t border-white/60 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
                         <div class="w-12 h-12 mx-auto mb-2 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
                         <div class="text-xs font-bold tracking-widest text-gray-500 uppercase mb-2">{{ __('Completed') }}</div>
                         <div class="text-4xl font-serif font-bold text-secondary">{{ $completedCount }}</div>
                     </div>
-                    <div class="glass-panel rounded-3xl p-6 text-center border-t border-white/60">
+                    <div class="glass-panel rounded-3xl p-6 text-center border-t border-white/60 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
                         <div class="w-12 h-12 mx-auto mb-2 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"></path></svg>
                         </div>
@@ -128,7 +128,7 @@
                 </h3>
                 <div class="space-y-4">
                     @foreach($activeOrders as $order)
-                        <div class="flex items-center justify-between p-5 bg-white/50 rounded-2xl border border-white/60 shadow-sm hover:bg-white/70 transition-colors">
+                        <div class="flex items-center justify-between p-5 bg-white/50 rounded-2xl border border-white/60 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:bg-white/70">
                             <div class="flex items-center gap-5">
                                 <div class="w-14 h-14 bg-gradient-to-br from-gray-100 to-white text-primary rounded-2xl flex items-center justify-center font-serif font-bold text-2xl border border-white shadow-sm">
                                     {{ substr($order->user->name, 0, 1) }}
@@ -151,8 +151,8 @@
                             </div>
                             <div class="flex flex-col items-end gap-2">
                                 <div class="flex gap-2">
-                                    <a href="{{ route('driver.navigation', $order->id) }}" class="px-5 py-2.5 bg-white/80 border border-gray-200 text-secondary text-sm font-bold rounded-full hover:bg-white transition-colors">{{ __('Navigate') }}</a>
-                                    <a href="{{ route('driver.verify', $order->id) }}" class="px-5 py-2.5 bg-gradient-to-r from-primary to-emerald-500 text-white text-sm font-bold rounded-full btn-premium shadow-lg shadow-emerald-500/30">{{ __('Verify Weight') }}</a>
+                                    <a href="{{ route('driver.navigation', $order->id) }}" class="px-5 py-2.5 bg-white/80 border border-gray-200 text-secondary text-sm font-bold rounded-full transition-all duration-200 active:scale-95 hover:scale-105 hover:bg-white hover:shadow-sm">{{ __('Navigate') }}</a>
+                                    <a href="{{ route('driver.verify', $order->id) }}" class="px-5 py-2.5 bg-gradient-to-r from-primary to-emerald-500 text-white text-sm font-bold rounded-full btn-premium shadow-lg shadow-emerald-500/30 active:scale-[0.98] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-emerald-500/50">{{ __('Verify Weight') }}</a>
                                 </div>
                                 @if($order->cancel_requested_by === 'user')
                                     <div class="flex gap-2 mt-2 w-full justify-end">
@@ -183,7 +183,7 @@
                     </div>
                     <h3 class="text-4xl font-serif font-bold mb-3 tracking-tight">{{ __('Ready to collect waste?') }}</h3>
                     <p class="text-emerald-50 mb-8 font-medium text-lg">{{ __('Check the Order Pool for new pickup requests near you.') }}</p>
-                    <a href="{{ route('driver.orders') }}" class="inline-block px-10 py-4 bg-gradient-to-r from-accent to-amber-400 text-white rounded-full font-bold text-lg shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 hover:-translate-y-0.5 transition-all">
+                    <a href="{{ route('driver.orders') }}" class="inline-block px-10 py-4 bg-gradient-to-r from-accent to-amber-400 text-white rounded-full font-bold text-lg shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 hover:-translate-y-1 active:scale-[0.98] transition-all duration-300">
                         {{ __('View Order Pool') }} ({{ $pendingCount }} {{ __('pending') }})
                     </a>
                 </div>

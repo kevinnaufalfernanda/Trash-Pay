@@ -16,7 +16,7 @@
 
             <!-- AI Scan Call to Action -->
             <div class="mb-10">
-                <a href="{{ route('user.pickup') }}" class="relative block overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-primary to-emerald-600 p-10 btn-premium group shadow-lg shadow-primary/30">
+                <a href="{{ route('user.pickup') }}" class="relative block overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-primary to-emerald-600 p-10 btn-premium group shadow-lg shadow-primary/30 active:scale-[0.98] transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/40">
                     <div class="absolute right-0 top-0 -mt-8 -mr-8 h-40 w-40 rounded-full bg-white opacity-10 group-hover:scale-[2.5] transition-transform duration-700 ease-out"></div>
                     <div class="absolute left-10 bottom-10 h-20 w-20 rounded-full bg-white opacity-20 blur-2xl"></div>
                     <div class="relative flex flex-col items-center justify-center text-center">
@@ -31,7 +31,7 @@
 
             <div class="grid md:grid-cols-2 gap-8 mb-10">
                 <!-- Impact Score -->
-                <div class="glass-panel rounded-3xl p-8 text-center relative overflow-hidden group">
+                <div class="glass-panel rounded-3xl p-8 text-center relative overflow-hidden group hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
                     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-emerald-400/20 rounded-full blur-3xl -z-10 group-hover:scale-110 transition-transform duration-500"></div>
                     <div class="text-emerald-600/80 text-xs font-bold tracking-widest uppercase mb-4">{{ __('Impact Score (CO2)') }}</div>
                     <div class="text-6xl font-serif font-bold text-secondary mb-2 tracking-tighter">{{ number_format($impactScore ?? 0, 2) }} <span class="text-2xl text-gray-400 font-sans">kg</span></div>
@@ -42,14 +42,14 @@
                 </div>
 
                 <!-- Coin Balance -->
-                <div class="glass-panel rounded-3xl p-8 text-center relative overflow-hidden group">
+                <div class="glass-panel rounded-3xl p-8 text-center relative overflow-hidden group hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
                     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-amber-400/20 rounded-full blur-3xl -z-10 group-hover:scale-110 transition-transform duration-500"></div>
                     <div class="text-amber-600/80 text-xs font-bold tracking-widest uppercase mb-4">{{ __('Coin Balance') }}</div>
                     <div class="text-6xl font-serif font-bold text-accent mb-4 tracking-tighter flex items-center justify-center gap-2">
                         {{ number_format($user->coin_balance) }} 
                         <svg class="w-8 h-8 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8v8m0-8V6m0 12v-2m0 0v-2"></path></svg>
                     </div>
-                    <a href="{{ route('user.redeem') }}" class="inline-block px-8 py-3 bg-gradient-to-r from-accent to-amber-400 text-white rounded-full text-sm font-bold shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 hover:-translate-y-0.5 transition-all">{{ __('Redeem Coins Now') }}</a>
+                    <a href="{{ route('user.redeem') }}" class="inline-block px-8 py-3 bg-gradient-to-r from-accent to-amber-400 text-white rounded-full text-sm font-bold shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 hover:-translate-y-0.5 active:scale-95 transition-all duration-200">{{ __('Redeem Coins Now') }}</a>
                 </div>
             </div>
 

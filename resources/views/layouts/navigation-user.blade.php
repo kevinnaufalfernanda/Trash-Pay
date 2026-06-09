@@ -15,19 +15,90 @@
                 </div>
 
                 <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('user.dashboard')" :active="request()->routeIs('user.dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('user.pickup')" :active="request()->routeIs('user.pickup')">
-                        {{ __('Request Pickup') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('user.redeem')" :active="request()->routeIs('user.redeem')">
-                        {{ __('Redeem Center') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('leaderboard')" :active="request()->routeIs('leaderboard')">
-                        {{ __('Leaderboard') }}
-                    </x-nav-link>
+                @php
+                    $activeRoute = '';
+                    if(request()->routeIs('user.dashboard')) $activeRoute = 'user.dashboard';
+                    if(request()->routeIs('user.pickup')) $activeRoute = 'user.pickup';
+                    if(request()->routeIs('user.redeem')) $activeRoute = 'user.redeem';
+                    if(request()->routeIs('leaderboard')) $activeRoute = 'leaderboard';
+                @endphp
+                <div class="hidden sm:flex sm:ms-10 items-center">
+                    <div x-data="{
+                            activeTab: '{{ $activeRoute }}',
+                            currentLine: '{{ $activeRoute }}',
+                            lineStyle: { opacity: 0 },
+                            updateLine(tab) {
+                                this.currentLine = tab;
+                                if (!tab) {
+                                    this.lineStyle = { opacity: 0 };
+                                    return;
+                                }
+                                let el = this.$refs['nav_' + tab.replace('.', '_')];
+                                if (el) {
+                                    this.lineStyle = {
+                                        left: el.offsetLeft + 'px',
+                                        width: el.offsetWidth + 'px',
+                                        opacity: 1
+                                    };
+                                } else {
+                                    this.lineStyle = { opacity: 0 };
+                                }
+                            },
+                            navigate(tab, url) {
+                                this.activeTab = tab;
+                                this.updateLine(tab);
+                                setTimeout(() => {
+                                    window.location.href = url;
+                                }, 250);
+                            },
+                            init() {
+                                setTimeout(() => this.updateLine(this.activeTab), 50);
+                                window.addEventListener('resize', () => this.updateLine(this.activeTab));
+                            }
+                        }" 
+                        @mouseleave="updateLine(activeTab)"
+                        class="flex space-x-8 h-16 relative">
+                        
+                        <!-- Sliding Bottom Line -->
+                        <div class="absolute bottom-0 h-1 bg-primary rounded-t-md transition-all duration-300 ease-out"
+                             :style="lineStyle"></div>
+
+                        <a href="{{ route('user.dashboard') }}" 
+                           x-ref="nav_user_dashboard"
+                           @mouseenter="updateLine('user.dashboard')"
+                           @click.prevent="navigate('user.dashboard', '{{ route('user.dashboard') }}')"
+                           class="inline-flex items-center px-1 pt-1 text-sm font-bold transition-colors duration-200"
+                           :class="currentLine === 'user.dashboard' ? 'text-primary' : 'text-gray-500 hover:text-gray-700'">
+                            {{ __('Dashboard') }}
+                        </a>
+                        
+                        <a href="{{ route('user.pickup') }}" 
+                           x-ref="nav_user_pickup"
+                           @mouseenter="updateLine('user.pickup')"
+                           @click.prevent="navigate('user.pickup', '{{ route('user.pickup') }}')"
+                           class="inline-flex items-center px-1 pt-1 text-sm font-bold transition-colors duration-200"
+                           :class="currentLine === 'user.pickup' ? 'text-primary' : 'text-gray-500 hover:text-gray-700'">
+                            {{ __('Request Pickup') }}
+                        </a>
+                        
+                        <a href="{{ route('user.redeem') }}" 
+                           x-ref="nav_user_redeem"
+                           @mouseenter="updateLine('user.redeem')"
+                           @click.prevent="navigate('user.redeem', '{{ route('user.redeem') }}')"
+                           class="inline-flex items-center px-1 pt-1 text-sm font-bold transition-colors duration-200"
+                           :class="currentLine === 'user.redeem' ? 'text-primary' : 'text-gray-500 hover:text-gray-700'">
+                            {{ __('Redeem Center') }}
+                        </a>
+                        
+                        <a href="{{ route('leaderboard') }}" 
+                           x-ref="nav_leaderboard"
+                           @mouseenter="updateLine('leaderboard')"
+                           @click.prevent="navigate('leaderboard', '{{ route('leaderboard') }}')"
+                           class="inline-flex items-center px-1 pt-1 text-sm font-bold transition-colors duration-200"
+                           :class="currentLine === 'leaderboard' ? 'text-primary' : 'text-gray-500 hover:text-gray-700'">
+                            {{ __('Leaderboard') }}
+                        </a>
+                    </div>
                 </div>
             </div>
 

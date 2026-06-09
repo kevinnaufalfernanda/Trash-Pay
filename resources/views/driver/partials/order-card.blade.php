@@ -1,5 +1,11 @@
 @props(['pickup', 'currentCapacity', 'type' => 'standard'])
 
+@php
+    $isOffline = auth()->user()->driver_status === 'offline';
+    $isOverCapacity = $currentCapacity + $pickup->total_weight > 10;
+    $isDisabled = $isOffline || $isOverCapacity;
+@endphp
+
 <div x-data="{ 
         showPreviewModal: false, 
         zoomImage: false,
@@ -42,7 +48,7 @@
             setTimeout(() => { map.invalidateSize(); }, 300);
         }
     }"
-    class="{{ $type === 'high' ? 'bg-gradient-to-br from-white/90 to-amber-50/90 border-amber-200' : 'bg-white/60 border-gray-200' }} rounded-3xl border p-6 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all group flex flex-col h-full">
+    class="{{ $type === 'high' ? 'bg-gradient-to-br from-white/90 to-amber-50/90 border-amber-200 hover:border-amber-400 hover:shadow-lg hover:shadow-amber-400/30' : 'bg-white/60 border-gray-200 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10' }} rounded-3xl border p-6 shadow-sm hover:-translate-y-1.5 transition-all duration-300 group flex flex-col h-full">
     
     <div class="flex justify-between items-start mb-4">
         <div class="flex items-center gap-4">
@@ -51,7 +57,7 @@
             </div>
             <div>
                 <div class="font-bold text-secondary">{{ $pickup->user->name }}</div>
-                <div class="text-xs font-bold {{ $type === 'high' ? 'text-amber-600' : 'text-gray-500' }} uppercase">{{ $pickup->category->name }}</div>
+                <div class="text-xs font-bold {{ $type === 'high' ? 'text-amber-600' : 'text-gray-500' }} uppercase">{{ __($pickup->category->name) }}</div>
             </div>
         </div>
         <span class="text-xs font-bold {{ $type === 'high' ? 'text-white bg-amber-500' : 'text-primary bg-primary/10 border border-primary/20' }} px-3 py-1 rounded-full shadow-sm flex items-center gap-1">{{ __('Est:') }} {{ $pickup->est_coins }} <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8v8m0-8V6m0 12v-2m0 0v-2"></path></svg></span>
@@ -79,13 +85,14 @@
 
     <div class="mt-auto">
         <div class="flex gap-2">
-            <button @click="showPreviewModal = true; setTimeout(() => initMap(), 100)" class="flex-1 py-{{ $type === 'high' ? '4' : '3' }} {{ $type === 'high' ? 'bg-amber-50 text-amber-600 border-amber-200 hover:bg-amber-100' : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100' }} border font-bold rounded-2xl transition-colors flex justify-center items-center gap-2 text-sm">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg> {{ __('Check Map') }}
+            <button @click="showPreviewModal = true; setTimeout(() => initMap(), 100)" class="flex-1 py-{{ $type === 'high' ? '4' : '3' }} {{ $type === 'high' ? 'bg-amber-50 text-amber-600 border-amber-200 hover:bg-amber-100' : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-primary/10 hover:text-primary hover:border-primary/30' }} border font-bold rounded-2xl transition-all duration-200 active:scale-95 hover:scale-[1.02] flex justify-center items-center gap-2 text-sm">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg> {{ __('Cek Peta') }}
             </button>
             <form action="{{ route('driver.orders.accept', $pickup->id) }}" method="POST" class="flex-1">
                 @csrf
-                <button @if($currentCapacity + $pickup->total_weight > 10) disabled @endif class="w-full h-full py-{{ $type === 'high' ? '4' : '3' }} {{ $type === 'high' ? 'bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50' : 'bg-white border-2 border-primary text-primary hover:bg-primary hover:text-white' }} font-bold rounded-2xl transition-all flex justify-center items-center gap-2 text-sm @if($currentCapacity + $pickup->total_weight > 10) opacity-50 cursor-not-allowed border-gray-300 text-gray-400 hover:bg-white hover:text-gray-400 bg-none @endif">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> {{ __('Take') }}
+                <button @if($isDisabled) disabled @endif class="w-full h-full py-{{ $type === 'high' ? '4' : '3' }} {{ $type === 'high' ? 'bg-white border-2 border-amber-500 text-amber-600 ' . (!$isDisabled ? 'hover:bg-gradient-to-r hover:from-amber-400 hover:to-orange-500 hover:border-orange-500 hover:text-white hover:shadow-lg hover:shadow-orange-500/40 active:scale-[0.98] hover:-translate-y-0.5' : '') : 'bg-white border-2 border-primary text-primary ' . (!$isDisabled ? 'hover:bg-primary hover:text-white active:scale-[0.98] hover:-translate-y-0.5' : '') }} font-bold rounded-2xl transition-all duration-300 flex justify-center items-center gap-2 text-sm @if($isDisabled) opacity-60 cursor-not-allowed border-gray-300 text-gray-400 bg-gray-50 @endif">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> 
+                    {{ $isOffline ? __('Aktifkan Akun') : __('Ambil') }}
                 </button>
             </form>
         </div>
@@ -136,7 +143,7 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
                             <div class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">{{ __('Kategori') }}</div>
-                            <div class="font-bold text-secondary">{{ $pickup->category->name }}</div>
+                            <div class="font-bold text-secondary">{{ __($pickup->category->name) }}</div>
                         </div>
                         <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
                             <div class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">{{ __('Estimasi Berat') }}</div>
@@ -154,8 +161,9 @@
                     <div class="mt-4 pt-4 border-t border-gray-100">
                         <form action="{{ route('driver.orders.accept', $pickup->id) }}" method="POST">
                             @csrf
-                            <button @if($currentCapacity + $pickup->total_weight > 10) disabled @endif type="submit" class="w-full flex justify-center items-center gap-2 text-center py-4 bg-gradient-to-r from-amber-400 to-amber-500 text-white font-bold rounded-2xl shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 transition-all @if($currentCapacity + $pickup->total_weight > 10) opacity-50 cursor-not-allowed bg-none bg-gray-300 text-gray-500 border border-gray-300 shadow-none hover:bg-gray-300 hover:shadow-none @endif">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> {{ __('Ambil Pesanan Ini') }}
+                            <button @if($isDisabled) disabled @endif type="submit" class="w-full flex justify-center items-center gap-2 text-center py-4 {{ !$isDisabled ? 'bg-gradient-to-r from-amber-400 to-amber-500 text-white shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 hover:-translate-y-0.5 active:scale-[0.98]' : 'bg-gray-100 text-gray-400 border border-gray-300 opacity-60 cursor-not-allowed' }} font-bold rounded-2xl transition-all">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> 
+                                {{ $isOffline ? __('Status Offline! Aktifkan Akun Dahulu') : __('Ambil Pesanan Ini') }}
                             </button>
                         </form>
                     </div>

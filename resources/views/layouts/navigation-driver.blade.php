@@ -15,19 +15,90 @@
                 </div>
 
                 <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('driver.dashboard')" :active="request()->routeIs('driver.dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('driver.orders')" :active="request()->routeIs('driver.orders')">
-                        {{ __('Order Pool') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('driver.redeem')" :active="request()->routeIs('driver.redeem')">
-                        {{ __('Redeem Center') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('leaderboard')" :active="request()->routeIs('leaderboard')">
-                        {{ __('Leaderboard') }}
-                    </x-nav-link>
+                @php
+                    $activeRoute = '';
+                    if(request()->routeIs('driver.dashboard')) $activeRoute = 'driver.dashboard';
+                    if(request()->routeIs('driver.orders')) $activeRoute = 'driver.orders';
+                    if(request()->routeIs('driver.redeem')) $activeRoute = 'driver.redeem';
+                    if(request()->routeIs('leaderboard')) $activeRoute = 'leaderboard';
+                @endphp
+                <div class="hidden sm:flex sm:ms-10 items-center">
+                    <div x-data="{
+                            activeTab: '{{ $activeRoute }}',
+                            currentLine: '{{ $activeRoute }}',
+                            lineStyle: { opacity: 0 },
+                            updateLine(tab) {
+                                this.currentLine = tab;
+                                if (!tab) {
+                                    this.lineStyle = { opacity: 0 };
+                                    return;
+                                }
+                                let el = this.$refs['nav_' + tab.replace('.', '_')];
+                                if (el) {
+                                    this.lineStyle = {
+                                        left: el.offsetLeft + 'px',
+                                        width: el.offsetWidth + 'px',
+                                        opacity: 1
+                                    };
+                                } else {
+                                    this.lineStyle = { opacity: 0 };
+                                }
+                            },
+                            navigate(tab, url) {
+                                this.activeTab = tab;
+                                this.updateLine(tab);
+                                setTimeout(() => {
+                                    window.location.href = url;
+                                }, 250);
+                            },
+                            init() {
+                                setTimeout(() => this.updateLine(this.activeTab), 50);
+                                window.addEventListener('resize', () => this.updateLine(this.activeTab));
+                            }
+                        }" 
+                        @mouseleave="updateLine(activeTab)"
+                        class="flex space-x-8 h-16 relative">
+                        
+                        <!-- Sliding Bottom Line -->
+                        <div class="absolute bottom-0 h-1 bg-primary rounded-t-md transition-all duration-300 ease-out"
+                             :style="lineStyle"></div>
+
+                        <a href="{{ route('driver.dashboard') }}" 
+                           x-ref="nav_driver_dashboard"
+                           @mouseenter="updateLine('driver.dashboard')"
+                           @click.prevent="navigate('driver.dashboard', '{{ route('driver.dashboard') }}')"
+                           class="inline-flex items-center px-1 pt-1 text-sm font-bold transition-colors duration-200"
+                           :class="currentLine === 'driver.dashboard' ? 'text-primary' : 'text-gray-500 hover:text-gray-700'">
+                            {{ __('Dashboard') }}
+                        </a>
+                        
+                        <a href="{{ route('driver.orders') }}" 
+                           x-ref="nav_driver_orders"
+                           @mouseenter="updateLine('driver.orders')"
+                           @click.prevent="navigate('driver.orders', '{{ route('driver.orders') }}')"
+                           class="inline-flex items-center px-1 pt-1 text-sm font-bold transition-colors duration-200"
+                           :class="currentLine === 'driver.orders' ? 'text-primary' : 'text-gray-500 hover:text-gray-700'">
+                            {{ __('Order Pool') }}
+                        </a>
+                        
+                        <a href="{{ route('driver.redeem') }}" 
+                           x-ref="nav_driver_redeem"
+                           @mouseenter="updateLine('driver.redeem')"
+                           @click.prevent="navigate('driver.redeem', '{{ route('driver.redeem') }}')"
+                           class="inline-flex items-center px-1 pt-1 text-sm font-bold transition-colors duration-200"
+                           :class="currentLine === 'driver.redeem' ? 'text-primary' : 'text-gray-500 hover:text-gray-700'">
+                            {{ __('Redeem Center') }}
+                        </a>
+                        
+                        <a href="{{ route('leaderboard') }}" 
+                           x-ref="nav_leaderboard"
+                           @mouseenter="updateLine('leaderboard')"
+                           @click.prevent="navigate('leaderboard', '{{ route('leaderboard') }}')"
+                           class="inline-flex items-center px-1 pt-1 text-sm font-bold transition-colors duration-200"
+                           :class="currentLine === 'leaderboard' ? 'text-primary' : 'text-gray-500 hover:text-gray-700'">
+                            {{ __('Leaderboard') }}
+                        </a>
+                    </div>
                 </div>
             </div>
 

@@ -35,7 +35,7 @@
 
                             <div class="bg-white/40 p-4 rounded-2xl border border-white/60 shadow-sm">
                                 <span class="text-xs text-gray-500 uppercase font-bold tracking-wider">{{ __('Estimation') }}</span>
-                                <div class="font-bold text-gray-800 text-lg">{{ $pickup->total_weight }} kg • {{ $pickup->category->name }}</div>
+                                <div class="font-bold text-gray-800 text-lg">{{ $pickup->total_weight }} kg • {{ __($pickup->category->name) }}</div>
                             </div>
                             
                             <div class="bg-white/40 p-4 rounded-2xl border border-amber-200 shadow-sm bg-amber-50">

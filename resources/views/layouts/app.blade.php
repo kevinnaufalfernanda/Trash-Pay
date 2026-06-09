@@ -11,6 +11,9 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400..800&family=Plus+Jakarta+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
 
+        <style>
+            [x-cloak] { display: none !important; }
+        </style>
         <!-- Scripts & Styles via CDN -->
         <script src="https://cdn.tailwindcss.com"></script>
         <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -136,8 +139,13 @@
             @endisset
 
             <!-- Page Content -->
-            <main class="relative z-10">
-                {{ $slot }}
+            <main class="relative z-10" x-data="{ pageLoaded: false }" x-init="setTimeout(() => pageLoaded = true, 50)">
+                <div x-cloak x-show="pageLoaded" 
+                     x-transition:enter="transition ease-out duration-500" 
+                     x-transition:enter-start="opacity-0 translate-y-4" 
+                     x-transition:enter-end="opacity-100 translate-y-0">
+                    {{ $slot }}
+                </div>
             </main>
 
             <footer class="py-8 text-center text-secondary/40">
