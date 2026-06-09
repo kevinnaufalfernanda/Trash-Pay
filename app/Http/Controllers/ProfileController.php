@@ -55,7 +55,7 @@ class ProfileController extends Controller
         $request->validateWithBag('updatePayment', [
             'payment_number' => ['required', 'string', 'max:20', \Illuminate\Validation\Rule::unique('users')->ignore($request->user()->id)],
         ], [
-            'payment_number.unique' => 'Nomor ini sudah terdaftar.'
+            'payment_number.unique' => __('This number is already registered.')
         ]);
 
         $request->user()->update([

@@ -252,5 +252,13 @@
     "Oops, my bad!": "Oops, maaf ya!",
     "Please select the correct category below.": "Silakan pilih kategori yang benar secara manual di bawah ini.",
     "Estimated Reward": "Estimasi Koin",
-    "Coins": "Koin"
+    "Coins": "Koin",
+    "This number is already registered.": "Nomor ini sudah terdaftar.",
+    "Registration successful! Please log in with your account.": "Registrasi berhasil! Silakan login dengan akun Anda.",
+    "This number is different from your profile's saved number. I confirm this number is correct.": "Nomor ini berbeda dengan nomor di profil. Saya mengkonfirmasi nomor ini sudah sesuai.",
+    "There is no saved number in your profile. I confirm this number is correct.": "Belum ada nomor yang tersimpan di profil. Saya mengkonfirmasi nomor ini sudah sesuai.",
+    "An error occurred": "Terdapat Kesalahan",
+    "Redemption History": "Riwayat Penukaran",
+    "No redemption history yet.": "Belum ada riwayat penukaran.",
+    "View All History": "Lihat Semua Riwayat"
 }

@@ -108,13 +108,13 @@
                             <div class="mt-4 p-4 bg-red-50 rounded-xl border border-red-200 flex items-start gap-3" x-show="accountNumber !== savedNumber && savedNumber !== '' && accountNumber !== ''" x-cloak x-transition>
                                 <input type="checkbox" id="confirm_number" x-model="confirmedNumber" class="mt-1 w-4 h-4 text-primary bg-white border-red-300 rounded focus:ring-primary focus:ring-2 cursor-pointer">
                                 <label for="confirm_number" class="text-sm text-red-800 font-medium cursor-pointer">
-                                    {{ __('Nomor ini berbeda dengan nomor di profil. Saya mengkonfirmasi nomor ini sudah sesuai.') }}
+                                    {{ __("This number is different from your profile's saved number. I confirm this number is correct.") }}
                                 </label>
                             </div>
                             <div class="mt-4 p-4 bg-amber-50 rounded-xl border border-amber-200 flex items-start gap-3" x-show="savedNumber === '' && accountNumber !== ''" x-cloak x-transition>
                                 <input type="checkbox" id="confirm_new_number" x-model="confirmedNumber" class="mt-1 w-4 h-4 text-primary bg-white border-amber-300 rounded focus:ring-primary focus:ring-2 cursor-pointer">
                                 <label for="confirm_new_number" class="text-sm text-amber-800 font-medium cursor-pointer">
-                                    {{ __('Belum ada nomor yang tersimpan di profil. Saya mengkonfirmasi nomor ini sudah sesuai.') }}
+                                    {{ __("There is no saved number in your profile. I confirm this number is correct.") }}
                                 </label>
                             </div>
                         </div>
@@ -133,7 +133,7 @@
             <div>
                 <div class="glass-panel rounded-3xl p-6">
                     <h3 class="text-xl font-serif font-semibold mb-4 text-secondary flex items-center justify-between">
-                        {{ __('Riwayat Penukaran') }}
+                        {{ __('Redemption History') }}
                     </h3>
 
                     @if($redemptions->isEmpty())
@@ -141,7 +141,7 @@
                             <div class="w-20 h-20 mx-auto mb-4 bg-gray-100 text-gray-400 rounded-full flex items-center justify-center">
                                 <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
                             </div>
-                            <p class="text-gray-500 text-sm font-medium">{{ __('Belum ada riwayat penukaran koin.') }}</p>
+                            <p class="text-gray-500 text-sm font-medium">{{ __('No redemption history yet.') }}</p>
                         </div>
                     @else
                         <div class="space-y-4">
@@ -151,7 +151,7 @@
                         </div>
                         <div class="mt-6 flex justify-center">
                             <a href="{{ route('driver.history') }}" class="inline-block px-6 py-2.5 bg-gray-50 text-gray-600 font-bold rounded-full border border-gray-200 hover:bg-gray-100 transition-colors text-sm text-center w-full">
-                                {{ __('Lihat Semua Riwayat') }} &rarr;
+                                {{ __('View All History') }} &rarr;
                             </a>
                         </div>
                     @endif
