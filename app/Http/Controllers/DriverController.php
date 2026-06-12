@@ -16,14 +16,26 @@ class DriverController extends Controller
     {
         $driver = auth()->user();
 
-        Pickup::where('status', 'pending')
-            ->where('created_at', '<', now()->subHours(24))
-            ->update(['status' => 'cancelled']);
+        if (!\Illuminate\Support\Facades\Cache::has('driver_auto_cancel_run')) {
+            Pickup::where('status', 'pending')
+                ->where('created_at', '<', now()->subHours(24))
+                ->update(['status' => 'cancelled']);
+            \Illuminate\Support\Facades\Cache::put('driver_auto_cancel_run', true, 60);
+        }
 
-        $completedCount = Pickup::where('driver_id', $driver->id)->where('status', 'completed')->count();
-        $totalWeightCollected = Pickup::where('driver_id', $driver->id)->where('status', 'completed')->sum('total_weight');
+        $completedCount = \Illuminate\Support\Facades\Cache::remember("driver_{$driver->id}_completed_count", 60, function() use ($driver) {
+            return Pickup::where('driver_id', $driver->id)->where('status', 'completed')->count();
+        });
+        
+        $totalWeightCollected = \Illuminate\Support\Facades\Cache::remember("driver_{$driver->id}_total_weight", 60, function() use ($driver) {
+            return Pickup::where('driver_id', $driver->id)->where('status', 'completed')->sum('total_weight');
+        });
+        
         $activeOrders = Pickup::with('user')->where('driver_id', $driver->id)->where('status', 'on-the-way')->latest()->get();
-        $pendingCount = Pickup::where('status', 'pending')->count();
+        
+        $pendingCount = \Illuminate\Support\Facades\Cache::remember('driver_pending_pickups_count', 30, function() {
+            return Pickup::where('status', 'pending')->count();
+        });
 
         return view('driver.dashboard', compact('driver', 'completedCount', 'totalWeightCollected', 'activeOrders', 'pendingCount'));
     }
@@ -210,7 +222,7 @@ class DriverController extends Controller
 
         $driver->decrement('coin_balance', $request->amount);
 
-        Redemption::create([
+        $redemption = Redemption::create([
             'user_id' => $driver->id,
             'amount' => $request->amount,
             'provider' => $request->provider,
@@ -218,7 +230,10 @@ class DriverController extends Controller
             'status' => 'pending'
         ]);
 
-        return redirect()->route('driver.redeem')->with('success', 'Permintaan penarikan saldo berhasil! Admin akan segera memprosesnya.');
+        return redirect()->route('driver.redeem')->with([
+            'success' => 'Permintaan penarikan saldo berhasil! Admin akan segera memprosesnya.',
+            'redemption_data' => $redemption
+        ]);
     }
 
     /**

@@ -125,6 +125,16 @@
                             @endif
                         </div>
                     </div>
+
+                    @if($redemption->status === 'pending')
+                    <div class="bg-emerald-50 border border-emerald-100 rounded-2xl p-5 mt-2 text-center">
+                        <p class="text-sm text-emerald-800 font-medium mb-4">{{ __('Please proceed with the payment link for validation.') }}</p>
+                        <a href="https://app.sandbox.midtrans.com/payment-links/17bf84e8-125b-442a-baf5-bef194cc1ddf-qClh4lkY" target="_blank"
+                           class="inline-block w-full px-6 py-3 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-200">
+                            {{ __('Proceed to Midtrans') }}
+                        </a>
+                    </div>
+                    @endif
                 </div>
             </div>
         </div>

@@ -15,16 +15,23 @@ class UserController extends Controller
     public function dashboard()
     {
         $user = auth()->user();
-        $impactScore = Pickup::where('user_id', $user->id)
-            ->where('status', 'completed')
-            ->sum('total_weight') * 1.2; // Formula E = W * 1.2
+        $impactScore = \Illuminate\Support\Facades\Cache::remember("user_{$user->id}_impact_score", 60, function() use ($user) {
+            return Pickup::where('user_id', $user->id)
+                ->where('status', 'completed')
+                ->sum('total_weight') * 1.2; // Formula E = W * 1.2
+        });
 
-        Pickup::where('status', 'pending')
-            ->where('created_at', '<', now()->subMinutes(15))
-            ->update(['status' => 'cancelled']);
+        if (!\Illuminate\Support\Facades\Cache::has('pickup_auto_cancel_run')) {
+            Pickup::where('status', 'pending')
+                ->where('created_at', '<', now()->subMinutes(15))
+                ->update(['status' => 'cancelled']);
+            \Illuminate\Support\Facades\Cache::put('pickup_auto_cancel_run', true, 60);
+        }
 
         $recentPickups = Pickup::where('user_id', $user->id)->latest()->take(5)->get();
-        $categories = WasteCategory::all();
+        $categories = \Illuminate\Support\Facades\Cache::remember('waste_categories', 3600, function() {
+            return WasteCategory::all();
+        });
 
         return view('user.dashboard', compact('user', 'impactScore', 'recentPickups', 'categories'));
     }
@@ -107,7 +114,7 @@ class UserController extends Controller
 
         $user->decrement('coin_balance', $request->amount);
 
-        Redemption::create([
+        $redemption = Redemption::create([
             'user_id' => $user->id,
             'amount' => $request->amount,
             'provider' => $request->provider,
@@ -115,7 +122,10 @@ class UserController extends Controller
             'status' => 'pending'
         ]);
 
-        return redirect()->route('user.redeem')->with('success', 'Redemption requested! Admin will review it shortly.');
+        return redirect()->route('user.redeem')->with([
+            'success' => 'Redemption requested! Admin will review it shortly.',
+            'redemption_data' => $redemption
+        ]);
     }
 
     /**

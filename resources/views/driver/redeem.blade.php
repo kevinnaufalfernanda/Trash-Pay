@@ -221,4 +221,79 @@
 
         </div>
     </div>
+    @if(session('redemption_data'))
+        <template x-teleport="body">
+            <div x-data="{ open: true }" x-show="open" class="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xl" x-cloak>
+                <div @click.away="window.history.back()" class="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl relative overflow-hidden"
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 translate-y-8 scale-95"
+                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                 x-transition:leave-end="opacity-0 translate-y-8 scale-95">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-400/20 rounded-full blur-3xl -z-10"></div>
+                
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-2xl font-serif font-bold text-secondary">{{ __('Redemption Details') }}</h3>
+                    <button @click="window.history.back()" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+                
+                <div class="flex items-center gap-4 p-5 bg-gray-50 rounded-2xl mb-4 border border-gray-100">
+                    <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-amber-500 shadow-sm border border-gray-100">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-gray-900 text-lg">{{ session('redemption_data')->provider }}</h4>
+                        <p class="text-gray-500 text-sm font-medium">{{ session('redemption_data')->account_number }}</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div class="p-5 bg-gray-50 rounded-2xl border border-gray-100 flex flex-col justify-center">
+                        <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{{ __('Redeemed TrashCoins') }}</div>
+                        <div class="text-xl font-bold text-amber-500 flex items-center gap-1">
+                            {{ number_format(session('redemption_data')->amount) }}
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z" clip-rule="evenodd"></path></svg>
+                        </div>
+                    </div>
+                    <div class="p-5 bg-gray-50 rounded-2xl border border-gray-100 flex flex-col justify-center">
+                        <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{{ __('Rupiah Value') }}</div>
+                        <div class="text-xl font-bold text-gray-900">
+                            Rp {{ number_format(session('redemption_data')->amount * 100, 0, ',', '.') }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-5 bg-gray-50 rounded-2xl mb-4 space-y-3 border border-gray-100">
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm font-medium text-gray-500">{{ __('Transaction ID') }}</span>
+                        <span class="text-sm font-bold text-gray-900">#TXN-{{ str_pad(session('redemption_data')->id, 5, '0', STR_PAD_LEFT) }}</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm font-medium text-gray-500">{{ __('Date') }}</span>
+                        <span class="text-sm font-bold text-gray-900">{{ session('redemption_data')->created_at->format('d M Y, H:i') }}</span>
+                    </div>
+                </div>
+
+                <div class="p-4 bg-amber-50 rounded-2xl mb-6 flex justify-between items-center border border-amber-100">
+                    <span class="text-xs font-bold text-amber-600 uppercase tracking-wider">{{ __('Status') }}</span>
+                    <div class="flex items-center gap-1.5 text-amber-600 font-bold text-sm bg-amber-100/50 px-3 py-1.5 rounded-full">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span>{{ ucfirst(session('redemption_data')->status) == 'Pending' ? 'Processing' : ucfirst(session('redemption_data')->status) }}</span>
+                    </div>
+                </div>
+                
+                <div class="bg-emerald-50 border border-emerald-100 rounded-2xl p-5 mb-6 text-center">
+                    <p class="text-sm text-emerald-800 font-medium mb-4">{{ __('Please proceed with the payment link for validation.') }}</p>
+                    <a href="https://app.sandbox.midtrans.com/payment-links/17bf84e8-125b-442a-baf5-bef194cc1ddf-qClh4lkY" target="_blank"
+                       class="inline-block w-full px-6 py-3 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-200">
+                        {{ __('Proceed to Midtrans') }}
+                    </a>
+                </div>
+            </div>
+        </div>
+        </template>
+    @endif
 </x-app-layout>

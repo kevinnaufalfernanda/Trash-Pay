@@ -18,12 +18,22 @@ class AdminController extends Controller
      */
     public function dashboard()
     {
-        $totalWeight = Pickup::where('status', 'completed')->sum('total_weight');
+        $totalWeight = \Illuminate\Support\Facades\Cache::remember('admin_total_weight', 60, function() {
+            return Pickup::where('status', 'completed')->sum('total_weight');
+        });
         $co2Reduced = $totalWeight * 1.2;
-        $completedPickups = Pickup::where('status', 'completed')->count();
-        $pendingPayouts = Redemption::where('status', 'pending')->count();
-        $totalUsers = User::where('role', 'user')->count();
-        $totalDrivers = User::where('role', 'driver')->count();
+        $completedPickups = \Illuminate\Support\Facades\Cache::remember('admin_completed_pickups', 60, function() {
+            return Pickup::where('status', 'completed')->count();
+        });
+        $pendingPayouts = \Illuminate\Support\Facades\Cache::remember('admin_pending_payouts', 60, function() {
+            return Redemption::where('status', 'pending')->count();
+        });
+        $totalUsers = \Illuminate\Support\Facades\Cache::remember('admin_total_users', 60, function() {
+            return User::where('role', 'user')->count();
+        });
+        $totalDrivers = \Illuminate\Support\Facades\Cache::remember('admin_total_drivers', 60, function() {
+            return User::where('role', 'driver')->count();
+        });
 
         return view('admin.dashboard', compact(
             'totalWeight', 'co2Reduced', 'completedPickups',
